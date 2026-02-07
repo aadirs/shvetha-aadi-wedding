@@ -1,0 +1,220 @@
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { fetchPot, fetchContributors } from "../lib/api";
+import { useCart } from "../context/CartContext";
+import ContributorFeed from "../components/ContributorFeed";
+import { Button } from "../components/ui/button";
+import { Progress } from "../components/ui/progress";
+import { Badge } from "../components/ui/badge";
+import { Input } from "../components/ui/input";
+import { Separator } from "../components/ui/separator";
+import { ArrowLeft, ShoppingBag, Heart, Gift, Check } from "lucide-react";
+import { toast } from "sonner";
+
+const PRESET_AMOUNTS = [500, 1000, 2500, 5000, 10000];
+
+export default function PotPage() {
+  const { slug } = useParams();
+  const [pot, setPot] = useState(null);
+  const [contributors, setContributors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedAmount, setSelectedAmount] = useState(null);
+  const [customAmount, setCustomAmount] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [added, setAdded] = useState(false);
+  const { addItem, items, setIsOpen } = useCart();
+
+  useEffect(() => {
+    Promise.all([
+      fetchPot(slug).then(r => setPot(r.data)),
+      fetchContributors(slug).then(r => setContributors(r.data))
+    ])
+      .catch(() => toast.error("Could not load this collection"))
+      .finally(() => setLoading(false));
+  }, [slug]);
+
+  const handleAddToCart = () => {
+    const amountRupees = selectedAmount || parseInt(customAmount);
+    if (!amountRupees || amountRupees < 1) {
+      toast.error("Please select or enter an amount");
+      return;
+    }
+    addItem(pot.id, pot.title, amountRupees * 100, selectedItem?.id, selectedItem?.title);
+    setAdded(true);
+    toast.success(`Added to your gift basket`);
+    setTimeout(() => setAdded(false), 2000);
+    setSelectedAmount(null);
+    setCustomAmount("");
+    setSelectedItem(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center mandala-bg">
+        <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!pot) {
+    return (
+      <div className="min-h-screen flex items-center justify-center mandala-bg">
+        <div className="text-center">
+          <p className="font-serif text-xl text-foreground mb-4">Collection not found</p>
+          <Link to="/" className="text-crimson underline text-sm">Go back home</Link>
+        </div>
+      </div>
+    );
+  }
+
+  const totalRupees = pot.total_raised_paise / 100;
+  const goalRupees = pot.goal_amount_paise ? pot.goal_amount_paise / 100 : null;
+  const progressPct = goalRupees ? Math.min((totalRupees / goalRupees) * 100, 100) : 0;
+
+  return (
+    <div className="min-h-screen mandala-bg">
+      {/* Nav */}
+      <nav className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border/40">
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 text-foreground hover:text-crimson transition-colors" data-testid="back-to-home">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-sans">Back</span>
+          </Link>
+          {items.length > 0 && (
+            <button onClick={() => setIsOpen(true)} className="relative" data-testid="nav-cart-btn">
+              <ShoppingBag className="w-5 h-5 text-foreground" />
+              <Badge className="absolute -top-1 -right-2 bg-crimson text-white text-xs w-4 h-4 flex items-center justify-center p-0 rounded-full">
+                {items.length}
+              </Badge>
+            </button>
+          )}
+        </div>
+      </nav>
+
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        {/* Cover Image */}
+        {pot.cover_image_url && (
+          <div className="rounded-xl overflow-hidden mb-8 gold-border" data-testid="pot-cover-image">
+            <img src={pot.cover_image_url} alt={pot.title} className="w-full h-48 sm:h-64 object-cover" />
+          </div>
+        )}
+
+        {/* Title & Story */}
+        <div className="mb-8 animate-fade-up" data-testid="pot-details">
+          <h1 className="font-serif text-3xl sm:text-4xl text-foreground mb-4">{pot.title}</h1>
+          {pot.story_text && (
+            <p className="text-muted-foreground leading-relaxed font-sans text-sm sm:text-base">{pot.story_text}</p>
+          )}
+        </div>
+
+        {/* Progress */}
+        <div className="bg-card rounded-xl p-5 gold-border mb-8" data-testid="pot-progress">
+          <div className="flex items-baseline justify-between mb-3">
+            <div>
+              <span className="text-2xl font-serif font-bold text-foreground">
+                {"\u20B9"}{totalRupees.toLocaleString('en-IN')}
+              </span>
+              <span className="text-muted-foreground text-sm ml-1">raised</span>
+            </div>
+            {goalRupees && (
+              <span className="text-muted-foreground text-sm">
+                of {"\u20B9"}{goalRupees.toLocaleString('en-IN')}
+              </span>
+            )}
+          </div>
+          {goalRupees && (
+            <div className="relative h-3 bg-muted rounded-full overflow-hidden">
+              <div className="absolute inset-0 h-full progress-gold rounded-full transition-all duration-700" style={{ width: `${progressPct}%` }} />
+            </div>
+          )}
+        </div>
+
+        {/* Items */}
+        {pot.items && pot.items.length > 0 && (
+          <div className="mb-8" data-testid="pot-items-section">
+            <h3 className="font-serif text-lg text-foreground mb-4 flex items-center gap-2">
+              <Gift className="w-4 h-4 text-gold" />
+              Gift Items
+            </h3>
+            <div className="grid gap-3">
+              {pot.items.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => setSelectedItem(selectedItem?.id === item.id ? null : item)}
+                  className={`text-left p-4 rounded-lg border transition-all ${
+                    selectedItem?.id === item.id
+                      ? 'border-gold bg-gold/5 gold-glow'
+                      : 'border-border/40 bg-card hover:border-gold/30'
+                  }`}
+                  data-testid={`pot-item-${item.id}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-sans font-medium text-foreground text-sm">{item.title}</p>
+                      {item.description && <p className="text-muted-foreground text-xs mt-1">{item.description}</p>}
+                    </div>
+                    {selectedItem?.id === item.id && <Check className="w-4 h-4 text-gold" />}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <Separator className="bg-border/40 my-8" />
+
+        {/* Add to Cart */}
+        <div className="mb-8" data-testid="add-to-cart-section">
+          <h3 className="font-serif text-lg text-foreground mb-4 flex items-center gap-2">
+            <Heart className="w-4 h-4 text-crimson" />
+            Choose Your Gift Amount
+          </h3>
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4">
+            {PRESET_AMOUNTS.map(amt => (
+              <button
+                key={amt}
+                onClick={() => { setSelectedAmount(amt); setCustomAmount(""); }}
+                className={`py-3 px-2 rounded-lg font-sans text-sm font-medium transition-all ${
+                  selectedAmount === amt
+                    ? 'bg-crimson text-white shadow-md'
+                    : 'bg-card border border-border/40 text-foreground hover:border-crimson/30'
+                }`}
+                data-testid={`preset-amount-${amt}`}
+              >
+                {"\u20B9"}{amt.toLocaleString('en-IN')}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">{"\u20B9"}</span>
+              <Input
+                type="number"
+                placeholder="Custom amount"
+                value={customAmount}
+                onChange={e => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
+                className="pl-7 bg-card border-border/40 font-sans"
+                data-testid="custom-amount-input"
+              />
+            </div>
+            <Button
+              onClick={handleAddToCart}
+              disabled={added}
+              className={`rounded-full px-6 font-sans font-medium ${
+                added ? 'bg-green-700 hover:bg-green-700' : 'bg-crimson hover:bg-crimson/90'
+              } text-white`}
+              data-testid="add-to-cart-btn"
+            >
+              {added ? <><Check className="w-4 h-4 mr-1" /> Added</> : <><ShoppingBag className="w-4 h-4 mr-1" /> Add</>}
+            </Button>
+          </div>
+        </div>
+
+        <Separator className="bg-border/40 my-8" />
+
+        {/* Contributors */}
+        <ContributorFeed contributors={contributors} />
+      </div>
+    </div>
+  );
+}
