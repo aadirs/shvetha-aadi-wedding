@@ -222,7 +222,6 @@ export default function CartDrawer() {
               )}
             </div>
           </ScrollArea>
-        )}
       </SheetContent>
     </Sheet>
   );
