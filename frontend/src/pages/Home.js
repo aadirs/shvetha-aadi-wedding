@@ -88,20 +88,6 @@ export default function Home() {
         )}
       </main>
 
-      {/* Floating Cart Button */}
-      {items.length > 0 && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-40 bg-crimson text-white rounded-full p-4 shadow-lg hover:scale-105 transition-transform"
-          data-testid="floating-cart-btn"
-        >
-          <ShoppingBag className="w-6 h-6" />
-          <Badge className="absolute -top-1 -right-1 bg-gold text-crimson text-xs w-5 h-5 flex items-center justify-center p-0 rounded-full">
-            {items.length}
-          </Badge>
-        </button>
-      )}
-
       {/* Footer */}
       <footer className="text-center py-8 border-t border-border/40">
         <p className="font-signature text-2xl text-crimson mb-1">Shvetha & Aadi</p>
