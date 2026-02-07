@@ -50,16 +50,33 @@ export default function PotCard({ pot }) {
         {goalRupees && (
           <div className="mb-4">
             <div className="brass-groove mx-auto">
-              <div className="brass-fill" style={{ width: `${progressPct}%` }} />
+              <div className="brass-fill" style={{ width: `${Math.min(progressPct, 100)}%` }} />
             </div>
-            <div className="flex justify-between text-[11px] font-sans mt-2 px-1">
-              <span className="font-medium text-foreground">
-                {"\u20B9"}{totalRupees.toLocaleString('en-IN')}
-              </span>
-              <span className="text-muted-foreground">
-                {"\u20B9"}{goalRupees.toLocaleString('en-IN')}
-              </span>
-            </div>
+            {totalRupees >= goalRupees ? (
+              <div className="text-center mt-2 px-1">
+                <span className="text-[11px] font-serif font-semibold text-foreground">
+                  {"\u20B9"}{totalRupees.toLocaleString('en-IN')}
+                </span>
+                {totalRupees > goalRupees ? (
+                  <span className="text-[10px] font-sans text-gold ml-1">
+                    ({"\u20B9"}{(totalRupees - goalRupees).toLocaleString('en-IN')} over goal)
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-sans text-gold ml-1">
+                    Goal reached
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="flex justify-between text-[11px] font-sans mt-2 px-1">
+                <span className="font-medium text-foreground">
+                  {"\u20B9"}{totalRupees.toLocaleString('en-IN')} raised
+                </span>
+                <span className="text-muted-foreground">
+                  of {"\u20B9"}{goalRupees.toLocaleString('en-IN')}
+                </span>
+              </div>
+            )}
           </div>
         )}
 
