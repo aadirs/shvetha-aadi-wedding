@@ -63,7 +63,7 @@ export default function CartDrawer() {
         handler: async function () {
           // Redirect to thank-you page
           const donorName = encodeURIComponent(donor.name);
-          const slug = potSlug || items[0]?.potId || "";
+          const slug = potSlug || "";
           clearCart();
           setDonor({ name: "", email: "", phone: "", message: "" });
           setIsOpen(false);
