@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { createSession, createOrder, pollSession } from "../lib/api";
+import { createSession, createOrder } from "../lib/api";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../components/ui/sheet";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -9,7 +10,7 @@ import { Textarea } from "../components/ui/textarea";
 import { Switch } from "../components/ui/switch";
 import { Separator } from "../components/ui/separator";
 import { ScrollArea } from "../components/ui/scroll-area";
-import { Trash2, ShoppingBag, CreditCard, CheckCircle2, Loader2 } from "lucide-react";
+import { Trash2, ShoppingBag, CreditCard, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function CartDrawer() {
@@ -17,10 +18,14 @@ export default function CartDrawer() {
   const [donor, setDonor] = useState({ name: "", email: "", phone: "", message: "" });
   const [coverFees, setCoverFees] = useState(true);
   const [paying, setPaying] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const feePaise = coverFees ? Math.ceil(totalPaise * 0.0236) : 0;
   const grandTotalPaise = totalPaise + feePaise;
+
+  // Derive pot slug from current path for redirect
+  const potSlug = location.pathname.startsWith("/p/") ? location.pathname.split("/p/")[1] : null;
 
   const handlePay = async () => {
     if (!donor.name || !donor.email || !donor.phone) {
@@ -56,30 +61,14 @@ export default function CartDrawer() {
         prefill: od.prefill,
         theme: { color: "#8B0000" },
         handler: async function () {
-          let attempts = 0;
-          const poll = setInterval(async () => {
-            attempts++;
-            try {
-              const res = await pollSession(sessionRes.data.session_id);
-              if (res.data.status === "paid") {
-                clearInterval(poll);
-                setSuccess(true);
-                clearCart();
-                setDonor({ name: "", email: "", phone: "", message: "" });
-                setPaying(false);
-                toast.success("Thank you for your generous gift!");
-              } else if (res.data.status === "failed" || attempts > 15) {
-                clearInterval(poll);
-                setPaying(false);
-                toast.error("Payment verification timed out. Please check with us.");
-              }
-            } catch {
-              if (attempts > 15) {
-                clearInterval(poll);
-                setPaying(false);
-              }
-            }
-          }, 2000);
+          // Redirect to thank-you page
+          const donorName = encodeURIComponent(donor.name);
+          const slug = potSlug || items[0]?.potId || "";
+          clearCart();
+          setDonor({ name: "", email: "", phone: "", message: "" });
+          setIsOpen(false);
+          setPaying(false);
+          navigate(`/thank-you?session=${sessionRes.data.session_id}&pot=${slug}&name=${donorName}`);
         },
         modal: {
           ondismiss: function () {
