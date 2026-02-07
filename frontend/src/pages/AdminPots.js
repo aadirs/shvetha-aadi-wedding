@@ -23,15 +23,20 @@ export default function AdminPots() {
 
   const load = () => {
     fetchAdminPots()
-      .then(r => setPots(r.data))
-      .catch(() => { localStorage.removeItem("admin_token"); navigate("/admin/login"); })
-      .finally(() => setLoading(false));
+      .then(r => { setPots(r.data); setLoading(false); })
+      .catch(e => {
+        if (e.response?.status === 401) {
+          localStorage.removeItem("admin_token");
+          navigate("/admin/login");
+        }
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) { navigate("/admin/login"); return; }
     load();
-  }, [navigate]);
+  }, []);
 
   const handleCreate = async () => {
     if (!form.title || !form.slug) { toast.error("Title and slug required"); return; }
