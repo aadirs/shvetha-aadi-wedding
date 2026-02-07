@@ -15,10 +15,15 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) { navigate("/admin/login"); return; }
     fetchDashboard()
-      .then(r => setData(r.data))
-      .catch(() => { localStorage.removeItem("admin_token"); navigate("/admin/login"); })
-      .finally(() => setLoading(false));
-  }, [navigate]);
+      .then(r => { setData(r.data); setLoading(false); })
+      .catch(e => {
+        if (e.response?.status === 401) {
+          localStorage.removeItem("admin_token");
+          navigate("/admin/login");
+        }
+        setLoading(false);
+      });
+  }, []);
 
   const logout = () => { localStorage.removeItem("admin_token"); navigate("/admin/login"); };
 
