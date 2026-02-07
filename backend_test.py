@@ -121,7 +121,7 @@ class WeddingGiftsAPITester:
         )
         return success, response
 
-    def test_create_session(self):
+    def test_create_session(self, pot_id):
         """Test creating a contribution session"""
         session_data = {
             "donor_name": "Test Donor",
@@ -130,7 +130,7 @@ class WeddingGiftsAPITester:
             "donor_message": "Best wishes for the couple",
             "allocations": [
                 {
-                    "pot_id": "dream-home-id", # This will need to be updated with actual pot ID
+                    "pot_id": pot_id,
                     "amount_paise": 50000  # Rs 500
                 }
             ],
