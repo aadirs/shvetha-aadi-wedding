@@ -1,34 +1,58 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.font-signature {
+    font-family: 'Great Vibes', cursive;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.gold-shimmer {
+    background: linear-gradient(135deg, #D4AF37 0%, #F3E5AB 50%, #D4AF37 100%);
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite linear;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.gold-border {
+    border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
-.App-link {
-    color: #61dafb;
+.gold-glow {
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.15);
+}
+
+.progress-gold {
+    background: linear-gradient(90deg, #D4AF37 0%, #F3E5AB 50%, #D4AF37 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite linear;
+}
+
+.mandala-bg {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='20' fill='none' stroke='%23D4AF37' stroke-width='0.5' opacity='0.08'/%3E%3Ccircle cx='30' cy='30' r='14' fill='none' stroke='%23D4AF37' stroke-width='0.3' opacity='0.06'/%3E%3Ccircle cx='30' cy='30' r='8' fill='none' stroke='%23D4AF37' stroke-width='0.3' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+.text-gold-gradient {
+    background: linear-gradient(135deg, #D4AF37, #F3E5AB, #D4AF37);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-stagger > * {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+}
+.animate-stagger > *:nth-child(1) { animation-delay: 0.1s; }
+.animate-stagger > *:nth-child(2) { animation-delay: 0.2s; }
+.animate-stagger > *:nth-child(3) { animation-delay: 0.3s; }
+.animate-stagger > *:nth-child(4) { animation-delay: 0.4s; }
+.animate-stagger > *:nth-child(5) { animation-delay: 0.5s; }
+.animate-stagger > *:nth-child(6) { animation-delay: 0.6s; }
