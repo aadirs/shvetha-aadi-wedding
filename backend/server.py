@@ -1,72 +1,545 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Request, HTTPException, Depends, Header
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
-import logging
-from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+import json
 import uuid
+import hmac
+import hashlib
+import html
+import csv
+import io
+import time
+import logging
 from datetime import datetime, timezone
-
+from pathlib import Path
+from collections import defaultdict
+import httpx
+import razorpay
+from jose import jwt as jose_jwt
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# Config
+SUPABASE_URL = os.environ.get('SUPABASE_URL', '')
+SUPABASE_KEY = os.environ.get('SUPABASE_SERVICE_KEY', '')
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
+RAZORPAY_WEBHOOK_SECRET = os.environ.get('RAZORPAY_WEBHOOK_SECRET', '')
+ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', '')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '')
+JWT_SECRET = os.environ.get('JWT_SECRET', 'default-secret')
 
-# Create the main app without a prefix
-app = FastAPI()
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-# Create a router with the /api prefix
+# Supabase REST helpers
+SB_BASE = f"{SUPABASE_URL.rstrip('/')}/rest/v1"
+SB_HEADERS = {
+    "apikey": SUPABASE_KEY,
+    "Authorization": f"Bearer {SUPABASE_KEY}",
+    "Content-Type": "application/json",
+    "Prefer": "return=representation"
+}
+
+
+async def sb_get(table, params=None):
+    async with httpx.AsyncClient(timeout=30) as c:
+        r = await c.get(f"{SB_BASE}/{table}", params=params or {}, headers={k: v for k, v in SB_HEADERS.items() if k != "Prefer"})
+        if r.status_code >= 400:
+            logger.error(f"SB GET {table}: {r.status_code} {r.text}")
+            if "schema cache" in r.text:
+                raise HTTPException(503, detail="Database tables not set up. Run schema.sql in Supabase Dashboard.")
+            raise HTTPException(502, detail=f"Database error")
+        return r.json()
+
+
+async def sb_post(table, data):
+    async with httpx.AsyncClient(timeout=30) as c:
+        r = await c.post(f"{SB_BASE}/{table}", json=data, headers=SB_HEADERS)
+        if r.status_code >= 400:
+            logger.error(f"SB POST {table}: {r.status_code} {r.text}")
+            raise HTTPException(502, detail=f"Database error: {r.text}")
+        return r.json()
+
+
+async def sb_patch(table, data, filters):
+    async with httpx.AsyncClient(timeout=30) as c:
+        r = await c.patch(f"{SB_BASE}/{table}", params=filters, json=data, headers=SB_HEADERS)
+        if r.status_code >= 400:
+            logger.error(f"SB PATCH {table}: {r.status_code} {r.text}")
+            raise HTTPException(502, detail=f"Database error")
+        return r.json()
+
+
+async def sb_delete(table, filters):
+    hdrs = {**SB_HEADERS}
+    async with httpx.AsyncClient(timeout=30) as c:
+        r = await c.delete(f"{SB_BASE}/{table}", params=filters, headers=hdrs)
+        if r.status_code >= 400:
+            logger.error(f"SB DELETE {table}: {r.status_code} {r.text}")
+            raise HTTPException(502, detail=f"Database error")
+        return r.json() if r.text else []
+
+
+# Razorpay
+razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+
+# Rate limiter
+_rate_store = defaultdict(list)
+
+
+def rate_limit(key, max_req=10, window=60):
+    now = time.time()
+    _rate_store[key] = [t for t in _rate_store[key] if now - t < window]
+    if len(_rate_store[key]) >= max_req:
+        raise HTTPException(429, "Rate limit exceeded. Try again later.")
+    _rate_store[key].append(now)
+
+
+# Auth
+def get_admin_token(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "Missing auth token")
+    token = authorization.split(" ", 1)[1]
+    try:
+        payload = jose_jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        if payload.get("role") != "admin":
+            raise HTTPException(403, "Not admin")
+        return payload
+    except Exception:
+        raise HTTPException(401, "Invalid token")
+
+
+# App
+app = FastAPI(title="Shvetha & Aadi Wedding Gifts")
 api_router = APIRouter(prefix="/api")
 
 
-# Define Models
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
-    
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
-
-# Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"status": "ok", "app": "wedding-gifts"}
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.model_dump()
-    status_obj = StatusCheck(**status_dict)
-    
-    # Convert to dict and serialize datetime to ISO string for MongoDB
-    doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    _ = await db.status_checks.insert_one(doc)
-    return status_obj
 
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
-    
-    # Convert ISO string timestamps back to datetime objects
-    for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
-    
-    return status_checks
+@api_router.get("/health")
+async def health():
+    try:
+        await sb_get("pots", {"select": "id", "limit": "1"})
+        return {"status": "ok", "database": True}
+    except Exception:
+        return {"status": "ok", "database": False}
 
-# Include the router in the main app
+
+# ---- AUTH ----
+@api_router.post("/admin/login")
+async def admin_login(request: Request):
+    data = await request.json()
+    if data.get("username") == ADMIN_USERNAME and data.get("password") == ADMIN_PASSWORD:
+        token = jose_jwt.encode(
+            {"role": "admin", "sub": ADMIN_USERNAME, "iat": time.time()},
+            JWT_SECRET, algorithm="HS256"
+        )
+        return {"token": token, "username": ADMIN_USERNAME}
+    raise HTTPException(401, "Invalid credentials")
+
+
+# ---- PUBLIC POTS ----
+@api_router.get("/pots")
+async def list_pots():
+    pots = await sb_get("pots", {
+        "select": "id,title,slug,story_text,cover_image_url,goal_amount_paise,is_active,created_at",
+        "is_active": "eq.true",
+        "order": "created_at.desc"
+    })
+    allocs = await sb_get("allocations", {
+        "select": "pot_id,amount_paise,session_id",
+        "status": "eq.paid"
+    })
+    pot_totals = defaultdict(int)
+    pot_sessions = defaultdict(set)
+    for a in allocs:
+        pot_totals[a["pot_id"]] += a["amount_paise"]
+        pot_sessions[a["pot_id"]].add(a["session_id"])
+
+    all_sids = set()
+    for sids in pot_sessions.values():
+        all_sids.update(sids)
+
+    session_names = {}
+    if all_sids:
+        slist = ",".join(all_sids)
+        sessions = await sb_get("contribution_sessions", {
+            "select": "id,donor_name",
+            "id": f"in.({slist})"
+        })
+        session_names = {s["id"]: s["donor_name"] for s in sessions}
+
+    result = []
+    for pot in pots:
+        names = []
+        for sid in pot_sessions.get(pot["id"], set()):
+            n = session_names.get(sid, "Guest")
+            if n not in names:
+                names.append(n)
+        result.append({
+            **pot,
+            "total_raised_paise": pot_totals.get(pot["id"], 0),
+            "contributor_names": names[:10],
+            "contributor_count": len(names)
+        })
+    return result
+
+
+@api_router.get("/pots/{slug}")
+async def get_pot(slug: str):
+    pots = await sb_get("pots", {"select": "*", "slug": f"eq.{slug}"})
+    if not pots:
+        raise HTTPException(404, "Pot not found")
+    pot = pots[0]
+    items = await sb_get("pot_items", {
+        "select": "*", "pot_id": f"eq.{pot['id']}", "order": "sort_order.asc"
+    })
+    allocs = await sb_get("allocations", {
+        "select": "amount_paise", "pot_id": f"eq.{pot['id']}", "status": "eq.paid"
+    })
+    return {**pot, "items": items, "total_raised_paise": sum(a["amount_paise"] for a in allocs)}
+
+
+@api_router.get("/pots/{slug}/contributors")
+async def get_contributors(slug: str):
+    pots = await sb_get("pots", {"select": "id", "slug": f"eq.{slug}"})
+    if not pots:
+        raise HTTPException(404, "Pot not found")
+    allocs = await sb_get("allocations", {
+        "select": "session_id", "pot_id": f"eq.{pots[0]['id']}", "status": "eq.paid"
+    })
+    sids = list(set(a["session_id"] for a in allocs))
+    if not sids:
+        return []
+    sessions = await sb_get("contribution_sessions", {
+        "select": "id,donor_name,donor_message,paid_at",
+        "id": f"in.({','.join(sids)})",
+        "order": "paid_at.desc"
+    })
+    return [{"donor_name": s["donor_name"], "donor_message": s.get("donor_message", ""), "paid_at": s.get("paid_at")} for s in sessions]
+
+
+# ---- SESSION ----
+@api_router.post("/session/create-or-update")
+async def create_or_update_session(request: Request):
+    data = await request.json()
+    client_ip = request.client.host if request.client else "unknown"
+    rate_limit(client_ip, max_req=20, window=60)
+
+    donor_name = html.escape(data.get("donor_name", "").strip())
+    donor_email = data.get("donor_email", "").strip()
+    donor_phone = data.get("donor_phone", "").strip()
+    donor_message = html.escape(data.get("donor_message", "").strip()) if data.get("donor_message") else ""
+    allocations_data = data.get("allocations", [])
+    cover_fees = data.get("cover_fees", True)
+    session_id = data.get("session_id")
+
+    if not donor_name or not donor_email or not donor_phone:
+        raise HTTPException(400, "Name, email, and phone are required")
+    if not allocations_data:
+        raise HTTPException(400, "At least one allocation is required")
+
+    total = 0
+    for alloc in allocations_data:
+        amt = int(alloc.get("amount_paise", 0))
+        if amt <= 0:
+            raise HTTPException(400, "Amounts must be positive")
+        total += amt
+
+    fee = int(total * 0.0236) if cover_fees else 0
+
+    if session_id:
+        existing = await sb_get("contribution_sessions", {"select": "id,status", "id": f"eq.{session_id}"})
+        if not existing or existing[0]["status"] != "created":
+            raise HTTPException(400, "Session cannot be updated")
+        await sb_delete("allocations", {"session_id": f"eq.{session_id}"})
+        await sb_patch("contribution_sessions", {
+            "donor_name": donor_name, "donor_email": donor_email,
+            "donor_phone": donor_phone, "donor_message": donor_message,
+            "total_amount_paise": total, "fee_amount_paise": fee
+        }, {"id": f"eq.{session_id}"})
+    else:
+        result = await sb_post("contribution_sessions", {
+            "donor_name": donor_name, "donor_email": donor_email,
+            "donor_phone": donor_phone, "donor_message": donor_message,
+            "total_amount_paise": total, "fee_amount_paise": fee, "status": "created"
+        })
+        session_id = result[0]["id"]
+
+    alloc_records = [{
+        "session_id": session_id, "pot_id": a["pot_id"],
+        "pot_item_id": a.get("pot_item_id"), "amount_paise": int(a["amount_paise"]), "status": "pending"
+    } for a in allocations_data]
+    await sb_post("allocations", alloc_records)
+
+    return {"session_id": session_id, "total_amount_paise": total, "fee_amount_paise": fee, "grand_total_paise": total + fee}
+
+
+@api_router.get("/session/{session_id}")
+async def get_session(session_id: str):
+    sessions = await sb_get("contribution_sessions", {
+        "select": "id,status,total_amount_paise,fee_amount_paise,razorpay_order_id,razorpay_payment_id,paid_at",
+        "id": f"eq.{session_id}"
+    })
+    if not sessions:
+        raise HTTPException(404, "Session not found")
+    return sessions[0]
+
+
+# ---- RAZORPAY ----
+@api_router.post("/razorpay/order/create")
+async def create_razorpay_order(request: Request):
+    data = await request.json()
+    client_ip = request.client.host if request.client else "unknown"
+    rate_limit(client_ip, max_req=10, window=60)
+
+    session_id = data.get("session_id")
+    if not session_id:
+        raise HTTPException(400, "session_id required")
+
+    sessions = await sb_get("contribution_sessions", {"select": "*", "id": f"eq.{session_id}"})
+    if not sessions:
+        raise HTTPException(404, "Session not found")
+    session = sessions[0]
+
+    if session["status"] not in ("created",):
+        raise HTTPException(400, f"Session status is {session['status']}")
+
+    allocs = await sb_get("allocations", {"select": "amount_paise", "session_id": f"eq.{session_id}"})
+    alloc_total = sum(a["amount_paise"] for a in allocs)
+    if alloc_total != session["total_amount_paise"]:
+        raise HTTPException(400, "Allocation total mismatch")
+
+    grand_total = session["total_amount_paise"] + session.get("fee_amount_paise", 0)
+
+    try:
+        order = razorpay_client.order.create({
+            "amount": grand_total, "currency": "INR", "payment_capture": 1,
+            "notes": {"session_id": session_id, "donor_name": session["donor_name"]}
+        })
+    except Exception as e:
+        logger.error(f"Razorpay order creation failed: {e}")
+        raise HTTPException(502, "Payment gateway error")
+
+    await sb_patch("contribution_sessions", {
+        "status": "pending", "razorpay_order_id": order["id"]
+    }, {"id": f"eq.{session_id}"})
+
+    return {
+        "order_id": order["id"], "amount": grand_total, "currency": "INR",
+        "key_id": RAZORPAY_KEY_ID, "session_id": session_id,
+        "prefill": {"name": session["donor_name"], "email": session["donor_email"], "contact": session["donor_phone"]}
+    }
+
+
+@api_router.post("/razorpay/webhook")
+async def razorpay_webhook(request: Request):
+    body = await request.body()
+    signature = request.headers.get("x-razorpay-signature", "")
+
+    try:
+        razorpay_client.utility.verify_webhook_signature(body.decode('utf-8'), signature, RAZORPAY_WEBHOOK_SECRET)
+    except Exception:
+        logger.warning("Webhook signature verification failed")
+        raise HTTPException(400, "Invalid signature")
+
+    payload = json.loads(body)
+    event_type = payload.get("event", "")
+
+    await sb_post("webhook_events", {
+        "gateway_event_id": payload.get("id", str(uuid.uuid4())),
+        "event_type": event_type, "payload_json": payload,
+        "received_at": datetime.now(timezone.utc).isoformat()
+    })
+
+    if event_type in ("payment.captured", "order.paid"):
+        pe = payload.get("payload", {}).get("payment", {}).get("entity", {})
+        order_id = pe.get("order_id")
+        payment_id = pe.get("id")
+        amount = pe.get("amount")
+
+        if order_id:
+            sessions = await sb_get("contribution_sessions", {"select": "*", "razorpay_order_id": f"eq.{order_id}"})
+            if sessions:
+                sess = sessions[0]
+                if sess["status"] == "paid":
+                    return {"status": "already_processed"}
+                expected = sess["total_amount_paise"] + sess.get("fee_amount_paise", 0)
+                if amount and amount == expected:
+                    await sb_patch("contribution_sessions", {
+                        "status": "paid", "razorpay_payment_id": payment_id,
+                        "paid_at": datetime.now(timezone.utc).isoformat()
+                    }, {"razorpay_order_id": f"eq.{order_id}"})
+                    await sb_patch("allocations", {"status": "paid"}, {"session_id": f"eq.{sess['id']}"})
+                    logger.info(f"Payment confirmed for session {sess['id']}")
+                else:
+                    logger.warning(f"Amount mismatch: expected {expected}, got {amount}")
+
+    return {"status": "ok"}
+
+
+# ---- ADMIN ----
+@api_router.get("/admin/dashboard")
+async def admin_dashboard(admin=Depends(get_admin_token)):
+    allocs = await sb_get("allocations", {"select": "pot_id,amount_paise", "status": "eq.paid"})
+    total_collected = sum(a["amount_paise"] for a in allocs)
+    pot_totals = defaultdict(int)
+    for a in allocs:
+        pot_totals[a["pot_id"]] += a["amount_paise"]
+
+    pots = await sb_get("pots", {"select": "id,title,slug,goal_amount_paise,is_active"})
+    pot_map = {p["id"]: p for p in pots}
+    pot_stats = [{
+        "pot_id": pid, "title": pot_map.get(pid, {}).get("title", "?"),
+        "goal_amount_paise": pot_map.get(pid, {}).get("goal_amount_paise"),
+        "total_raised_paise": total, "is_active": pot_map.get(pid, {}).get("is_active", False)
+    } for pid, total in pot_totals.items()]
+
+    recent = await sb_get("contribution_sessions", {
+        "select": "id,donor_name,donor_email,total_amount_paise,fee_amount_paise,status,paid_at,created_at",
+        "status": "eq.paid", "order": "paid_at.desc", "limit": "10"
+    })
+
+    return {
+        "total_collected_paise": total_collected, "pot_stats": pot_stats,
+        "recent_contributions": recent, "total_pots": len(pots),
+        "active_pots": sum(1 for p in pots if p.get("is_active"))
+    }
+
+
+@api_router.get("/admin/pots")
+async def admin_list_pots(admin=Depends(get_admin_token)):
+    pots = await sb_get("pots", {"select": "*", "order": "created_at.desc"})
+    all_items = await sb_get("pot_items", {"select": "*", "order": "sort_order.asc"})
+    items_by_pot = defaultdict(list)
+    for item in all_items:
+        items_by_pot[item["pot_id"]].append(item)
+
+    allocs = await sb_get("allocations", {"select": "pot_id,amount_paise", "status": "eq.paid"})
+    pot_totals = defaultdict(int)
+    for a in allocs:
+        pot_totals[a["pot_id"]] += a["amount_paise"]
+
+    for pot in pots:
+        pot["total_raised_paise"] = pot_totals.get(pot["id"], 0)
+        pot["items"] = items_by_pot.get(pot["id"], [])
+    return pots
+
+
+@api_router.post("/admin/pots")
+async def create_pot(request: Request, admin=Depends(get_admin_token)):
+    data = await request.json()
+    title = html.escape(data.get("title", "").strip())
+    slug = data.get("slug", "").strip().lower().replace(" ", "-")
+    if not title or not slug:
+        raise HTTPException(400, "Title and slug are required")
+    result = await sb_post("pots", {
+        "title": title, "slug": slug,
+        "story_text": data.get("story_text", ""),
+        "cover_image_url": data.get("cover_image_url", ""),
+        "goal_amount_paise": data.get("goal_amount_paise"),
+        "is_active": True
+    })
+    return result[0]
+
+
+@api_router.put("/admin/pots/{pot_id}")
+async def update_pot(pot_id: str, request: Request, admin=Depends(get_admin_token)):
+    data = await request.json()
+    update = {}
+    for key in ["title", "story_text", "cover_image_url", "goal_amount_paise", "is_active"]:
+        if key in data:
+            update[key] = data[key]
+    result = await sb_patch("pots", update, {"id": f"eq.{pot_id}"})
+    return result[0] if result else {"status": "updated"}
+
+
+@api_router.post("/admin/pots/{pot_id}/archive")
+async def archive_pot(pot_id: str, admin=Depends(get_admin_token)):
+    await sb_patch("pots", {"is_active": False}, {"id": f"eq.{pot_id}"})
+    return {"status": "archived"}
+
+
+@api_router.post("/admin/pots/{pot_id}/items")
+async def add_pot_item(pot_id: str, request: Request, admin=Depends(get_admin_token)):
+    data = await request.json()
+    title = html.escape(data.get("title", "").strip())
+    if not title:
+        raise HTTPException(400, "Item title required")
+    result = await sb_post("pot_items", {
+        "pot_id": pot_id, "title": title,
+        "description": data.get("description", ""),
+        "image_url": data.get("image_url", ""),
+        "sort_order": data.get("sort_order", 0)
+    })
+    return result[0]
+
+
+@api_router.put("/admin/pot-items/{item_id}")
+async def update_pot_item(item_id: str, request: Request, admin=Depends(get_admin_token)):
+    data = await request.json()
+    update = {}
+    for key in ["title", "description", "image_url", "sort_order"]:
+        if key in data:
+            update[key] = data[key]
+    result = await sb_patch("pot_items", update, {"id": f"eq.{item_id}"})
+    return result[0] if result else {"status": "updated"}
+
+
+@api_router.delete("/admin/pot-items/{item_id}")
+async def delete_pot_item(item_id: str, admin=Depends(get_admin_token)):
+    await sb_delete("pot_items", {"id": f"eq.{item_id}"})
+    return {"status": "deleted"}
+
+
+@api_router.get("/admin/contributions")
+async def admin_contributions(admin=Depends(get_admin_token)):
+    sessions = await sb_get("contribution_sessions", {"select": "*", "order": "created_at.desc"})
+    all_allocs = await sb_get("allocations", {"select": "*"})
+    allocs_by_session = defaultdict(list)
+    for a in all_allocs:
+        allocs_by_session[a["session_id"]].append(a)
+
+    pots = await sb_get("pots", {"select": "id,title"})
+    pot_names = {p["id"]: p["title"] for p in pots}
+
+    for session in sessions:
+        sa = allocs_by_session.get(session["id"], [])
+        for alloc in sa:
+            alloc["pot_title"] = pot_names.get(alloc["pot_id"], "Unknown")
+        session["allocations"] = sa
+    return sessions
+
+
+@api_router.get("/admin/contributions/export")
+async def export_contributions(admin=Depends(get_admin_token)):
+    sessions = await sb_get("contribution_sessions", {
+        "select": "*", "status": "eq.paid", "order": "paid_at.desc"
+    })
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Donor Name", "Email", "Phone", "Message", "Amount (INR)", "Fee (INR)", "Paid At", "Payment ID"])
+    for s in sessions:
+        writer.writerow([
+            s["donor_name"], s["donor_email"], s["donor_phone"],
+            s.get("donor_message", ""), s["total_amount_paise"] / 100,
+            s.get("fee_amount_paise", 0) / 100, s.get("paid_at", ""),
+            s.get("razorpay_payment_id", "")
+        ])
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]), media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=contributions.csv"}
+    )
+
+
 app.include_router(api_router)
 
 app.add_middleware(
@@ -76,14 +549,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
