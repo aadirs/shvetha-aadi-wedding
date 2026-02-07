@@ -91,13 +91,8 @@ export default function CartDrawer() {
     }
   };
 
-  const handleClose = () => {
-    setIsOpen(false);
-    if (success) setSuccess(false);
-  };
-
   return (
-    <Sheet open={isOpen} onOpenChange={handleClose}>
+    <Sheet open={isOpen} onOpenChange={() => setIsOpen(false)}>
       <SheetContent className="bg-card border-l border-gold/20 w-full sm:max-w-md p-0" data-testid="cart-drawer">
         <SheetHeader className="p-5 pb-0">
           <SheetTitle className="font-serif text-xl flex items-center gap-2">
@@ -106,19 +101,7 @@ export default function CartDrawer() {
           </SheetTitle>
         </SheetHeader>
 
-        {success ? (
-          <div className="flex flex-col items-center justify-center h-[60vh] px-6 text-center" data-testid="payment-success">
-            <CheckCircle2 className="w-16 h-16 text-green-600 mb-4" />
-            <h3 className="font-serif text-2xl text-foreground mb-2">Thank You!</h3>
-            <p className="text-muted-foreground font-sans text-sm mb-6">
-              Your generous gift has been received. Shvetha & Aadi are grateful for your blessings.
-            </p>
-            <Button onClick={handleClose} className="bg-crimson text-white rounded-full font-sans">
-              Close
-            </Button>
-          </div>
-        ) : (
-          <ScrollArea className="h-[calc(100vh-80px)]">
+        <ScrollArea className="h-[calc(100vh-80px)]">
             <div className="p-5 space-y-5">
               {/* Cart Items */}
               {items.length === 0 ? (
