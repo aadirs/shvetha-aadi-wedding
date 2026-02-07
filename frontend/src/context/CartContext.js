@@ -1,10 +1,21 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 const CartContext = createContext();
 
+const loadCart = () => {
+  try {
+    const saved = localStorage.getItem('wedding_cart');
+    return saved ? JSON.parse(saved) : [];
+  } catch { return []; }
+};
+
 export function CartProvider({ children }) {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(loadCart);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('wedding_cart', JSON.stringify(items));
+  }, [items]);
 
   const addItem = useCallback((potId, potTitle, amountPaise, itemId, itemTitle) => {
     setItems(prev => [...prev, {
