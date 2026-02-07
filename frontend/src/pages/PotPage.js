@@ -116,15 +116,25 @@ export default function PotPage() {
               </span>
               <span className="text-muted-foreground text-sm ml-1">raised</span>
             </div>
-            {goalRupees && (
+            {goalRupees && totalRupees < goalRupees && (
               <span className="text-muted-foreground text-sm">
                 of {"\u20B9"}{goalRupees.toLocaleString('en-IN')}
+              </span>
+            )}
+            {goalRupees && totalRupees >= goalRupees && totalRupees > goalRupees && (
+              <span className="text-gold text-sm font-sans font-medium">
+                {"\u20B9"}{(totalRupees - goalRupees).toLocaleString('en-IN')} over goal
+              </span>
+            )}
+            {goalRupees && totalRupees === goalRupees && (
+              <span className="text-gold text-sm font-sans font-medium">
+                Goal reached
               </span>
             )}
           </div>
           {goalRupees && (
             <div className="relative h-3 bg-muted rounded-full overflow-hidden">
-              <div className="absolute inset-0 h-full progress-gold rounded-full transition-all duration-700" style={{ width: `${progressPct}%` }} />
+              <div className="absolute inset-0 h-full progress-gold rounded-full transition-all duration-700" style={{ width: `${Math.min(progressPct, 100)}%` }} />
             </div>
           )}
         </div>
