@@ -15,10 +15,15 @@ export default function AdminContributions() {
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) { navigate("/admin/login"); return; }
     fetchContributions()
-      .then(r => setSessions(r.data))
-      .catch(() => { localStorage.removeItem("admin_token"); navigate("/admin/login"); })
-      .finally(() => setLoading(false));
-  }, [navigate]);
+      .then(r => { setSessions(r.data); setLoading(false); })
+      .catch(e => {
+        if (e.response?.status === 401) {
+          localStorage.removeItem("admin_token");
+          navigate("/admin/login");
+        }
+        setLoading(false);
+      });
+  }, []);
 
   const handleExport = async () => {
     try {
