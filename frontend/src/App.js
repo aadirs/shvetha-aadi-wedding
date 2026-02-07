@@ -4,6 +4,7 @@ import { CartProvider, useCart } from "./context/CartContext";
 import { Toaster } from "./components/ui/sonner";
 import Home from "./pages/Home";
 import PotPage from "./pages/PotPage";
+import ThankYou from "./pages/ThankYou";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminPots from "./pages/AdminPots";
