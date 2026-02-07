@@ -255,9 +255,9 @@ def main():
         # Update session data with actual pot ID
         pot_id = pots[0].get('id')
         if pot_id:
-            tester.test_create_session()
-            tester.test_get_session_status()
-            tester.test_create_razorpay_order()
+            if tester.test_create_session(pot_id):
+                tester.test_get_session_status()
+                tester.test_create_razorpay_order()
     
     # Print final results
     print(f"\n📊 Test Results:")
