@@ -8,7 +8,6 @@ export default function Home() {
   const [pots, setPots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { items, setIsOpen } = useCart();
 
   useEffect(() => {
     fetchPots()
