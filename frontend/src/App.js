@@ -40,6 +40,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/p/:slug" element={<PotPage />} />
+            <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/pots" element={<AdminPots />} />
