@@ -118,10 +118,13 @@ export default function CartDrawer() {
             html, body { pointer-events: auto !important; overflow: auto !important; touch-action: auto !important; position: static !important; }
             .razorpay-container, .razorpay-container * { pointer-events: auto !important; touch-action: manipulation !important; z-index: 999999 !important; }
             .razorpay-backdrop { pointer-events: auto !important; z-index: 999998 !important; }
-            #emergent-badge { display: none !important; }
           `;
           document.head.appendChild(overrideStyle);
           body.classList.add('razorpay-active');
+
+          // Hide Emergent badge directly (inline !important styles can't be overridden by CSS)
+          const badge = document.getElementById('emergent-badge');
+          if (badge) badge.style.setProperty('display', 'none', 'important');
 
           rzp.open();
         }, 500);
