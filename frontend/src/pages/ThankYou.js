@@ -6,12 +6,25 @@ import { Heart } from "lucide-react";
 export default function ThankYou() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const sessionId = params.get("session");
-  const potSlug = params.get("pot");
-  const donorName = params.get("name") || "Guest";
-  const [confirmed, setConfirmed] = useState(false);
+  const paymentStatus = params.get("payment"); // "success" or "failed" from redirect mode
+
+  // Read from URL params first, fallback to localStorage (for redirect mode)
+  const savedSession = (() => {
+    try { return JSON.parse(localStorage.getItem('rzp_session') || '{}'); } catch { return {}; }
+  })();
+
+  const sessionId = params.get("session") || savedSession.session_id || "";
+  const potSlug = params.get("pot") || savedSession.pot_slug || "";
+  const donorName = params.get("name") || savedSession.donor_name || "Guest";
+
+  const [confirmed, setConfirmed] = useState(paymentStatus === "success");
   const [countdown, setCountdown] = useState(12);
   const pollRef = useRef(null);
+
+  // Clean up saved session data
+  useEffect(() => {
+    localStorage.removeItem('rzp_session');
+  }, []);
 
   // Poll for payment confirmation
   useEffect(() => {
