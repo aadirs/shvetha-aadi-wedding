@@ -61,7 +61,10 @@ export default function CartDrawer() {
         prefill: od.prefill,
         theme: { color: "#8B0000" },
         handler: async function () {
+          // Cleanup iOS fix
           document.body.classList.remove('razorpay-active');
+          const fixStyle = document.getElementById('rzp-ios-fix');
+          if (fixStyle) fixStyle.remove();
           // Redirect to thank-you page
           const donorName = encodeURIComponent(donor.name);
           const slug = potSlug || "";
@@ -73,10 +76,12 @@ export default function CartDrawer() {
         },
         modal: {
           ondismiss: function () {
+            // Cleanup iOS fix
             document.body.classList.remove('razorpay-active');
+            const fixStyle = document.getElementById('rzp-ios-fix');
+            if (fixStyle) fixStyle.remove();
             setPaying(false);
             toast.info("Payment was cancelled");
-            // Re-open the cart so user can retry
             setIsOpen(true);
           }
         }
