@@ -52,12 +52,9 @@ export default function CartDrawer() {
         allocations, cover_fees: coverFees
       });
 
-      const orderRes = await createOrder({ session_id: sessionRes.data.session_id });
-      const od = orderRes.data;
-
       if (isMobile) {
-        // MOBILE: Use Razorpay Payment Links (opens hosted checkout page, no iframe)
-        // This completely bypasses iOS Safari's iframe touch blocking issue
+        // MOBILE: Use Razorpay Payment Links (hosted checkout page, NO iframe)
+        // This completely bypasses iOS Safari's cross-origin iframe touch blocking
         localStorage.setItem('rzp_session', JSON.stringify({
           session_id: sessionRes.data.session_id,
           donor_name: donor.name,
@@ -70,12 +67,15 @@ export default function CartDrawer() {
           callback_base: API_BASE
         });
 
-        // Redirect browser to Razorpay's hosted checkout page
+        // Full page redirect to Razorpay's hosted checkout
         setIsOpen(false);
         window.location.href = linkRes.data.payment_link_url;
 
       } else {
-        // DESKTOP: Use popup/iframe mode (works fine on desktop browsers)
+        // DESKTOP: Use checkout.js popup mode (works fine on desktop browsers)
+        const orderRes = await createOrder({ session_id: sessionRes.data.session_id });
+        const od = orderRes.data;
+
         const options = {
           key: od.key_id,
           amount: od.amount,
