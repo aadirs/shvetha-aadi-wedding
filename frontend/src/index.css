@@ -78,14 +78,8 @@ body {
     pointer-events: auto !important;
     touch-action: manipulation !important;
     -webkit-overflow-scrolling: touch !important;
-    z-index: 999999 !important;
 }
 .razorpay-container iframe {
     pointer-events: auto !important;
     touch-action: manipulation !important;
-}
-/* Hide fixed elements that can overlap Razorpay on mobile */
-body.razorpay-active #emergent-badge,
-body.razorpay-active [data-testid="floating-cart-btn"] {
-    display: none !important;
 }
