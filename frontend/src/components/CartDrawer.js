@@ -61,6 +61,7 @@ export default function CartDrawer() {
         prefill: od.prefill,
         theme: { color: "#8B0000" },
         handler: async function () {
+          document.body.classList.remove('razorpay-active');
           // Redirect to thank-you page
           const donorName = encodeURIComponent(donor.name);
           const slug = potSlug || "";
@@ -72,6 +73,7 @@ export default function CartDrawer() {
         },
         modal: {
           ondismiss: function () {
+            document.body.classList.remove('razorpay-active');
             setPaying(false);
             toast.info("Payment was cancelled");
             // Re-open the cart so user can retry
