@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { createSession, createPaymentLink } from "../lib/api";
+import { createSession, createOrder } from "../lib/api";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../components/ui/sheet";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -18,15 +18,41 @@ export default function CartDrawer() {
   const [donor, setDonor] = useState({ name: "", email: "", phone: "", message: "" });
   const [coverFees, setCoverFees] = useState(true);
   const [paying, setPaying] = useState(false);
+  const navigate = useNavigate();
   const location = useLocation();
+
+  // This ref holds Razorpay options to open AFTER the Sheet is fully closed
+  const rzpPendingRef = useRef(null);
 
   const feePaise = coverFees ? Math.ceil(totalPaise * 0.0236) : 0;
   const grandTotalPaise = totalPaise + feePaise;
-
-  // Derive pot slug from current path for redirect
   const potSlug = location.pathname.startsWith("/p/") ? location.pathname.split("/p/")[1] : null;
 
-  const API_BASE = process.env.REACT_APP_BACKEND_URL;
+  // Open Razorpay ONLY after Sheet has fully closed and unmounted its overlay
+  useEffect(() => {
+    if (!isOpen && rzpPendingRef.current) {
+      // Wait for Radix close animation to finish and overlay to unmount
+      const timer = setTimeout(() => {
+        // Force-clean any residual body styles from Radix Dialog
+        document.body.style.pointerEvents = '';
+        document.body.style.overflow = '';
+        document.body.removeAttribute('data-scroll-locked');
+        document.documentElement.removeAttribute('data-scroll-locked');
+
+        const options = rzpPendingRef.current;
+        rzpPendingRef.current = null;
+
+        if (window.Razorpay) {
+          const rzp = new window.Razorpay(options);
+          rzp.open();
+        } else {
+          toast.error("Payment gateway not loaded. Please refresh.");
+          setPaying(false);
+        }
+      }, 600); // Radix close animation is 300ms, add buffer
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   const handlePay = async () => {
     if (!donor.name || !donor.email || !donor.phone) {
@@ -49,25 +75,38 @@ export default function CartDrawer() {
         allocations, cover_fees: coverFees
       });
 
-      // Save context for after redirect back from Razorpay
-      localStorage.setItem('rzp_session', JSON.stringify({
-        session_id: sessionRes.data.session_id,
-        donor_name: donor.name,
-        pot_slug: potSlug || ""
-      }));
+      const orderRes = await createOrder({ session_id: sessionRes.data.session_id });
+      const od = orderRes.data;
 
-      // Use Razorpay Payment Links — opens hosted checkout page via full page redirect
-      // No iframe, no popup — works reliably on all devices including iOS Safari
-      const linkRes = await createPaymentLink({
-        session_id: sessionRes.data.session_id,
-        callback_base: API_BASE
-      });
+      const savedDonorName = donor.name;
+      const savedSessionId = sessionRes.data.session_id;
 
-      clearCart();
+      // Store Razorpay options — will be opened by useEffect after Sheet closes
+      rzpPendingRef.current = {
+        key: od.key_id,
+        amount: od.amount,
+        currency: od.currency,
+        order_id: od.order_id,
+        name: "Shvetha & Aadi",
+        description: "Wedding Gift Contribution",
+        prefill: od.prefill,
+        theme: { color: "#8B0000" },
+        handler: function () {
+          const donorName = encodeURIComponent(savedDonorName);
+          const slug = potSlug || "";
+          clearCart();
+          navigate(`/thank-you?session=${savedSessionId}&pot=${slug}&name=${donorName}`);
+        },
+        modal: {
+          ondismiss: function () {
+            setPaying(false);
+            toast.info("Payment was cancelled");
+          }
+        }
+      };
+
+      // Close the Sheet — useEffect will detect this and open Razorpay
       setIsOpen(false);
-
-      // Full page redirect to Razorpay's hosted checkout
-      window.location.href = linkRes.data.payment_link_url;
     } catch (e) {
       toast.error(e.response?.data?.detail || "Something went wrong");
       setPaying(false);
