@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { createSession, createOrder, createPaymentLink } from "../lib/api";
+import { createSession, createPaymentLink } from "../lib/api";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../components/ui/sheet";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -18,7 +18,6 @@ export default function CartDrawer() {
   const [donor, setDonor] = useState({ name: "", email: "", phone: "", message: "" });
   const [coverFees, setCoverFees] = useState(true);
   const [paying, setPaying] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
 
   const feePaise = coverFees ? Math.ceil(totalPaise * 0.0236) : 0;
@@ -27,8 +26,6 @@ export default function CartDrawer() {
   // Derive pot slug from current path for redirect
   const potSlug = location.pathname.startsWith("/p/") ? location.pathname.split("/p/")[1] : null;
 
-  // Detect mobile/tablet (iOS Safari is the main issue, but redirect is safer for all mobile)
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const API_BASE = process.env.REACT_APP_BACKEND_URL;
 
   const handlePay = async () => {
@@ -52,65 +49,25 @@ export default function CartDrawer() {
         allocations, cover_fees: coverFees
       });
 
-      if (isMobile) {
-        // MOBILE: Use Razorpay Payment Links (hosted checkout page, NO iframe)
-        // This completely bypasses iOS Safari's cross-origin iframe touch blocking
-        localStorage.setItem('rzp_session', JSON.stringify({
-          session_id: sessionRes.data.session_id,
-          donor_name: donor.name,
-          pot_slug: potSlug || ""
-        }));
-        clearCart();
+      // Save context for after redirect back from Razorpay
+      localStorage.setItem('rzp_session', JSON.stringify({
+        session_id: sessionRes.data.session_id,
+        donor_name: donor.name,
+        pot_slug: potSlug || ""
+      }));
 
-        const linkRes = await createPaymentLink({
-          session_id: sessionRes.data.session_id,
-          callback_base: API_BASE
-        });
+      // Use Razorpay Payment Links — opens hosted checkout page via full page redirect
+      // No iframe, no popup — works reliably on all devices including iOS Safari
+      const linkRes = await createPaymentLink({
+        session_id: sessionRes.data.session_id,
+        callback_base: API_BASE
+      });
 
-        // Full page redirect to Razorpay's hosted checkout
-        setIsOpen(false);
-        window.location.href = linkRes.data.payment_link_url;
+      clearCart();
+      setIsOpen(false);
 
-      } else {
-        // DESKTOP: Use checkout.js popup mode (works fine on desktop browsers)
-        const orderRes = await createOrder({ session_id: sessionRes.data.session_id });
-        const od = orderRes.data;
-
-        const options = {
-          key: od.key_id,
-          amount: od.amount,
-          currency: od.currency,
-          order_id: od.order_id,
-          name: "Shvetha & Aadi",
-          description: "Wedding Gift Contribution",
-          prefill: od.prefill,
-          theme: { color: "#8B0000" },
-          handler: async function () {
-            const donorName = encodeURIComponent(donor.name);
-            const slug = potSlug || "";
-            clearCart();
-            setDonor({ name: "", email: "", phone: "", message: "" });
-            setIsOpen(false);
-            setPaying(false);
-            navigate(`/thank-you?session=${sessionRes.data.session_id}&pot=${slug}&name=${donorName}`);
-          },
-          modal: {
-            ondismiss: function () {
-              setPaying(false);
-              toast.info("Payment was cancelled");
-            }
-          }
-        };
-
-        if (window.Razorpay) {
-          const rzp = new window.Razorpay(options);
-          setIsOpen(false);
-          setTimeout(() => rzp.open(), 300);
-        } else {
-          toast.error("Payment gateway not loaded. Please refresh the page.");
-          setPaying(false);
-        }
-      }
+      // Full page redirect to Razorpay's hosted checkout
+      window.location.href = linkRes.data.payment_link_url;
     } catch (e) {
       toast.error(e.response?.data?.detail || "Something went wrong");
       setPaying(false);
