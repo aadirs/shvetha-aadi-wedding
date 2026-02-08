@@ -27,6 +27,10 @@ export default function CartDrawer() {
   // Derive pot slug from current path for redirect
   const potSlug = location.pathname.startsWith("/p/") ? location.pathname.split("/p/")[1] : null;
 
+  // Detect mobile/tablet (iOS Safari is the main issue, but redirect is safer for all mobile)
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const API_BASE = process.env.REACT_APP_BACKEND_URL;
+
   const handlePay = async () => {
     if (!donor.name || !donor.email || !donor.phone) {
       toast.error("Please fill in your name, email, and phone");
@@ -51,90 +55,76 @@ export default function CartDrawer() {
       const orderRes = await createOrder({ session_id: sessionRes.data.session_id });
       const od = orderRes.data;
 
-      const options = {
-        key: od.key_id,
-        amount: od.amount,
-        currency: od.currency,
-        order_id: od.order_id,
-        name: "Shvetha & Aadi",
-        description: "Wedding Gift Contribution",
-        prefill: od.prefill,
-        theme: { color: "#8B0000" },
-        handler: async function () {
-          // Cleanup iOS fix
-          document.body.classList.remove('razorpay-active');
-          const fixStyle = document.getElementById('rzp-ios-fix');
-          if (fixStyle) fixStyle.remove();
-          const badge = document.getElementById('emergent-badge');
-          if (badge) badge.style.removeProperty('display');
-          // Redirect to thank-you page
-          const donorName = encodeURIComponent(donor.name);
-          const slug = potSlug || "";
-          clearCart();
-          setDonor({ name: "", email: "", phone: "", message: "" });
-          setIsOpen(false);
-          setPaying(false);
-          navigate(`/thank-you?session=${sessionRes.data.session_id}&pot=${slug}&name=${donorName}`);
-        },
-        modal: {
-          ondismiss: function () {
-            // Cleanup iOS fix
-            document.body.classList.remove('razorpay-active');
-            const fixStyle = document.getElementById('rzp-ios-fix');
-            if (fixStyle) fixStyle.remove();
-            const badge = document.getElementById('emergent-badge');
-            if (badge) badge.style.removeProperty('display');
-            setPaying(false);
-            toast.info("Payment was cancelled");
-            setIsOpen(true);
-          }
-        }
-      };
+      if (isMobile) {
+        // MOBILE: Use Razorpay redirect mode (avoids iOS Safari iframe touch issue)
+        // Save context for after redirect
+        localStorage.setItem('rzp_session', JSON.stringify({
+          session_id: sessionRes.data.session_id,
+          donor_name: donor.name,
+          pot_slug: potSlug || ""
+        }));
+        clearCart();
 
-      if (window.Razorpay) {
-        const rzp = new window.Razorpay(options);
-        // Close sheet and force-clean ALL body/html styles before Razorpay opens (iOS Safari fix)
+        const options = {
+          key: od.key_id,
+          amount: od.amount,
+          currency: od.currency,
+          order_id: od.order_id,
+          name: "Shvetha & Aadi",
+          description: "Wedding Gift Contribution",
+          prefill: od.prefill,
+          theme: { color: "#8B0000" },
+          callback_url: `${API_BASE}/api/razorpay/callback`,
+          redirect: true
+        };
+
         setIsOpen(false);
         setTimeout(() => {
-          // Nuclear cleanup: Radix Dialog / react-remove-scroll sets pointer-events, overflow,
-          // touch-action, position on body/html via inline styles AND injected <style> tags.
-          // We must override everything to let Razorpay's cross-origin iframe receive touches on iOS.
-          const body = document.body;
-          const html = document.documentElement;
+          if (window.Razorpay) {
+            const rzp = new window.Razorpay(options);
+            rzp.open(); // This will redirect the browser to Razorpay's page
+          } else {
+            toast.error("Payment gateway not loaded. Please refresh.");
+            setPaying(false);
+          }
+        }, 300);
 
-          // Remove Radix data attributes that trigger CSS locks
-          body.removeAttribute('data-scroll-locked');
-          html.removeAttribute('data-scroll-locked');
-
-          // Force-reset inline styles
-          body.style.pointerEvents = '';
-          body.style.overflow = '';
-          body.style.position = '';
-          body.style.touchAction = '';
-          body.style.width = '';
-          body.style.top = '';
-          html.style.overflow = '';
-
-          // Inject override stylesheet to beat any remaining Radix/react-remove-scroll rules
-          const overrideStyle = document.createElement('style');
-          overrideStyle.id = 'rzp-ios-fix';
-          overrideStyle.textContent = `
-            html, body { pointer-events: auto !important; overflow: auto !important; touch-action: auto !important; position: static !important; }
-            .razorpay-container, .razorpay-container * { pointer-events: auto !important; touch-action: manipulation !important; z-index: 999999 !important; }
-            .razorpay-backdrop { pointer-events: auto !important; z-index: 999998 !important; }
-          `;
-          document.head.appendChild(overrideStyle);
-          body.classList.add('razorpay-active');
-
-          // Hide Emergent badge directly (inline !important styles can't be overridden by CSS)
-          const badge = document.getElementById('emergent-badge');
-          if (badge) badge.style.setProperty('display', 'none', 'important');
-
-          rzp.open();
-        }, 500);
       } else {
-        toast.error("Payment gateway not loaded. Please refresh the page.");
-        setPaying(false);
+        // DESKTOP: Use popup/iframe mode (works fine on desktop browsers)
+        const options = {
+          key: od.key_id,
+          amount: od.amount,
+          currency: od.currency,
+          order_id: od.order_id,
+          name: "Shvetha & Aadi",
+          description: "Wedding Gift Contribution",
+          prefill: od.prefill,
+          theme: { color: "#8B0000" },
+          handler: async function () {
+            const donorName = encodeURIComponent(donor.name);
+            const slug = potSlug || "";
+            clearCart();
+            setDonor({ name: "", email: "", phone: "", message: "" });
+            setIsOpen(false);
+            setPaying(false);
+            navigate(`/thank-you?session=${sessionRes.data.session_id}&pot=${slug}&name=${donorName}`);
+          },
+          modal: {
+            ondismiss: function () {
+              setPaying(false);
+              toast.info("Payment was cancelled");
+            }
+          }
+        };
+
+        if (window.Razorpay) {
+          const rzp = new window.Razorpay(options);
+          setIsOpen(false);
+          setTimeout(() => rzp.open(), 300);
+        } else {
+          toast.error("Payment gateway not loaded. Please refresh the page.");
+          setPaying(false);
+        }
       }
     } catch (e) {
       toast.error(e.response?.data?.detail || "Something went wrong");
