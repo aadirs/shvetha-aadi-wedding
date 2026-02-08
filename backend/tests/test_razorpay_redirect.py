@@ -90,11 +90,13 @@ class TestSessionPolling:
     """Tests for session polling endpoint used by ThankYou page"""
     
     def test_session_polling_not_found(self):
-        """Test polling for non-existent session returns 404"""
-        response = requests.get(f"{BASE_URL}/api/session/nonexistent-session-id")
-        # 404 = not found, 502 = database error (acceptable for invalid UUID format)
-        assert response.status_code in [404, 502]
-        print(f"SUCCESS: Non-existent session returns {response.status_code}")
+        """Test polling for non-existent session (valid UUID format) returns 404"""
+        # Use a valid UUID format that doesn't exist
+        fake_uuid = "00000000-0000-0000-0000-000000000000"
+        response = requests.get(f"{BASE_URL}/api/session/{fake_uuid}")
+        # Should return 404 for non-existent session with valid UUID format
+        assert response.status_code == 404
+        print(f"SUCCESS: Non-existent session returns 404")
     
     def test_session_creation_and_polling(self):
         """Test creating a session and polling it"""
