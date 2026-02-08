@@ -80,7 +80,9 @@ export default function CartDrawer() {
 
       if (window.Razorpay) {
         const rzp = new window.Razorpay(options);
-        rzp.open();
+        // Close the sheet first so its overlay doesn't block Razorpay on iOS Safari
+        setIsOpen(false);
+        setTimeout(() => rzp.open(), 300);
       } else {
         toast.error("Payment gateway not loaded. Please refresh the page.");
         setPaying(false);
