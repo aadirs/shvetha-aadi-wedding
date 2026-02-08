@@ -41,7 +41,13 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with Raz
 - [x] Mobile-first responsive design
 
 ## Fixes Applied (Feb 8, 2026)
-- [x] Fixed Razorpay checkout unresponsive on iOS Safari — Sheet overlay was blocking touch events; now closes Sheet before opening Razorpay
+- [x] Fixed Razorpay checkout unresponsive on iOS Safari — multiple root causes addressed:
+  - Sheet (cart drawer) overlay was blocking touch events; now closes 500ms before Razorpay opens
+  - Force-cleans ALL body/html styles set by Radix Dialog (pointer-events, overflow, touch-action, position, data-scroll-locked)
+  - Injects override `<style>` tag with `!important` rules for Razorpay container iframe interactivity
+  - Hides Emergent badge (z-index 9999) via JS during checkout to prevent overlap
+  - Updated viewport meta tag: `maximum-scale=1, user-scalable=no, viewport-fit=cover`
+  - CSS rules for `.razorpay-container` with `pointer-events: auto` and `touch-action: manipulation`
 - [x] Admin username capitalized: aadishve → Aadishve
 - [x] "Goal reached" display for fully funded pots (completed prior session)
 
