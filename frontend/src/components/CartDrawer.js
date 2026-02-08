@@ -56,8 +56,8 @@ export default function CartDrawer() {
       const od = orderRes.data;
 
       if (isMobile) {
-        // MOBILE: Use Razorpay redirect mode (avoids iOS Safari iframe touch issue)
-        // Save context for after redirect
+        // MOBILE: Use Razorpay Payment Links (opens hosted checkout page, no iframe)
+        // This completely bypasses iOS Safari's iframe touch blocking issue
         localStorage.setItem('rzp_session', JSON.stringify({
           session_id: sessionRes.data.session_id,
           donor_name: donor.name,
@@ -65,29 +65,14 @@ export default function CartDrawer() {
         }));
         clearCart();
 
-        const options = {
-          key: od.key_id,
-          amount: od.amount,
-          currency: od.currency,
-          order_id: od.order_id,
-          name: "Shvetha & Aadi",
-          description: "Wedding Gift Contribution",
-          prefill: od.prefill,
-          theme: { color: "#8B0000" },
-          callback_url: `${API_BASE}/api/razorpay/callback`,
-          redirect: true
-        };
+        const linkRes = await createPaymentLink({
+          session_id: sessionRes.data.session_id,
+          callback_base: API_BASE
+        });
 
+        // Redirect browser to Razorpay's hosted checkout page
         setIsOpen(false);
-        setTimeout(() => {
-          if (window.Razorpay) {
-            const rzp = new window.Razorpay(options);
-            rzp.open(); // This will redirect the browser to Razorpay's page
-          } else {
-            toast.error("Payment gateway not loaded. Please refresh.");
-            setPaying(false);
-          }
-        }, 300);
+        window.location.href = linkRes.data.payment_link_url;
 
       } else {
         // DESKTOP: Use popup/iframe mode (works fine on desktop browsers)
