@@ -84,17 +84,42 @@ export default function CartDrawer() {
 
       if (window.Razorpay) {
         const rzp = new window.Razorpay(options);
-        // Close sheet and force-clean body styles before Razorpay opens (iOS Safari fix)
+        // Close sheet and force-clean ALL body/html styles before Razorpay opens (iOS Safari fix)
         setIsOpen(false);
         setTimeout(() => {
-          // Radix Dialog leaves pointer-events:none + overflow:hidden on body during close animation
-          document.body.style.pointerEvents = '';
-          document.body.style.overflow = '';
-          document.body.removeAttribute('data-scroll-locked');
-          // Hide fixed overlapping elements while Razorpay is open
-          document.body.classList.add('razorpay-active');
+          // Nuclear cleanup: Radix Dialog / react-remove-scroll sets pointer-events, overflow,
+          // touch-action, position on body/html via inline styles AND injected <style> tags.
+          // We must override everything to let Razorpay's cross-origin iframe receive touches on iOS.
+          const body = document.body;
+          const html = document.documentElement;
+
+          // Remove Radix data attributes that trigger CSS locks
+          body.removeAttribute('data-scroll-locked');
+          html.removeAttribute('data-scroll-locked');
+
+          // Force-reset inline styles
+          body.style.pointerEvents = '';
+          body.style.overflow = '';
+          body.style.position = '';
+          body.style.touchAction = '';
+          body.style.width = '';
+          body.style.top = '';
+          html.style.overflow = '';
+
+          // Inject override stylesheet to beat any remaining Radix/react-remove-scroll rules
+          const overrideStyle = document.createElement('style');
+          overrideStyle.id = 'rzp-ios-fix';
+          overrideStyle.textContent = `
+            html, body { pointer-events: auto !important; overflow: auto !important; touch-action: auto !important; position: static !important; }
+            .razorpay-container, .razorpay-container * { pointer-events: auto !important; touch-action: manipulation !important; z-index: 999999 !important; }
+            .razorpay-backdrop { pointer-events: auto !important; z-index: 999998 !important; }
+            #emergent-badge { display: none !important; }
+          `;
+          document.head.appendChild(overrideStyle);
+          body.classList.add('razorpay-active');
+
           rzp.open();
-        }, 400);
+        }, 500);
       } else {
         toast.error("Payment gateway not loaded. Please refresh the page.");
         setPaying(false);
