@@ -82,9 +82,15 @@ export default function CartDrawer() {
 
       if (window.Razorpay) {
         const rzp = new window.Razorpay(options);
-        // Close the sheet first so its overlay doesn't block Razorpay on iOS Safari
+        // Close sheet and force-clean body styles before Razorpay opens (iOS Safari fix)
         setIsOpen(false);
-        setTimeout(() => rzp.open(), 300);
+        setTimeout(() => {
+          // Radix Dialog leaves pointer-events:none + overflow:hidden on body during close animation
+          document.body.style.pointerEvents = '';
+          document.body.style.overflow = '';
+          document.body.removeAttribute('data-scroll-locked');
+          rzp.open();
+        }, 400);
       } else {
         toast.error("Payment gateway not loaded. Please refresh the page.");
         setPaying(false);
