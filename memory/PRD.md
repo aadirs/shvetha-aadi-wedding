@@ -41,11 +41,13 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with Raz
 - [x] Mobile-first responsive design
 
 ## Fixes Applied (Feb 8, 2026)
-- [x] **Fixed Razorpay checkout unresponsive on iOS Safari** — Root cause: iOS Safari blocks touch events on cross-origin iframes (Razorpay checkout.js uses iframe). Solution: On mobile devices, use Razorpay Payment Links API instead of checkout.js. This creates a hosted checkout page on Razorpay's domain — the browser does a full page redirect (no iframe). After payment, Razorpay redirects to `/api/razorpay/payment-link/callback` which verifies signature and redirects to thank-you page. Desktop continues using checkout.js popup.
-  - New backend endpoint: `POST /api/razorpay/payment-link` (creates Razorpay Payment Link)
-  - New backend endpoint: `GET /api/razorpay/payment-link/callback` (verifies signature, redirects to thank-you)
-  - CartDrawer detects mobile via userAgent, saves session to localStorage, redirects via window.location.href
-  - ThankYou page reads from both URL params and localStorage fallback
+- [x] **Fixed Razorpay checkout unresponsive on iOS Safari** — Removed checkout.js entirely. Now using Razorpay Payment Links API for ALL devices. When user clicks Pay, browser does a full page redirect to `https://razorpay.com/payment-link/...` (Razorpay's hosted checkout). No iframe, no popup, no cross-origin touch issues. After payment, Razorpay redirects to `/api/razorpay/payment-link/callback` which verifies HMAC signature and redirects to thank-you page.
+  - Backend: `POST /api/razorpay/payment-link` (creates Razorpay Payment Link via API)
+  - Backend: `GET /api/razorpay/payment-link/callback` (verifies signature, updates DB, redirects to /thank-you)
+  - Frontend: `window.location.href = short_url` (full page redirect)
+  - checkout.js script tag removed from index.html
+- [x] Admin username capitalized: aadishve → Aadishve
+- [x] "Goal reached" display for fully funded pots (completed prior session)
 - [x] Admin username capitalized: aadishve → Aadishve
 - [x] "Goal reached" display for fully funded pots (completed prior session)
 - [x] Admin username capitalized: aadishve → Aadishve
