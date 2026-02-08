@@ -41,10 +41,13 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with Raz
 - [x] Mobile-first responsive design
 
 ## Fixes Applied (Feb 8, 2026)
-- [x] **Fixed Razorpay checkout unresponsive on iOS Safari** — Root cause: iOS Safari blocks touch events on cross-origin iframes. Solution: Implemented Razorpay REDIRECT checkout mode for all mobile devices (iPhone/iPad/Android). On mobile, the browser redirects to Razorpay's full checkout page instead of opening an iframe popup. After payment, Razorpay redirects back to `/api/razorpay/callback` which verifies the signature and redirects to the thank-you page. Desktop continues using the popup mode.
-  - New backend endpoint: `POST /api/razorpay/callback` (verifies signature, redirects to thank-you)
-  - CartDrawer saves session context to localStorage before redirect
-  - ThankYou page reads from localStorage for redirect mode, handles `payment=success` param
+- [x] **Fixed Razorpay checkout unresponsive on iOS Safari** — Root cause: iOS Safari blocks touch events on cross-origin iframes (Razorpay checkout.js uses iframe). Solution: On mobile devices, use Razorpay Payment Links API instead of checkout.js. This creates a hosted checkout page on Razorpay's domain — the browser does a full page redirect (no iframe). After payment, Razorpay redirects to `/api/razorpay/payment-link/callback` which verifies signature and redirects to thank-you page. Desktop continues using checkout.js popup.
+  - New backend endpoint: `POST /api/razorpay/payment-link` (creates Razorpay Payment Link)
+  - New backend endpoint: `GET /api/razorpay/payment-link/callback` (verifies signature, redirects to thank-you)
+  - CartDrawer detects mobile via userAgent, saves session to localStorage, redirects via window.location.href
+  - ThankYou page reads from both URL params and localStorage fallback
+- [x] Admin username capitalized: aadishve → Aadishve
+- [x] "Goal reached" display for fully funded pots (completed prior session)
 - [x] Admin username capitalized: aadishve → Aadishve
 - [x] "Goal reached" display for fully funded pots (completed prior session)
 
