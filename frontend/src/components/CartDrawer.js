@@ -89,6 +89,8 @@ export default function CartDrawer() {
           document.body.style.pointerEvents = '';
           document.body.style.overflow = '';
           document.body.removeAttribute('data-scroll-locked');
+          // Hide fixed overlapping elements while Razorpay is open
+          document.body.classList.add('razorpay-active');
           rzp.open();
         }, 400);
       } else {
