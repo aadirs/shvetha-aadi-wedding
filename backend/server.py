@@ -385,6 +385,65 @@ async def razorpay_webhook(request: Request):
     return {"status": "ok"}
 
 
+# ---- RAZORPAY CALLBACK (redirect mode for mobile) ----
+@api_router.post("/razorpay/callback")
+async def razorpay_callback(request: Request):
+    """Handle Razorpay redirect after payment. Verifies signature and redirects to thank-you page."""
+    form_data = await request.form()
+    payment_id = form_data.get("razorpay_payment_id", "")
+    order_id = form_data.get("razorpay_order_id", "")
+    signature = form_data.get("razorpay_signature", "")
+
+    # Get frontend URL from request origin or fallback
+    frontend_url = request.headers.get("origin", "")
+    if not frontend_url:
+        # Derive from referer or use the request base URL
+        frontend_url = str(request.base_url).rstrip("/")
+        # Remove /api prefix if present
+        if frontend_url.endswith("/api"):
+            frontend_url = frontend_url[:-4]
+
+    # Find the session for this order
+    session_id = ""
+    try:
+        sessions = await sb_get("contribution_sessions", {"select": "id,donor_name", "razorpay_order_id": f"eq.{order_id}"})
+        if sessions:
+            session_id = sessions[0]["id"]
+            donor_name = sessions[0].get("donor_name", "")
+    except Exception:
+        donor_name = ""
+
+    # Verify payment signature
+    try:
+        razorpay_client.utility.verify_payment_signature({
+            "razorpay_order_id": order_id,
+            "razorpay_payment_id": payment_id,
+            "razorpay_signature": signature,
+        })
+        logger.info(f"Razorpay callback: signature verified for order {order_id}")
+
+        # Update session if webhook hasn't already
+        if session_id:
+            sessions = await sb_get("contribution_sessions", {"select": "status", "id": f"eq.{session_id}"})
+            if sessions and sessions[0]["status"] != "paid":
+                await sb_patch("contribution_sessions", {
+                    "status": "paid", "razorpay_payment_id": payment_id,
+                    "paid_at": datetime.now(timezone.utc).isoformat()
+                }, {"razorpay_order_id": f"eq.{order_id}"})
+                await sb_patch("allocations", {"status": "paid"}, {"session_id": f"eq.{session_id}"})
+
+        # Redirect to thank-you page
+        from urllib.parse import quote
+        redirect_url = f"/thank-you?session={session_id}&name={quote(donor_name)}&payment=success"
+        return RedirectResponse(url=redirect_url, status_code=303)
+
+    except Exception as e:
+        logger.error(f"Razorpay callback signature verification failed: {e}")
+        redirect_url = f"/thank-you?session={session_id}&payment=failed"
+        return RedirectResponse(url=redirect_url, status_code=303)
+
+
+
 # ---- ADMIN ----
 @api_router.get("/admin/dashboard")
 async def admin_dashboard(admin=Depends(get_admin_token)):
