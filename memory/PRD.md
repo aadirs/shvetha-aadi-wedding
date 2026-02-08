@@ -7,7 +7,7 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with Raz
 - **Backend**: FastAPI + Supabase Postgres (via REST API) + Razorpay SDK
 - **Frontend**: React + Shadcn UI + Tailwind CSS + Razorpay Checkout.js
 - **Database**: Supabase Postgres (5 tables: pots, pot_items, contribution_sessions, allocations, webhook_events)
-- **Auth**: JWT with hardcoded admin credentials (aadishve/061097)
+- **Auth**: JWT with hardcoded admin credentials (Aadishve/061097)
 
 ## User Personas
 1. **Wedding Guests** - View pots, contribute via Razorpay (UPI/cards/netbanking), leave blessings
@@ -39,6 +39,11 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with Raz
 - [x] Admin CRUD (pots, items)
 - [x] Admin dashboard + CSV export
 - [x] Mobile-first responsive design
+
+## Fixes Applied (Feb 8, 2026)
+- [x] Fixed Razorpay checkout unresponsive on iOS Safari — Sheet overlay was blocking touch events; now closes Sheet before opening Razorpay
+- [x] Admin username capitalized: aadishve → Aadishve
+- [x] "Goal reached" display for fully funded pots (completed prior session)
 
 ## P1 (Next)
 - [ ] Razorpay webhook live testing (requires public webhook URL configured)
