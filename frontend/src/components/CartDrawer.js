@@ -65,6 +65,8 @@ export default function CartDrawer() {
           document.body.classList.remove('razorpay-active');
           const fixStyle = document.getElementById('rzp-ios-fix');
           if (fixStyle) fixStyle.remove();
+          const badge = document.getElementById('emergent-badge');
+          if (badge) badge.style.removeProperty('display');
           // Redirect to thank-you page
           const donorName = encodeURIComponent(donor.name);
           const slug = potSlug || "";
@@ -80,6 +82,8 @@ export default function CartDrawer() {
             document.body.classList.remove('razorpay-active');
             const fixStyle = document.getElementById('rzp-ios-fix');
             if (fixStyle) fixStyle.remove();
+            const badge = document.getElementById('emergent-badge');
+            if (badge) badge.style.removeProperty('display');
             setPaying(false);
             toast.info("Payment was cancelled");
             setIsOpen(true);
