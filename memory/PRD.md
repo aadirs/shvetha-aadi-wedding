@@ -41,13 +41,10 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with Raz
 - [x] Mobile-first responsive design
 
 ## Fixes Applied (Feb 8, 2026)
-- [x] Fixed Razorpay checkout unresponsive on iOS Safari — multiple root causes addressed:
-  - Sheet (cart drawer) overlay was blocking touch events; now closes 500ms before Razorpay opens
-  - Force-cleans ALL body/html styles set by Radix Dialog (pointer-events, overflow, touch-action, position, data-scroll-locked)
-  - Injects override `<style>` tag with `!important` rules for Razorpay container iframe interactivity
-  - Hides Emergent badge (z-index 9999) via JS during checkout to prevent overlap
-  - Updated viewport meta tag: `maximum-scale=1, user-scalable=no, viewport-fit=cover`
-  - CSS rules for `.razorpay-container` with `pointer-events: auto` and `touch-action: manipulation`
+- [x] **Fixed Razorpay checkout unresponsive on iOS Safari** — Root cause: iOS Safari blocks touch events on cross-origin iframes. Solution: Implemented Razorpay REDIRECT checkout mode for all mobile devices (iPhone/iPad/Android). On mobile, the browser redirects to Razorpay's full checkout page instead of opening an iframe popup. After payment, Razorpay redirects back to `/api/razorpay/callback` which verifies the signature and redirects to the thank-you page. Desktop continues using the popup mode.
+  - New backend endpoint: `POST /api/razorpay/callback` (verifies signature, redirects to thank-you)
+  - CartDrawer saves session context to localStorage before redirect
+  - ThankYou page reads from localStorage for redirect mode, handles `payment=success` param
 - [x] Admin username capitalized: aadishve → Aadishve
 - [x] "Goal reached" display for fully funded pots (completed prior session)
 
