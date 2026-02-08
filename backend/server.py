@@ -385,61 +385,128 @@ async def razorpay_webhook(request: Request):
     return {"status": "ok"}
 
 
-# ---- RAZORPAY CALLBACK (redirect mode for mobile) ----
-@api_router.post("/razorpay/callback")
-async def razorpay_callback(request: Request):
-    """Handle Razorpay redirect after payment. Verifies signature and redirects to thank-you page."""
-    form_data = await request.form()
-    payment_id = form_data.get("razorpay_payment_id", "")
-    order_id = form_data.get("razorpay_order_id", "")
-    signature = form_data.get("razorpay_signature", "")
+# ---- RAZORPAY PAYMENT LINK (redirect mode for mobile - bypasses iframe) ----
+@api_router.post("/razorpay/payment-link")
+async def create_payment_link(request: Request):
+    """Create a Razorpay Payment Link for mobile redirect checkout (no iframe)."""
+    data = await request.json()
+    client_ip = request.client.host if request.client else "unknown"
+    rate_limit(client_ip, max_req=10, window=60)
 
-    # Get frontend URL from request origin or fallback
-    frontend_url = request.headers.get("origin", "")
-    if not frontend_url:
-        # Derive from referer or use the request base URL
-        frontend_url = str(request.base_url).rstrip("/")
-        # Remove /api prefix if present
-        if frontend_url.endswith("/api"):
-            frontend_url = frontend_url[:-4]
+    session_id = data.get("session_id")
+    if not session_id:
+        raise HTTPException(400, "session_id required")
 
-    # Find the session for this order
-    session_id = ""
+    sessions = await sb_get("contribution_sessions", {"select": "*", "id": f"eq.{session_id}"})
+    if not sessions:
+        raise HTTPException(404, "Session not found")
+    session = sessions[0]
+
+    if session["status"] not in ("created",):
+        raise HTTPException(400, f"Session status is {session['status']}")
+
+    allocs = await sb_get("allocations", {"select": "amount_paise", "session_id": f"eq.{session_id}"})
+    alloc_total = sum(a["amount_paise"] for a in allocs)
+    if alloc_total != session["total_amount_paise"]:
+        raise HTTPException(400, "Allocation total mismatch")
+
+    grand_total = session["total_amount_paise"] + session.get("fee_amount_paise", 0)
+
+    # Build callback URL using the request's origin
+    callback_base = data.get("callback_base", "")
+    if not callback_base:
+        callback_base = str(request.base_url).rstrip("/")
+    callback_url = f"{callback_base}/api/razorpay/payment-link/callback?session_id={session_id}"
+
     try:
-        sessions = await sb_get("contribution_sessions", {"select": "id,donor_name", "razorpay_order_id": f"eq.{order_id}"})
-        if sessions:
-            session_id = sessions[0]["id"]
-            donor_name = sessions[0].get("donor_name", "")
-    except Exception:
-        donor_name = ""
+        link_data = {
+            "amount": grand_total,
+            "currency": "INR",
+            "description": "Wedding Gift - Shvetha & Aadi",
+            "reference_id": session_id,
+            "customer": {
+                "name": session["donor_name"],
+                "email": session["donor_email"],
+                "contact": session["donor_phone"],
+            },
+            "callback_url": callback_url,
+            "callback_method": "get",
+            "notes": {
+                "session_id": session_id,
+                "donor_name": session["donor_name"]
+            }
+        }
+        payment_link = razorpay_client.payment_link.create(link_data)
+    except Exception as e:
+        logger.error(f"Razorpay payment link creation failed: {e}")
+        raise HTTPException(502, "Payment gateway error")
 
-    # Verify payment signature
+    # Update session with payment link info
+    await sb_patch("contribution_sessions", {
+        "status": "pending",
+        "razorpay_order_id": payment_link.get("order_id", payment_link["id"])
+    }, {"id": f"eq.{session_id}"})
+
+    return {
+        "payment_link_url": payment_link["short_url"],
+        "payment_link_id": payment_link["id"],
+        "session_id": session_id
+    }
+
+
+@api_router.get("/razorpay/payment-link/callback")
+async def payment_link_callback(request: Request):
+    """Handle redirect from Razorpay Payment Link after payment."""
+    params = request.query_params
+    payment_link_id = params.get("razorpay_payment_link_id", "")
+    payment_link_ref = params.get("razorpay_payment_link_reference_id", "")
+    payment_link_status = params.get("razorpay_payment_link_status", "")
+    payment_id = params.get("razorpay_payment_id", "")
+    signature = params.get("razorpay_signature", "")
+    session_id = params.get("session_id", "") or payment_link_ref
+
+    # Look up session
+    donor_name = ""
     try:
-        razorpay_client.utility.verify_payment_signature({
-            "razorpay_order_id": order_id,
-            "razorpay_payment_id": payment_id,
-            "razorpay_signature": signature,
-        })
-        logger.info(f"Razorpay callback: signature verified for order {order_id}")
-
-        # Update session if webhook hasn't already
         if session_id:
+            sessions = await sb_get("contribution_sessions", {"select": "id,donor_name", "id": f"eq.{session_id}"})
+            if sessions:
+                donor_name = sessions[0].get("donor_name", "")
+    except Exception:
+        pass
+
+    # Verify signature
+    try:
+        verify_payload = f"{payment_link_id}|{payment_link_ref}|{payment_link_status}|{payment_id}"
+        expected_sig = hmac.new(
+            RAZORPAY_KEY_SECRET.encode('utf-8'),
+            verify_payload.encode('utf-8'),
+            hashlib.sha256
+        ).hexdigest()
+
+        if not hmac.compare_digest(expected_sig, signature):
+            raise ValueError("Signature mismatch")
+
+        logger.info(f"Payment link callback: verified for session {session_id}, status={payment_link_status}")
+
+        if payment_link_status == "paid" and session_id:
             sessions = await sb_get("contribution_sessions", {"select": "status", "id": f"eq.{session_id}"})
             if sessions and sessions[0]["status"] != "paid":
                 await sb_patch("contribution_sessions", {
-                    "status": "paid", "razorpay_payment_id": payment_id,
+                    "status": "paid",
+                    "razorpay_payment_id": payment_id,
                     "paid_at": datetime.now(timezone.utc).isoformat()
-                }, {"razorpay_order_id": f"eq.{order_id}"})
+                }, {"id": f"eq.{session_id}"})
                 await sb_patch("allocations", {"status": "paid"}, {"session_id": f"eq.{session_id}"})
 
-        # Redirect to thank-you page
         from urllib.parse import quote
         redirect_url = f"/thank-you?session={session_id}&name={quote(donor_name)}&payment=success"
         return RedirectResponse(url=redirect_url, status_code=303)
 
     except Exception as e:
-        logger.error(f"Razorpay callback signature verification failed: {e}")
-        redirect_url = f"/thank-you?session={session_id}&payment=failed"
+        logger.error(f"Payment link callback verification failed: {e}")
+        from urllib.parse import quote
+        redirect_url = f"/thank-you?session={session_id}&name={quote(donor_name)}&payment=failed"
         return RedirectResponse(url=redirect_url, status_code=303)
 
 
