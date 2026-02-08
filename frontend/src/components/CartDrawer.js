@@ -74,6 +74,8 @@ export default function CartDrawer() {
           ondismiss: function () {
             setPaying(false);
             toast.info("Payment was cancelled");
+            // Re-open the cart so user can retry
+            setIsOpen(true);
           }
         }
       };
