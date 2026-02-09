@@ -412,10 +412,8 @@ async def create_payment_link(request: Request):
 
     grand_total = session["total_amount_paise"] + session.get("fee_amount_paise", 0)
 
-    # Build callback URL using the request's origin
-    callback_base = data.get("callback_base", "")
-    if not callback_base:
-        callback_base = str(request.base_url).rstrip("/")
+    # Build callback URL
+    callback_base = data.get("callback_base", "") or os.environ.get("APP_URL", str(request.base_url).rstrip("/"))
     callback_url = f"{callback_base}/api/razorpay/payment-link/callback?session_id={session_id}"
 
     try:
