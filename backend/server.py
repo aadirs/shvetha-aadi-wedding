@@ -752,16 +752,18 @@ async def admin_contributions(admin=Depends(get_admin_token)):
 @api_router.get("/admin/contributions/export")
 async def export_contributions(admin=Depends(get_admin_token)):
     sessions = await sb_get("contribution_sessions", {
-        "select": "*", "status": "eq.paid", "order": "paid_at.desc"
+        "select": "*", "status": "in.(paid,submitted,received)", "order": "paid_at.desc.nullslast"
     })
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Donor Name", "Email", "Phone", "Message", "Amount (INR)", "Fee (INR)", "Paid At", "Payment ID"])
+    writer.writerow(["Donor Name", "Email", "Phone", "Message", "Amount (INR)", "Fee (INR)", "Payment Method", "UTR", "Status", "Paid At", "Payment ID"])
     for s in sessions:
         writer.writerow([
-            s["donor_name"], s["donor_email"], s["donor_phone"],
+            s["donor_name"], s.get("donor_email", ""), s["donor_phone"],
             s.get("donor_message", ""), s["total_amount_paise"] / 100,
-            s.get("fee_amount_paise", 0) / 100, s.get("paid_at", ""),
+            s.get("fee_amount_paise", 0) / 100,
+            s.get("payment_method", "razorpay"), s.get("utr", ""),
+            s.get("status", ""), s.get("paid_at", ""),
             s.get("razorpay_payment_id", "")
         ])
     output.seek(0)
