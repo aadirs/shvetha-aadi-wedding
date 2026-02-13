@@ -294,6 +294,92 @@ async def get_session(session_id: str):
     return sessions[0]
 
 
+
+# ---- UPI FLOW ----
+@api_router.post("/upi/session/create")
+async def create_upi_session(request: Request):
+    """Create a session for UPI payment (no donor info yet — collected after payment)."""
+    data = await request.json()
+    client_ip = request.client.host if request.client else "unknown"
+    rate_limit(client_ip, max_req=20, window=60)
+
+    allocations_data = data.get("allocations", [])
+    if not allocations_data:
+        raise HTTPException(400, "At least one allocation is required")
+
+    total = 0
+    for alloc in allocations_data:
+        amt = int(alloc.get("amount_paise", 0))
+        if amt <= 0:
+            raise HTTPException(400, "Amounts must be positive")
+        total += amt
+
+    result = await sb_post("contribution_sessions", {
+        "total_amount_paise": total,
+        "fee_amount_paise": 0,
+        "status": "created",
+        "payment_method": "upi",
+        "donor_name": "",
+        "donor_email": "",
+        "donor_phone": "",
+    })
+    session_id = result[0]["id"]
+
+    alloc_records = [{
+        "session_id": session_id,
+        "pot_id": a["pot_id"],
+        "pot_item_id": a.get("pot_item_id"),
+        "amount_paise": int(a["amount_paise"]),
+        "status": "created"
+    } for a in allocations_data]
+    await sb_post("allocations", alloc_records)
+
+    return {"session_id": session_id, "total_amount_paise": total}
+
+
+@api_router.post("/upi/blessing/confirm")
+async def confirm_upi_blessing(request: Request):
+    """After UPI payment, donor submits name/phone/message/UTR."""
+    data = await request.json()
+    client_ip = request.client.host if request.client else "unknown"
+    rate_limit(client_ip, max_req=20, window=60)
+
+    session_id = data.get("session_id")
+    donor_name = html.escape(data.get("donor_name", "").strip())
+    donor_phone = data.get("donor_phone", "").strip()
+    donor_message = html.escape(data.get("donor_message", "").strip()) if data.get("donor_message") else ""
+    utr = data.get("utr", "").strip()
+
+    if not session_id or not donor_name or not donor_phone or not donor_message:
+        raise HTTPException(400, "Session ID, name, phone, and blessing message are required")
+
+    sessions = await sb_get("contribution_sessions", {"select": "id,status,payment_method", "id": f"eq.{session_id}"})
+    if not sessions:
+        raise HTTPException(404, "Session not found")
+    if sessions[0]["status"] not in ("created",):
+        raise HTTPException(400, f"Session already {sessions[0]['status']}")
+
+    update_data = {
+        "donor_name": donor_name,
+        "donor_phone": donor_phone,
+        "donor_message": donor_message,
+        "utr": utr if utr else None,
+        "status": "submitted",
+        "paid_at": datetime.now(timezone.utc).isoformat()
+    }
+    await sb_patch("contribution_sessions", update_data, {"id": f"eq.{session_id}"})
+    await sb_patch("allocations", {"status": "submitted"}, {"session_id": f"eq.{session_id}"})
+
+    return {"status": "submitted", "session_id": session_id, "donor_name": donor_name}
+
+
+@api_router.get("/config")
+async def get_config():
+    """Return payment provider config to frontend."""
+    return {"payment_provider": PAYMENT_PROVIDER}
+
+
+
 # ---- RAZORPAY ----
 @api_router.post("/razorpay/order/create")
 async def create_razorpay_order(request: Request):
