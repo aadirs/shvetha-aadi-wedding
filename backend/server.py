@@ -626,7 +626,7 @@ async def admin_dashboard(admin=Depends(get_admin_token)):
     } for pid, total in pot_totals.items()]
 
     recent = await sb_get("contribution_sessions", {
-        "select": "id,donor_name,donor_email,total_amount_paise,fee_amount_paise,status,paid_at,created_at,payment_method,utr",
+        "select": "id,donor_name,donor_email,total_amount_paise,fee_amount_paise,status,paid_at,created_at",
         "status": "eq.paid", "order": "paid_at.desc.nullslast", "limit": "10"
     })
 
