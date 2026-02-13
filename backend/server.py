@@ -382,7 +382,7 @@ async def confirm_upi_blessing(request: Request):
         await sb_patch("contribution_sessions", update_data, {"id": f"eq.{session_id}"})
     await sb_patch("allocations", {"status": "paid"}, {"session_id": f"eq.{session_id}"})
 
-    return {"status": "submitted", "session_id": session_id, "donor_name": donor_name}
+    return {"status": "paid", "session_id": session_id, "donor_name": donor_name}
 
 
 @api_router.get("/config")
