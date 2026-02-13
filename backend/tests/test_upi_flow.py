@@ -193,9 +193,10 @@ class TestUpiBlessingConfirm:
         assert second_response.status_code == 400
 
     def test_confirm_blessing_invalid_session_returns_404(self):
-        """POST /api/upi/blessing/confirm with invalid session_id returns 404"""
+        """POST /api/upi/blessing/confirm with non-existent session_id returns 404"""
+        # Use valid UUID format that doesn't exist in DB
         payload = {
-            "session_id": "invalid-session-id-12345",
+            "session_id": "00000000-0000-0000-0000-000000000000",
             "donor_name": "TEST_InvalidSession",
             "donor_phone": "+919876543210",
             "donor_message": "Best wishes!"
