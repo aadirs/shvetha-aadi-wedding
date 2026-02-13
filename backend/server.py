@@ -369,11 +369,17 @@ async def confirm_upi_blessing(request: Request):
         "donor_name": donor_name,
         "donor_phone": donor_phone,
         "donor_message": donor_message,
-        "utr": utr if utr else None,
         "status": "submitted",
         "paid_at": datetime.now(timezone.utc).isoformat()
     }
-    await sb_patch("contribution_sessions", update_data, {"id": f"eq.{session_id}"})
+    if utr:
+        update_data["utr"] = utr
+    try:
+        await sb_patch("contribution_sessions", update_data, {"id": f"eq.{session_id}"})
+    except Exception:
+        # utr column may not exist — try without it
+        update_data.pop("utr", None)
+        await sb_patch("contribution_sessions", update_data, {"id": f"eq.{session_id}"})
     await sb_patch("allocations", {"status": "submitted"}, {"session_id": f"eq.{session_id}"})
 
     return {"status": "submitted", "session_id": session_id, "donor_name": donor_name}
