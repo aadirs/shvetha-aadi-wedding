@@ -336,7 +336,7 @@ async def create_upi_session(request: Request):
         "pot_id": a["pot_id"],
         "pot_item_id": a.get("pot_item_id"),
         "amount_paise": int(a["amount_paise"]),
-        "status": "created"
+        "status": "pending"
     } for a in allocations_data]
     await sb_post("allocations", alloc_records)
 
