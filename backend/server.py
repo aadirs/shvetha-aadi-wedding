@@ -156,7 +156,7 @@ async def list_pots():
     })
     allocs = await sb_get("allocations", {
         "select": "pot_id,amount_paise,session_id",
-        "status": "in.(paid,submitted,received)"
+        "status": "eq.paid"
     })
     pot_totals = defaultdict(int)
     pot_sessions = defaultdict(set)
@@ -203,7 +203,7 @@ async def get_pot(slug: str):
         "select": "*", "pot_id": f"eq.{pot['id']}", "order": "sort_order.asc"
     })
     allocs = await sb_get("allocations", {
-        "select": "amount_paise", "pot_id": f"eq.{pot['id']}", "status": "in.(paid,submitted,received)"
+        "select": "amount_paise", "pot_id": f"eq.{pot['id']}", "status": "eq.paid"
     })
     return {**pot, "items": items, "total_raised_paise": sum(a["amount_paise"] for a in allocs)}
 
@@ -214,7 +214,7 @@ async def get_contributors(slug: str):
     if not pots:
         raise HTTPException(404, "Pot not found")
     allocs = await sb_get("allocations", {
-        "select": "session_id", "pot_id": f"eq.{pots[0]['id']}", "status": "in.(paid,submitted,received)"
+        "select": "session_id", "pot_id": f"eq.{pots[0]['id']}", "status": "eq.paid"
     })
     sids = list(set(a["session_id"] for a in allocs))
     if not sids:
@@ -611,7 +611,7 @@ async def payment_link_callback(request: Request):
 # ---- ADMIN ----
 @api_router.get("/admin/dashboard")
 async def admin_dashboard(admin=Depends(get_admin_token)):
-    allocs = await sb_get("allocations", {"select": "pot_id,amount_paise", "status": "in.(paid,submitted,received)"})
+    allocs = await sb_get("allocations", {"select": "pot_id,amount_paise", "status": "eq.paid"})
     total_collected = sum(a["amount_paise"] for a in allocs)
     pot_totals = defaultdict(int)
     for a in allocs:
@@ -627,7 +627,7 @@ async def admin_dashboard(admin=Depends(get_admin_token)):
 
     recent = await sb_get("contribution_sessions", {
         "select": "id,donor_name,donor_email,total_amount_paise,fee_amount_paise,status,paid_at,created_at,payment_method,utr",
-        "status": "in.(paid,submitted,received)", "order": "paid_at.desc.nullslast", "limit": "10"
+        "status": "eq.paid", "order": "paid_at.desc.nullslast", "limit": "10"
     })
 
     return {
@@ -645,7 +645,7 @@ async def admin_list_pots(admin=Depends(get_admin_token)):
     for item in all_items:
         items_by_pot[item["pot_id"]].append(item)
 
-    allocs = await sb_get("allocations", {"select": "pot_id,amount_paise", "status": "in.(paid,submitted,received)"})
+    allocs = await sb_get("allocations", {"select": "pot_id,amount_paise", "status": "eq.paid"})
     pot_totals = defaultdict(int)
     for a in allocs:
         pot_totals[a["pot_id"]] += a["amount_paise"]
@@ -767,7 +767,7 @@ async def admin_contributions(admin=Depends(get_admin_token)):
 @api_router.get("/admin/contributions/export")
 async def export_contributions(admin=Depends(get_admin_token)):
     sessions = await sb_get("contribution_sessions", {
-        "select": "*", "status": "in.(paid,submitted,received)", "order": "paid_at.desc.nullslast"
+        "select": "*", "status": "eq.paid", "order": "paid_at.desc.nullslast"
     })
     output = io.StringIO()
     writer = csv.writer(output)
