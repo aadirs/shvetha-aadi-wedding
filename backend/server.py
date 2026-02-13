@@ -771,13 +771,12 @@ async def export_contributions(admin=Depends(get_admin_token)):
     })
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Donor Name", "Email", "Phone", "Message", "Amount (INR)", "Fee (INR)", "Payment Method", "UTR", "Status", "Paid At", "Payment ID"])
+    writer.writerow(["Donor Name", "Email", "Phone", "Message", "Amount (INR)", "Fee (INR)", "Status", "Paid At", "Payment ID"])
     for s in sessions:
         writer.writerow([
-            s["donor_name"], s.get("donor_email", ""), s["donor_phone"],
+            s["donor_name"], s.get("donor_email", ""), s.get("donor_phone", ""),
             s.get("donor_message", ""), s["total_amount_paise"] / 100,
             s.get("fee_amount_paise", 0) / 100,
-            s.get("payment_method", "razorpay"), s.get("utr", ""),
             s.get("status", ""), s.get("paid_at", ""),
             s.get("razorpay_payment_id", "")
         ])
