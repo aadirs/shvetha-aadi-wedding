@@ -1,71 +1,84 @@
 # Wedding Gift Collection Pots - PRD
 
 ## Problem Statement
-Build a wedding gift "Collection Pots" full-stack web app (India-first) with Razorpay payments (INR), Supabase Postgres, single admin user, public access for anyone with link.
+Build a wedding gift "Collection Pots" full-stack web app (India-first) with dual payment support (Razorpay + personal UPI), Supabase Postgres, single admin user, public access for anyone with link.
 
 ## Architecture
 - **Backend**: FastAPI + Supabase Postgres (via REST API) + Razorpay SDK
-- **Frontend**: React + Shadcn UI + Tailwind CSS + Razorpay Checkout.js
+- **Frontend**: React + Shadcn UI + Tailwind CSS + qrcode.react + canvas-confetti
 - **Database**: Supabase Postgres (5 tables: pots, pot_items, contribution_sessions, allocations, webhook_events)
-- **Auth**: JWT with hardcoded admin credentials (Aadishve/061097)
+- **Auth**: JWT with admin credentials (Aadishve/061097)
+- **Payment Toggle**: `PAYMENT_PROVIDER` env var switches between "upi" and "razorpay"
 
 ## User Personas
-1. **Wedding Guests** - View pots, contribute via Razorpay (UPI/cards/netbanking), leave blessings
-2. **Couple (Admin)** - Manage pots, view contributions, export CSV, track progress
+1. **Wedding Guests** - View pots, contribute via UPI (scan QR / deep link) or Razorpay, leave blessings
+2. **Couple (Admin)** - Manage pots, view contributions, mark as Received/Failed, export CSV
 
 ## Core Requirements
-- Public: View pots, contribute without login, cart checkout, fee toggle
-- Admin: CRUD pots/items, dashboard stats, contributions export
+- Public: View pots, contribute without login, cart checkout
+- UPI mode: Cart → UPI Modal (QR + deep link) → Blessing form (name/phone/message/UTR) → Confetti → Thank You
+- Razorpay mode: Cart with donor form → Razorpay checkout.js popup → Thank You
+- Admin: CRUD pots/items, dashboard stats, contributions export, mark contributions Received/Failed
 - Privacy: Never show individual amounts publicly
-- Payments: Razorpay INR with webhook verification
 
-## What's Been Implemented (Feb 7, 2026)
+## What's Been Implemented
+
+### Phase 1 (Feb 7, 2026)
 - Full backend with 20+ API endpoints (Supabase REST, Razorpay, JWT auth)
 - Public homepage with "Shvetha & Aadi" wedding header, pot grid with progress bars
 - Pot detail page with items, add-to-cart, contributor feed
 - Cart drawer with multi-pot allocations, donor form, fee toggle, Razorpay checkout
 - Admin dashboard with stats, pot CRUD with items, contributions table + CSV export
 - South Indian traditional theme (crimson/gold/ivory), Playfair Display + Great Vibes fonts
-- Cart persistence via localStorage
-- Rate limiting, XSS sanitization, webhook signature verification
-- 3 seed pots created: Dream Home, Honeymoon Adventures, Kitchen Essentials
 
-## P0 (Done)
-- [x] Supabase schema + all tables
-- [x] Public pot listing with progress
-- [x] Pot detail with items & contributors
-- [x] Cart + multi-pot checkout
-- [x] Razorpay order creation + webhook
-- [x] Admin CRUD (pots, items)
-- [x] Admin dashboard + CSV export
-- [x] Mobile-first responsive design
+### Phase 2 (Feb 8, 2026)
+- Fixed Razorpay checkout iOS Safari issue (Sheet overlay blocking touch events)
+- Added Razorpay Payment Links API as alternative flow
+- Admin username capitalized: Aadishve
+- "Goal reached" display for fully funded pots
+- Production readiness testing: 100% pass rate
 
-## Fixes Applied (Feb 8, 2026)
-- [x] **Fixed Razorpay checkout unresponsive on iOS Safari** — Removed checkout.js entirely. Now using Razorpay Payment Links API for ALL devices. When user clicks Pay, browser does a full page redirect to `https://razorpay.com/payment-link/...` (Razorpay's hosted checkout). No iframe, no popup, no cross-origin touch issues. After payment, Razorpay redirects to `/api/razorpay/payment-link/callback` which verifies HMAC signature and redirects to thank-you page.
-  - Backend: `POST /api/razorpay/payment-link` (creates Razorpay Payment Link via API)
-  - Backend: `GET /api/razorpay/payment-link/callback` (verifies signature, updates DB, redirects to /thank-you)
-  - Frontend: `window.location.href = short_url` (full page redirect)
-  - checkout.js script tag removed from index.html
-- [x] Admin username capitalized: aadishve → Aadishve
-- [x] "Goal reached" display for fully funded pots (completed prior session)
-- [x] Admin username capitalized: aadishve → Aadishve
-- [x] "Goal reached" display for fully funded pots (completed prior session)
-- [x] Admin username capitalized: aadishve → Aadishve
-- [x] "Goal reached" display for fully funded pots (completed prior session)
+### Phase 3 (Feb 13, 2026) - UPI Payment Mode
+- **PAYMENT_PROVIDER env toggle** — switches between "upi" and "razorpay" modes
+- **UPI Cart** — Removed donor fields, ceremonial styling, "Proceed to Blessing" button
+- **UPI Modal** — QR code (240px, black/white, level M, 4-module margin), "Pay via UPI App" deep link, instruction text
+- **Blessing Confirmation Form** — Name*, Phone*, Blessing Message* (required), UTR (optional with tooltip)
+- **Post-submit** — Golden confetti (slow fall, ceremonial), toast, redirect to Thank You
+- **Backend**: `POST /api/upi/session/create`, `POST /api/upi/blessing/confirm`, `GET /api/config`
+- **Admin Status Management** — Mark contributions as Received (→paid) or Failed, cascades to allocations
+- **Updated totals** — Pot progress counts paid status (covers both Razorpay and UPI confirmed)
+- All tests passing: 20/20 backend, 100% frontend
 
-## Production Readiness (Feb 8, 2026)
-- Full test suite: 19/19 backend, 100% frontend
-- All flows tested on desktop (1920x800) and mobile (390x844)
-- Zero critical bugs, zero UI bugs
-- Tested: homepage, pot pages, cart, payment, thank you, admin login/dashboard/pots/contributions/export
-- Ready for production: switch Razorpay keys from test to live in backend .env
-- [ ] Razorpay webhook live testing (requires public webhook URL configured)
-- [ ] Supabase realtime subscription for live total updates
+## DB Schema
+- **pots**: id, title, slug, story, cover_image_url, goal_amount, created_at, archived
+- **pot_items**: id, pot_id, title, amount, description, image_url, sort_order
+- **contribution_sessions**: id, razorpay_order_id, status (created/pending/paid/failed), donor_name, donor_email, donor_phone, donor_message, total_amount_paise, fee_amount_paise, paid_at, created_at
+  - Note: `utr` and `payment_method` columns pending (need Supabase dashboard access)
+- **allocations**: id, session_id, pot_id, pot_item_id, amount_paise, status (pending/paid/failed)
+- **webhook_events**: id, body, headers, created_at
+
+## Key API Endpoints
+- `GET /api/config` — Returns payment_provider setting
+- `GET /api/pots` / `GET /api/pots/:slug` — Public pot listing
+- `POST /api/upi/session/create` — Create UPI session (no donor info)
+- `POST /api/upi/blessing/confirm` — Submit blessing after UPI payment
+- `POST /api/session/create-or-update` — Razorpay session
+- `POST /api/razorpay/order/create` — Razorpay order
+- `POST /api/admin/contributions/:id/status` — Mark Received/Failed
+
+## P1 (Next)
+- [ ] Add `utr` and `payment_method` columns to Supabase (requires dashboard access)
 - [ ] Email confirmation to donors after payment
-- [ ] Image upload for pot covers (currently URL-based)
+- [ ] Supabase realtime subscription for live total updates
 
 ## P2 (Backlog)
+- [ ] Image upload for pot covers (currently URL-based)
 - [ ] QR code sharing for individual pots
-- [ ] Thank you page with confetti animation
 - [ ] Admin: bulk archive, reorder pots
 - [ ] PWA support for mobile home screen
+
+## Current Config
+- `PAYMENT_PROVIDER=upi` (both frontend and backend)
+- UPI ID: `861805225@ybl`
+- Admin: Aadishve / 061097
+- Preview URL: https://couple-gift-fund.preview.emergentagent.com
