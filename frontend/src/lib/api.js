@@ -17,6 +17,10 @@ export const createSession = (data) => api.post('/session/create-or-update', dat
 export const createOrder = (data) => api.post('/razorpay/order/create', data);
 export const createPaymentLink = (data) => api.post('/razorpay/payment-link', data);
 export const pollSession = (id) => api.get(`/session/${id}`);
+export const createUpiSession = (data) => api.post('/upi/session/create', data);
+export const confirmBlessing = (data) => api.post('/upi/blessing/confirm', data);
+export const getConfig = () => api.get('/config');
+export const updateContributionStatus = (sessionId, status) => api.post(`/admin/contributions/${sessionId}/status`, { status });
 export const adminLogin = (data) => api.post('/admin/login', data);
 export const fetchDashboard = () => api.get('/admin/dashboard');
 export const fetchAdminPots = () => api.get('/admin/pots');
