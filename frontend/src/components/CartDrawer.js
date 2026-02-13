@@ -10,38 +10,36 @@ import { Textarea } from "../components/ui/textarea";
 import { Switch } from "../components/ui/switch";
 import { Separator } from "../components/ui/separator";
 import { ScrollArea } from "../components/ui/scroll-area";
-import { Trash2, ShoppingBag, CreditCard, Loader2 } from "lucide-react";
+import { Trash2, ShoppingBag, CreditCard, Loader2, Heart } from "lucide-react";
 import { toast } from "sonner";
+import UpiModal from "./UpiModal";
+
+const PAYMENT_PROVIDER = process.env.REACT_APP_PAYMENT_PROVIDER || "razorpay";
 
 export default function CartDrawer() {
   const { items, removeItem, clearCart, totalPaise, isOpen, setIsOpen } = useCart();
   const [donor, setDonor] = useState({ name: "", email: "", phone: "", message: "" });
   const [coverFees, setCoverFees] = useState(true);
   const [paying, setPaying] = useState(false);
+  const [upiModalOpen, setUpiModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
-  // This ref holds Razorpay options to open AFTER the Sheet is fully closed
   const rzpPendingRef = useRef(null);
 
-  const feePaise = coverFees ? Math.ceil(totalPaise * 0.0236) : 0;
+  const feePaise = PAYMENT_PROVIDER === "razorpay" && coverFees ? Math.ceil(totalPaise * 0.0236) : 0;
   const grandTotalPaise = totalPaise + feePaise;
   const potSlug = location.pathname.startsWith("/p/") ? location.pathname.split("/p/")[1] : null;
 
-  // Open Razorpay ONLY after Sheet has fully closed and unmounted its overlay
+  // Open Razorpay ONLY after Sheet has fully closed (for Razorpay mode)
   useEffect(() => {
     if (!isOpen && rzpPendingRef.current) {
-      // Wait for Radix close animation to finish and overlay to unmount
       const timer = setTimeout(() => {
-        // Force-clean any residual body styles from Radix Dialog
         document.body.style.pointerEvents = '';
         document.body.style.overflow = '';
         document.body.removeAttribute('data-scroll-locked');
         document.documentElement.removeAttribute('data-scroll-locked');
-
         const options = rzpPendingRef.current;
         rzpPendingRef.current = null;
-
         if (window.Razorpay) {
           const rzp = new window.Razorpay(options);
           rzp.open();
@@ -49,12 +47,32 @@ export default function CartDrawer() {
           toast.error("Payment gateway not loaded. Please refresh.");
           setPaying(false);
         }
-      }, 600); // Radix close animation is 300ms, add buffer
+      }, 600);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
-  const handlePay = async () => {
+  // Aggregate items by pot
+  const potGroups = items.reduce((acc, item) => {
+    const key = item.potId;
+    if (!acc[key]) acc[key] = { potTitle: item.potTitle, items: [], total: 0 };
+    acc[key].items.push(item);
+    acc[key].total += item.amountPaise;
+    return acc;
+  }, {});
+
+  const handlePayUpi = () => {
+    if (items.length === 0) { toast.error("Your basket is empty"); return; }
+    const allocations = items.map(item => ({
+      pot_id: item.potId,
+      pot_item_id: item.itemId,
+      amount_paise: item.amountPaise,
+    }));
+    setIsOpen(false);
+    setTimeout(() => setUpiModalOpen(true), 300);
+  };
+
+  const handlePayRazorpay = async () => {
     if (!donor.name || !donor.email || !donor.phone) {
       toast.error("Please fill in your name, email, and phone");
       return;
@@ -64,48 +82,29 @@ export default function CartDrawer() {
     setPaying(true);
     try {
       const allocations = items.map(item => ({
-        pot_id: item.potId,
-        pot_item_id: item.itemId,
-        amount_paise: item.amountPaise
+        pot_id: item.potId, pot_item_id: item.itemId, amount_paise: item.amountPaise
       }));
-
       const sessionRes = await createSession({
         donor_name: donor.name, donor_email: donor.email,
         donor_phone: donor.phone, donor_message: donor.message,
         allocations, cover_fees: coverFees
       });
-
       const orderRes = await createOrder({ session_id: sessionRes.data.session_id });
       const od = orderRes.data;
-
       const savedDonorName = donor.name;
       const savedSessionId = sessionRes.data.session_id;
 
-      // Store Razorpay options — will be opened by useEffect after Sheet closes
       rzpPendingRef.current = {
-        key: od.key_id,
-        amount: od.amount,
-        currency: od.currency,
-        order_id: od.order_id,
-        name: "Shvetha & Aadi",
+        key: od.key_id, amount: od.amount, currency: od.currency,
+        order_id: od.order_id, name: "Shvetha & Aadi",
         description: "Wedding Gift Contribution",
-        prefill: od.prefill,
-        theme: { color: "#8B0000" },
+        prefill: od.prefill, theme: { color: "#8B0000" },
         handler: function () {
-          const donorName = encodeURIComponent(savedDonorName);
-          const slug = potSlug || "";
           clearCart();
-          navigate(`/thank-you?session=${savedSessionId}&pot=${slug}&name=${donorName}`);
+          navigate(`/thank-you?session=${savedSessionId}&pot=${potSlug || ""}&name=${encodeURIComponent(savedDonorName)}`);
         },
-        modal: {
-          ondismiss: function () {
-            setPaying(false);
-            toast.info("Payment was cancelled");
-          }
-        }
+        modal: { ondismiss: function () { setPaying(false); toast.info("Payment was cancelled"); } }
       };
-
-      // Close the Sheet — useEffect will detect this and open Razorpay
       setIsOpen(false);
     } catch (e) {
       toast.error(e.response?.data?.detail || "Something went wrong");
@@ -113,138 +112,147 @@ export default function CartDrawer() {
     }
   };
 
-  return (
-    <Sheet open={isOpen} onOpenChange={() => setIsOpen(false)}>
-      <SheetContent className="bg-card border-l border-gold/20 w-full sm:max-w-md p-0" data-testid="cart-drawer">
-        <SheetHeader className="p-5 pb-0">
-          <SheetTitle className="font-serif text-xl flex items-center gap-2">
-            <ShoppingBag className="w-5 h-5 text-gold" />
-            Your Gift Basket
-          </SheetTitle>
-        </SheetHeader>
+  const upiAllocations = items.map(item => ({
+    pot_id: item.potId, pot_item_id: item.itemId, amount_paise: item.amountPaise,
+  }));
 
-        <ScrollArea className="h-[calc(100vh-80px)]">
+  return (
+    <>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md p-0 bg-[#FFF8F0] border-l border-[#D4AF37]/20" data-testid="cart-drawer">
+          <SheetHeader className="p-5 pb-3 border-b border-[#D4AF37]/15">
+            <SheetTitle className="font-serif text-[#5C3A1E] flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5 text-[#8B0000]" />
+              Your Offering
+            </SheetTitle>
+          </SheetHeader>
+
+          <ScrollArea className="h-[calc(100vh-80px)]">
             <div className="p-5 space-y-5">
-              {/* Cart Items */}
               {items.length === 0 ? (
-                <p className="text-center text-muted-foreground py-10 font-sans text-sm" data-testid="empty-cart">
-                  Your basket is empty
-                </p>
+                <div className="text-center py-16" data-testid="empty-cart">
+                  <Heart className="w-12 h-12 mx-auto text-[#D4AF37]/30 mb-3" />
+                  <p className="font-serif text-[#5C3A1E]/60 text-lg">Your basket is empty</p>
+                  <p className="text-sm text-[#5C3A1E]/40 mt-1">Choose a gift to bless the couple</p>
+                </div>
               ) : (
-                <div className="space-y-3" data-testid="cart-items">
-                  {items.map(item => (
-                    <div key={item.id} className="flex items-center justify-between bg-background/50 rounded-lg p-3 border border-border/30" data-testid={`cart-item-${item.id}`}>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-sans font-medium text-foreground truncate">{item.potTitle}</p>
-                        {item.itemTitle && <p className="text-xs text-muted-foreground truncate">{item.itemTitle}</p>}
-                        <p className="text-sm font-sans font-bold text-foreground mt-1">
-                          {"\u20B9"}{(item.amountPaise / 100).toLocaleString('en-IN')}
-                        </p>
+                <>
+                  {/* Items grouped by pot */}
+                  {Object.entries(potGroups).map(([potId, group]) => (
+                    <div key={potId} className="bg-white/70 rounded-xl p-4 border border-[#D4AF37]/10">
+                      <p className="font-serif text-sm text-[#8B0000] mb-2">{group.potTitle}</p>
+                      {group.items.map((item) => (
+                        <div key={item.cartId} className="flex items-center justify-between py-1.5" data-testid={`cart-item-${item.cartId}`}>
+                          <div>
+                            <p className="text-sm text-[#5C3A1E]">{item.itemTitle}</p>
+                            <p className="text-xs text-[#5C3A1E]/50">₹{(item.amountPaise / 100).toLocaleString("en-IN")}</p>
+                          </div>
+                          <button onClick={() => removeItem(item.cartId)} className="p-1.5 rounded-full hover:bg-red-50 transition" data-testid={`remove-item-${item.cartId}`}>
+                            <Trash2 className="w-4 h-4 text-[#8B0000]/50 hover:text-[#8B0000]" />
+                          </button>
+                        </div>
+                      ))}
+                      <div className="flex justify-between pt-2 border-t border-[#D4AF37]/10 mt-2">
+                        <span className="text-xs text-[#5C3A1E]/60">Subtotal</span>
+                        <span className="text-sm font-medium text-[#5C3A1E]">₹{(group.total / 100).toLocaleString("en-IN")}</span>
                       </div>
-                      <button onClick={() => removeItem(item.id)} className="text-destructive/50 hover:text-destructive ml-2 p-1">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
                     </div>
                   ))}
-                </div>
-              )}
 
-              {items.length > 0 && (
-                <>
-                  <Separator className="bg-border/40" />
+                  <Separator className="bg-[#D4AF37]/15" />
 
-                  {/* Donor Form */}
-                  <div className="space-y-4" data-testid="donor-form">
-                    <h4 className="font-serif text-base text-foreground">Your Details</h4>
-                    <div>
-                      <Label className="font-sans text-xs text-muted-foreground">Name *</Label>
-                      <Input
-                        value={donor.name} onChange={e => setDonor({...donor, name: e.target.value})}
-                        placeholder="Your name"
-                        className="mt-1 bg-background border-border/40 font-sans text-sm"
-                        data-testid="donor-name-input"
-                      />
-                    </div>
-                    <div>
-                      <Label className="font-sans text-xs text-muted-foreground">Email *</Label>
-                      <Input
-                        type="email" value={donor.email} onChange={e => setDonor({...donor, email: e.target.value})}
-                        placeholder="your@email.com"
-                        className="mt-1 bg-background border-border/40 font-sans text-sm"
-                        data-testid="donor-email-input"
-                      />
-                    </div>
-                    <div>
-                      <Label className="font-sans text-xs text-muted-foreground">Phone *</Label>
-                      <Input
-                        type="tel" value={donor.phone} onChange={e => setDonor({...donor, phone: e.target.value})}
-                        placeholder="+91 98765 43210"
-                        className="mt-1 bg-background border-border/40 font-sans text-sm"
-                        data-testid="donor-phone-input"
-                      />
-                    </div>
-                    <div>
-                      <Label className="font-sans text-xs text-muted-foreground">Message (optional)</Label>
-                      <Textarea
-                        value={donor.message} onChange={e => setDonor({...donor, message: e.target.value})}
-                        placeholder="Your blessings for the couple..."
-                        className="mt-1 bg-background border-border/40 font-sans text-sm resize-none"
-                        rows={2}
-                        data-testid="donor-message-input"
-                      />
-                    </div>
-                  </div>
+                  {/* Razorpay mode: show donor form + fees */}
+                  {PAYMENT_PROVIDER === "razorpay" && (
+                    <>
+                      <div className="space-y-3">
+                        <div>
+                          <Label className="text-[#5C3A1E] font-serif text-xs">Your Name *</Label>
+                          <Input data-testid="donor-name-input" value={donor.name} onChange={e => setDonor({ ...donor, name: e.target.value })}
+                            placeholder="Full name" className="mt-1 bg-white border-[#D4AF37]/30 rounded-lg text-sm h-9" />
+                        </div>
+                        <div>
+                          <Label className="text-[#5C3A1E] font-serif text-xs">Email *</Label>
+                          <Input data-testid="donor-email-input" value={donor.email} onChange={e => setDonor({ ...donor, email: e.target.value })}
+                            placeholder="Email address" className="mt-1 bg-white border-[#D4AF37]/30 rounded-lg text-sm h-9" />
+                        </div>
+                        <div>
+                          <Label className="text-[#5C3A1E] font-serif text-xs">Phone *</Label>
+                          <Input data-testid="donor-phone-input" value={donor.phone} onChange={e => setDonor({ ...donor, phone: e.target.value })}
+                            placeholder="+91 XXXXX XXXXX" className="mt-1 bg-white border-[#D4AF37]/30 rounded-lg text-sm h-9" />
+                        </div>
+                        <div>
+                          <Label className="text-[#5C3A1E] font-serif text-xs">Message</Label>
+                          <Textarea data-testid="donor-message-input" value={donor.message} onChange={e => setDonor({ ...donor, message: e.target.value })}
+                            placeholder="Your blessing..." className="mt-1 bg-white border-[#D4AF37]/30 rounded-lg text-sm min-h-[60px]" />
+                        </div>
+                      </div>
 
-                  <Separator className="bg-border/40" />
-
-                  {/* Fee Toggle */}
-                  <div className="flex items-center justify-between" data-testid="fee-toggle">
-                    <div>
-                      <p className="font-sans text-sm text-foreground">Cover payment fees</p>
-                      <p className="text-xs text-muted-foreground">+{"\u20B9"}{(feePaise / 100).toFixed(2)} (2.36%)</p>
-                    </div>
-                    <Switch checked={coverFees} onCheckedChange={setCoverFees} />
-                  </div>
+                      <div className="flex items-center justify-between bg-white/60 rounded-lg p-3 border border-[#D4AF37]/10">
+                        <div>
+                          <p className="text-sm text-[#5C3A1E]">Cover processing fees</p>
+                          <p className="text-xs text-[#5C3A1E]/50">2.36% gateway fee</p>
+                        </div>
+                        <Switch checked={coverFees} onCheckedChange={setCoverFees} data-testid="cover-fees-toggle" />
+                      </div>
+                    </>
+                  )}
 
                   {/* Totals */}
-                  <div className="bg-crimson/5 rounded-lg p-4 space-y-2" data-testid="cart-totals">
-                    <div className="flex justify-between text-sm font-sans">
-                      <span className="text-muted-foreground">Subtotal</span>
-                      <span className="text-foreground">{"\u20B9"}{(totalPaise / 100).toLocaleString('en-IN')}</span>
+                  <div className="bg-white/80 rounded-xl p-4 border border-[#D4AF37]/15 space-y-2">
+                    <div className="flex justify-between text-sm text-[#5C3A1E]/70">
+                      <span>Gift Total</span>
+                      <span>₹{(totalPaise / 100).toLocaleString("en-IN")}</span>
                     </div>
-                    {coverFees && (
-                      <div className="flex justify-between text-sm font-sans">
-                        <span className="text-muted-foreground">Gateway fees</span>
-                        <span className="text-foreground">{"\u20B9"}{(feePaise / 100).toFixed(2)}</span>
+                    {PAYMENT_PROVIDER === "razorpay" && feePaise > 0 && (
+                      <div className="flex justify-between text-sm text-[#5C3A1E]/50">
+                        <span>Processing Fee</span>
+                        <span>₹{(feePaise / 100).toFixed(2)}</span>
                       </div>
                     )}
-                    <Separator className="bg-border/40" />
-                    <div className="flex justify-between font-serif">
-                      <span className="font-bold text-foreground">Total</span>
-                      <span className="font-bold text-foreground text-lg">
-                        {"\u20B9"}{(grandTotalPaise / 100).toLocaleString('en-IN')}
-                      </span>
+                    <Separator className="bg-[#D4AF37]/15" />
+                    <div className="flex justify-between font-serif text-lg text-[#5C3A1E]" data-testid="cart-total">
+                      <span>Total</span>
+                      <span>₹{(grandTotalPaise / 100).toLocaleString("en-IN")}</span>
                     </div>
                   </div>
 
-                  {/* Pay Button */}
-                  <Button
-                    onClick={handlePay}
-                    disabled={paying}
-                    className="w-full bg-crimson hover:bg-crimson/90 text-white rounded-full font-sans py-6 text-base"
-                    data-testid="pay-btn"
-                  >
-                    {paying ? (
-                      <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
-                    ) : (
-                      <><CreditCard className="w-5 h-5 mr-2" /> Pay {"\u20B9"}{(grandTotalPaise / 100).toLocaleString('en-IN')}</>
-                    )}
-                  </Button>
+                  {/* Action button */}
+                  {PAYMENT_PROVIDER === "upi" ? (
+                    <Button
+                      onClick={handlePayUpi}
+                      className="w-full h-12 bg-[#8B0000] hover:bg-[#6B0000] text-white font-serif text-base rounded-xl shadow-lg"
+                      data-testid="proceed-blessing-btn"
+                    >
+                      <Heart className="w-4 h-4 mr-2" />
+                      Proceed to Blessing
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handlePayRazorpay}
+                      disabled={paying}
+                      className="w-full h-12 bg-[#8B0000] hover:bg-[#6B0000] text-white font-serif text-base rounded-xl shadow-lg"
+                      data-testid="pay-btn"
+                    >
+                      {paying ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                        <><CreditCard className="w-4 h-4 mr-2" /> Pay ₹{(grandTotalPaise / 100).toLocaleString("en-IN")}</>
+                      )}
+                    </Button>
+                  )}
                 </>
               )}
             </div>
           </ScrollArea>
-      </SheetContent>
-    </Sheet>
+        </SheetContent>
+      </Sheet>
+
+      {/* UPI Modal - renders outside Sheet */}
+      <UpiModal
+        isOpen={upiModalOpen}
+        onClose={() => setUpiModalOpen(false)}
+        allocations={upiAllocations}
+        totalPaise={totalPaise}
+        potSlug={potSlug}
+      />
+    </>
   );
 }
