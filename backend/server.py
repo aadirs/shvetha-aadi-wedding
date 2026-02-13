@@ -203,7 +203,7 @@ async def get_pot(slug: str):
         "select": "*", "pot_id": f"eq.{pot['id']}", "order": "sort_order.asc"
     })
     allocs = await sb_get("allocations", {
-        "select": "amount_paise", "pot_id": f"eq.{pot['id']}", "status": "eq.paid"
+        "select": "amount_paise", "pot_id": f"eq.{pot['id']}", "status": "in.(paid,submitted,received)"
     })
     return {**pot, "items": items, "total_raised_paise": sum(a["amount_paise"] for a in allocs)}
 
