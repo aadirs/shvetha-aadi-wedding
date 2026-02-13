@@ -1,0 +1,78 @@
+{
+  "summary": "UPI dual payment mode testing completed. All 20 backend tests PASSED (100%). Frontend UPI flow fully functional: Cart shows 'Proceed to Blessing' (not Pay), UPI modal with QR + deep link, blessing form with confetti, thank-you redirect. Admin Received/Failed buttons working.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "GET /api/config returns {payment_provider: 'upi'}",
+    "POST /api/upi/session/create with valid allocations returns session_id and total_amount_paise",
+    "POST /api/upi/session/create with multiple allocations sums correctly",
+    "POST /api/upi/session/create with empty allocations returns 400",
+    "POST /api/upi/session/create with no allocations key returns 400",
+    "POST /api/upi/session/create with zero amount returns 400",
+    "POST /api/upi/blessing/confirm with valid data updates session to 'paid'",
+    "POST /api/upi/blessing/confirm with UTR processes correctly",
+    "POST /api/upi/blessing/confirm with missing name returns 400",
+    "POST /api/upi/blessing/confirm with missing phone returns 400",
+    "POST /api/upi/blessing/confirm with missing message returns 400",
+    "POST /api/upi/blessing/confirm with missing session_id returns 400",
+    "POST /api/upi/blessing/confirm with already-paid session returns 400",
+    "POST /api/upi/blessing/confirm with non-existent session returns 404",
+    "POST /api/admin/contributions/{id}/status with 'received' sets status to 'paid'",
+    "POST /api/admin/contributions/{id}/status with 'failed' sets status to 'failed'",
+    "POST /api/admin/contributions/{id}/status with invalid status returns 400",
+    "POST /api/admin/contributions/{id}/status requires auth (returns 401 without token)",
+    "GET /api/pots still works (Razorpay flow preserved)",
+    "POST /api/session/create-or-update still works (Razorpay flow preserved)",
+    "Homepage loads on desktop (1920x1080)",
+    "Homepage loads on mobile (390x844) - responsive",
+    "Pot detail page loads with items and 5 preset amounts (₹500, ₹1000, ₹2500, ₹5000, ₹10000)",
+    "Cart shows 'Proceed to Blessing' button (not 'Pay') in UPI mode",
+    "Cart has NO donor fields in UPI mode (collected after payment)",
+    "Cart groups items by pot with subtotals",
+    "UPI Modal opens with QR code and 'Pay via UPI App' button",
+    "UPI Modal shows instruction text and 'I've completed the payment' button",
+    "Blessing form has Name*, Phone*, Blessing* (required), UTR (optional with tooltip)",
+    "Submitting blessing shows confetti, toast 'Your blessing has been received!', and redirects to /thank-you",
+    "Admin login works with Aadishve/061097",
+    "Admin dashboard shows Total Collected, Active Pots, Per-Pot Totals, Recent Contributions",
+    "Admin contributions page shows table with status, Received/Failed action buttons",
+    "Admin Export CSV button present"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_upi_flow.py",
+    "/app/test_reports/pytest/pytest_upi_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "UPI flow correctly implemented with payment_method graceful handling (Supabase column may not exist yet)",
+    "PAYMENT_PROVIDER env toggle working correctly between 'upi' and 'razorpay'",
+    "Backend correctly maps 'received' admin action to 'paid' DB status",
+    "All existing Razorpay endpoints preserved and working"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_upi_flow.py"
+  ],
+  "success_rate": {
+    "backend": "100% (20/20 tests)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "admin_username": "Aadishve",
+    "admin_password": "061097"
+  },
+  "seed_data_creation": "Created test contributions via playwright: TEST_PlaywrightUser (₹1,000 to Honeymoon pot), confirmed visible in admin dashboard",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "UPI dual payment mode fully tested and working. PAYMENT_PROVIDER=upi in both frontend and backend .env. Previous iterations 1-5 tested Razorpay flow. Test user data in DB prefixed with TEST_. No real UPI payments occur - it's a mocked/manual flow where user scans QR, pays externally, then confirms blessing.",
+  "mocked_api": {
+    "has_mocked_apis": false,
+    "note": "UPI payment is manual/external - user pays via their UPI app, then confirms blessing. No actual UPI gateway integration - QR/deep link point to real UPI ID but confirmation is manual."
+  }
+}
