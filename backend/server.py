@@ -314,15 +314,21 @@ async def create_upi_session(request: Request):
             raise HTTPException(400, "Amounts must be positive")
         total += amt
 
-    result = await sb_post("contribution_sessions", {
+    session_data = {
         "total_amount_paise": total,
         "fee_amount_paise": 0,
         "status": "created",
-        "payment_method": "upi",
         "donor_name": "",
         "donor_email": "",
         "donor_phone": "",
-    })
+    }
+    # payment_method and utr columns may not exist yet — try with them, fallback without
+    try:
+        session_data["payment_method"] = "upi"
+        result = await sb_post("contribution_sessions", session_data)
+    except Exception:
+        del session_data["payment_method"]
+        result = await sb_post("contribution_sessions", session_data)
     session_id = result[0]["id"]
 
     alloc_records = [{
