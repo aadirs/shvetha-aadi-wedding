@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { fetchContributions, exportContributions, updateContributionStatus } from "../lib/api";
-import AdminMenu from "../components/AdminMenu";
 import { Button } from "../components/ui/button";
-import { Download, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { Download, CheckCircle, XCircle, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminContributions() {
@@ -44,7 +44,10 @@ export default function AdminContributions() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <AdminMenu />
+      <nav className="bg-white border-b px-6 py-3 flex items-center gap-4">
+        <Link to="/admin" className="text-gray-500 hover:text-gray-700"><ArrowLeft className="w-5 h-5" /></Link>
+        <h1 className="font-semibold text-lg">Contributions</h1>
+      </nav>
       <main className="max-w-5xl mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold" data-testid="admin-contributions-title">Contributions</h1>
