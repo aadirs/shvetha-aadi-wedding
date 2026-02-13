@@ -222,9 +222,9 @@ async def get_contributors(slug: str):
     sessions = await sb_get("contribution_sessions", {
         "select": "id,donor_name,donor_message,paid_at",
         "id": f"in.({','.join(sids)})",
-        "order": "paid_at.desc"
+        "order": "paid_at.desc.nullslast"
     })
-    return [{"donor_name": s["donor_name"], "donor_message": s.get("donor_message", ""), "paid_at": s.get("paid_at")} for s in sessions]
+    return [{"donor_name": s["donor_name"], "donor_message": s.get("donor_message", ""), "paid_at": s.get("paid_at")} for s in sessions if s.get("donor_name")]
 
 
 # ---- SESSION ----
