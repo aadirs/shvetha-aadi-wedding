@@ -725,20 +725,23 @@ async def delete_pot_item(item_id: str, admin=Depends(get_admin_token)):
 
 @api_router.post("/admin/contributions/{session_id}/status")
 async def update_contribution_status(session_id: str, request: Request, admin=Depends(get_admin_token)):
-    """Mark a contribution as RECEIVED or FAILED."""
+    """Mark a contribution as RECEIVED (paid) or FAILED."""
     data = await request.json()
     new_status = data.get("status", "").lower()
-    if new_status not in ("received", "failed"):
+    # Map logical statuses to DB-allowed values
+    status_map = {"received": "paid", "failed": "failed"}
+    db_status = status_map.get(new_status)
+    if not db_status:
         raise HTTPException(400, "Status must be 'received' or 'failed'")
 
     sessions = await sb_get("contribution_sessions", {"select": "id,status", "id": f"eq.{session_id}"})
     if not sessions:
         raise HTTPException(404, "Session not found")
 
-    await sb_patch("contribution_sessions", {"status": new_status}, {"id": f"eq.{session_id}"})
-    await sb_patch("allocations", {"status": new_status}, {"session_id": f"eq.{session_id}"})
+    await sb_patch("contribution_sessions", {"status": db_status}, {"id": f"eq.{session_id}"})
+    await sb_patch("allocations", {"status": db_status}, {"session_id": f"eq.{session_id}"})
 
-    return {"status": new_status, "session_id": session_id}
+    return {"status": db_status, "session_id": session_id}
 
 
 
