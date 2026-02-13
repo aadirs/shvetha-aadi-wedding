@@ -156,7 +156,7 @@ async def list_pots():
     })
     allocs = await sb_get("allocations", {
         "select": "pot_id,amount_paise,session_id",
-        "status": "eq.paid"
+        "status": "in.(paid,submitted,received)"
     })
     pot_totals = defaultdict(int)
     pot_sessions = defaultdict(set)
