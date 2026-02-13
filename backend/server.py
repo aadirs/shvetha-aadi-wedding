@@ -599,7 +599,7 @@ async def payment_link_callback(request: Request):
 # ---- ADMIN ----
 @api_router.get("/admin/dashboard")
 async def admin_dashboard(admin=Depends(get_admin_token)):
-    allocs = await sb_get("allocations", {"select": "pot_id,amount_paise", "status": "eq.paid"})
+    allocs = await sb_get("allocations", {"select": "pot_id,amount_paise", "status": "in.(paid,submitted,received)"})
     total_collected = sum(a["amount_paise"] for a in allocs)
     pot_totals = defaultdict(int)
     for a in allocs:
