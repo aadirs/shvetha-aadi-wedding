@@ -214,7 +214,7 @@ async def get_contributors(slug: str):
     if not pots:
         raise HTTPException(404, "Pot not found")
     allocs = await sb_get("allocations", {
-        "select": "session_id", "pot_id": f"eq.{pots[0]['id']}", "status": "eq.paid"
+        "select": "session_id", "pot_id": f"eq.{pots[0]['id']}", "status": "in.(paid,submitted,received)"
     })
     sids = list(set(a["session_id"] for a in allocs))
     if not sids:
