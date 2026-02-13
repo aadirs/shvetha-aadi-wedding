@@ -633,7 +633,7 @@ async def admin_list_pots(admin=Depends(get_admin_token)):
     for item in all_items:
         items_by_pot[item["pot_id"]].append(item)
 
-    allocs = await sb_get("allocations", {"select": "pot_id,amount_paise", "status": "eq.paid"})
+    allocs = await sb_get("allocations", {"select": "pot_id,amount_paise", "status": "in.(paid,submitted,received)"})
     pot_totals = defaultdict(int)
     for a in allocs:
         pot_totals[a["pot_id"]] += a["amount_paise"]
