@@ -359,7 +359,7 @@ async def confirm_upi_blessing(request: Request):
     if not session_id or not donor_name or not donor_phone or not donor_message:
         raise HTTPException(400, "Session ID, name, phone, and blessing message are required")
 
-    sessions = await sb_get("contribution_sessions", {"select": "id,status,payment_method", "id": f"eq.{session_id}"})
+    sessions = await sb_get("contribution_sessions", {"select": "id,status", "id": f"eq.{session_id}"})
     if not sessions:
         raise HTTPException(404, "Session not found")
     if sessions[0]["status"] not in ("created", "pending"):
