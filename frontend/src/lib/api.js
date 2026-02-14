@@ -32,3 +32,5 @@ export const updatePotItem = (id, data) => api.put(`/admin/pot-items/${id}`, dat
 export const deletePotItem = (id) => api.delete(`/admin/pot-items/${id}`);
 export const fetchContributions = () => api.get('/admin/contributions');
 export const exportContributions = () => api.get('/admin/contributions/export', { responseType: 'blob' });
+export const fetchSettings = () => api.get('/admin/settings');
+export const updateSettings = (data) => api.put('/admin/settings', data);
