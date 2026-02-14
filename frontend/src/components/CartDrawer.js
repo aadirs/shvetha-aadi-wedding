@@ -151,7 +151,7 @@ export default function CartDrawer() {
           <SheetHeader className="px-5 pt-5 pb-3">
             <SheetTitle className="font-serif text-xl text-[#5C3A1E] flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8B0000]/10 to-[#D4AF37]/10 flex items-center justify-center">
-                <KalashIcon className="w-5 h-5 text-[#8B0000]" />
+                <GiftBoxIcon className="w-5 h-5 text-[#8B0000]" />
               </div>
               <div>
                 <span>Your Offering</span>
