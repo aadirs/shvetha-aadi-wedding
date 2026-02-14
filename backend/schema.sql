@@ -103,3 +103,7 @@ CREATE POLICY "service_role_all_pot_items" ON pot_items FOR ALL USING (true) WIT
 CREATE POLICY "service_role_all_sessions" ON contribution_sessions FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "service_role_all_allocations" ON allocations FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "service_role_all_webhook" ON webhook_events FOR ALL USING (true) WITH CHECK (true);
+
+-- Site settings policy
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "service_role_all_settings" ON site_settings FOR ALL USING (true) WITH CHECK (true);
