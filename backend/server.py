@@ -365,20 +365,23 @@ async def confirm_upi_blessing(request: Request):
     if sessions[0]["status"] not in ("created", "pending"):
         raise HTTPException(400, f"Session already {sessions[0]['status']}")
 
+    now_iso = datetime.now(timezone.utc).isoformat()
     update_data = {
         "donor_name": donor_name,
         "donor_phone": donor_phone,
         "donor_message": donor_message,
         "status": "paid",
-        "paid_at": datetime.now(timezone.utc).isoformat()
+        "paid_at": now_iso,
+        "submitted_at": now_iso  # Log when blessing was submitted
     }
     if utr:
         update_data["utr"] = utr
     try:
         await sb_patch("contribution_sessions", update_data, {"id": f"eq.{session_id}"})
     except Exception:
-        # utr column may not exist — try without it
+        # submitted_at or utr column may not exist — try without them
         update_data.pop("utr", None)
+        update_data.pop("submitted_at", None)
         await sb_patch("contribution_sessions", update_data, {"id": f"eq.{session_id}"})
     await sb_patch("allocations", {"status": "paid"}, {"session_id": f"eq.{session_id}"})
 

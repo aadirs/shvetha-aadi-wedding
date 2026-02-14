@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import confetti from "canvas-confetti";
@@ -8,7 +8,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
-import { X, Smartphone, HelpCircle, Loader2 } from "lucide-react";
+import { X, Smartphone, HelpCircle, Loader2, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 const UPI_ID = "8618052253@ybl";
@@ -21,14 +21,24 @@ function fireGoldenConfetti() {
   setTimeout(() => confetti({ particleCount: 30, spread: 60, startVelocity: 15, gravity: 0.5, ticks: 180, origin: { y: 0.5, x: 0.7 }, colors, scalar: 0.8 }), 700);
 }
 
+// Phone validation: Indian mobile numbers
+function isValidPhone(phone) {
+  const cleaned = phone.replace(/[\s\-\(\)]/g, "");
+  // Accept: +91XXXXXXXXXX, 91XXXXXXXXXX, or XXXXXXXXXX (10 digits starting with 6-9)
+  return /^(\+91|91)?[6-9]\d{9}$/.test(cleaned);
+}
+
 export default function UpiModal({ isOpen, onClose, allocations, totalPaise, potSlug }) {
   const navigate = useNavigate();
   const { clearCart } = useCart();
+  const scrollRef = useRef(null);
   const [sessionId, setSessionId] = useState(null);
   const [creating, setCreating] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showScrollHint, setShowScrollHint] = useState(true);
+  const [phoneError, setPhoneError] = useState("");
   const [form, setForm] = useState({ name: "", phone: "", message: "", utr: "" });
 
   const totalRupees = (totalPaise / 100).toLocaleString("en-IN");
@@ -49,9 +59,25 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       setSessionId(null);
       setSuccess(false);
       setSubmitting(false);
+      setShowScrollHint(true);
+      setPhoneError("");
       setForm({ name: "", phone: "", message: "", utr: "" });
     }
   }, [isOpen]);
+
+  // Hide scroll hint when user scrolls
+  const handleScroll = (e) => {
+    if (e.target.scrollTop > 20) setShowScrollHint(false);
+  };
+
+  // Phone validation on blur
+  const handlePhoneBlur = () => {
+    if (form.phone.trim() && !isValidPhone(form.phone)) {
+      setPhoneError("Please enter a valid Indian mobile number");
+    } else {
+      setPhoneError("");
+    }
+  };
 
   const shortId = sessionId ? sessionId.split("-")[0] : "";
   const upiLink = `upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}`;
@@ -59,6 +85,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   async function handleSubmit() {
     if (!form.name.trim()) { toast.error("Please enter your name"); return; }
     if (!form.phone.trim()) { toast.error("Please enter your phone number"); return; }
+    if (!isValidPhone(form.phone)) { toast.error("Please enter a valid phone number"); setPhoneError("Please enter a valid Indian mobile number"); return; }
     if (!form.message.trim()) { toast.error("Please write a blessing for the couple"); return; }
 
     setSubmitting(true);
@@ -74,7 +101,6 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       setSuccess(true);
       fireGoldenConfetti();
       clearCart();
-      toast.success("Your blessing has been received!");
 
       setTimeout(() => {
         onClose();
@@ -90,33 +116,38 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center" data-testid="upi-modal">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={!submitting && !success ? onClose : undefined} />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={!submitting && !success ? onClose : undefined} />
 
-      <div className="relative w-full sm:w-[420px] max-h-[92vh] overflow-hidden rounded-t-3xl sm:rounded-2xl bg-[#FFFBF5] shadow-2xl"
+      <div className="relative w-full sm:w-[440px] max-h-[94vh] overflow-hidden rounded-t-3xl sm:rounded-2xl bg-gradient-to-b from-[#FFFBF5] to-[#FFF8F0] shadow-2xl"
            style={{ animation: "slideUp 0.35s ease-out" }}>
 
-        {/* Top accent */}
-        <div className="h-1 bg-gradient-to-r from-[#8B0000] via-[#D4AF37] to-[#8B0000]" />
+        {/* Top decorative border */}
+        <div className="h-1.5 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
 
-        {/* Scrollable content */}
-        <div className="overflow-y-auto max-h-[calc(92vh-4px)]" style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}>
-
+        {/* Scrollable content with visible scrollbar */}
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="overflow-y-auto max-h-[calc(94vh-6px)] upi-scroll-container"
+        >
           {/* Close button */}
           {!submitting && !success && (
-            <button onClick={onClose} className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-black/5 z-10" data-testid="upi-modal-close">
-              <X className="w-4 h-4 text-[#5C3A1E]/60" />
+            <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white shadow-sm z-10 transition-all" data-testid="upi-modal-close">
+              <X className="w-4 h-4 text-[#5C3A1E]/70" />
             </button>
           )}
 
           {creating ? (
-            <div className="flex flex-col items-center py-20 gap-3">
-              <Loader2 className="w-7 h-7 animate-spin text-[#8B0000]" />
+            <div className="flex flex-col items-center py-24 gap-4">
+              <div className="relative">
+                <div className="w-12 h-12 rounded-full border-2 border-[#D4AF37]/30 border-t-[#D4AF37] animate-spin" />
+              </div>
               <p className="text-[#5C3A1E]/70 font-serif text-sm">Preparing your blessing...</p>
             </div>
           ) : success ? (
-            <div className="flex flex-col items-center py-20 gap-3 px-6">
-              <div className="w-16 h-16 rounded-full bg-[#8B0000]/10 flex items-center justify-center mb-2">
-                <svg className="w-8 h-8 text-[#8B0000]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <div className="flex flex-col items-center py-20 gap-4 px-6">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#8B0000]/10 to-[#D4AF37]/10 flex items-center justify-center mb-2 shadow-inner">
+                <svg className="w-10 h-10 text-[#8B0000]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
@@ -126,25 +157,40 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
           ) : (
             <div className="px-6 pt-6 pb-8">
               {/* Header */}
-              <div className="text-center mb-6">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-[#8B0000]/60 mb-1.5 font-medium">Wedding Gift</p>
-                <h2 className="font-serif text-[22px] text-[#5C3A1E] leading-tight">Send Your Blessing</h2>
-                <div className="mt-2 inline-block px-4 py-1 rounded-full bg-[#8B0000]/5">
-                  <span className="font-serif text-[#8B0000] text-lg font-semibold">₹{totalRupees}</span>
+              <div className="text-center mb-5">
+                <div className="inline-flex items-center gap-2 mb-2">
+                  <span className="w-8 h-px bg-[#D4AF37]/40" />
+                  <span className="text-[9px] uppercase tracking-[0.3em] text-[#8B0000]/50 font-medium">Wedding Gift</span>
+                  <span className="w-8 h-px bg-[#D4AF37]/40" />
+                </div>
+                <h2 className="font-serif text-2xl text-[#5C3A1E] leading-tight mb-3">Send Your Blessing</h2>
+                <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#8B0000]/5 via-[#8B0000]/10 to-[#8B0000]/5 border border-[#8B0000]/10">
+                  <span className="font-serif text-[#8B0000] text-xl font-semibold">₹{totalRupees}</span>
                 </div>
               </div>
 
-              {/* QR + Pay button — compact */}
-              <div className="bg-white rounded-2xl p-5 border border-[#E8DDD0] mb-6">
+              {/* MOBILE: Pay button first, then QR */}
+              <div className="sm:hidden mb-5">
+                <a href={upiLink} className="block" data-testid="upi-pay-btn-mobile">
+                  <Button className="w-full h-14 bg-gradient-to-r from-[#8B0000] to-[#6B0000] hover:from-[#7B0000] hover:to-[#5B0000] text-white font-serif text-base rounded-2xl gap-3 shadow-lg transition-all active:scale-[0.98]">
+                    <Smartphone className="w-5 h-5" />
+                    Pay ₹{totalRupees} via UPI
+                  </Button>
+                </a>
+                <p className="text-center text-[11px] text-[#5C3A1E]/40 mt-3">or scan QR code below</p>
+              </div>
+
+              {/* QR Code section */}
+              <div className="bg-white rounded-2xl p-4 border border-[#E8DDD0]/80 shadow-sm mb-5">
                 <div className="flex flex-col items-center">
-                  <div className="p-3 bg-white rounded-xl shadow-sm border border-gray-100" data-testid="upi-qr-code">
-                    <QRCodeSVG value={upiLink} size={180} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={4} />
+                  <div className="p-3 bg-white rounded-xl border border-gray-100" data-testid="upi-qr-code">
+                    <QRCodeSVG value={upiLink} size={160} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={3} />
                   </div>
-
-                  <p className="text-[11px] text-[#5C3A1E]/40 mt-3 mb-3">Scan with any UPI app</p>
-
-                  <a href={upiLink} className="w-full" data-testid="upi-pay-btn">
-                    <Button className="w-full h-10 bg-[#8B0000] hover:bg-[#6B0000] text-white font-serif text-sm rounded-xl gap-2 shadow-sm">
+                  <p className="text-[11px] text-[#5C3A1E]/40 mt-3 mb-2">Scan with any UPI app</p>
+                  
+                  {/* DESKTOP: Pay button below QR */}
+                  <a href={upiLink} className="w-full hidden sm:block" data-testid="upi-pay-btn">
+                    <Button className="w-full h-11 bg-gradient-to-r from-[#8B0000] to-[#6B0000] hover:from-[#7B0000] hover:to-[#5B0000] text-white font-serif text-sm rounded-xl gap-2 shadow-md transition-all">
                       <Smartphone className="w-4 h-4" />
                       Pay via UPI App
                     </Button>
@@ -152,53 +198,50 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                 </div>
               </div>
 
-              {/* Instruction */}
-              <p className="text-center text-[12px] text-[#5C3A1E]/50 mb-5 leading-relaxed italic">
-                After completing payment, fill in your details below
-              </p>
-
-              {/* Thin divider */}
+              {/* Instruction with ornate divider */}
               <div className="flex items-center gap-3 mb-5">
-                <div className="flex-1 h-px bg-[#D4AF37]/15" />
-                <span className="text-[10px] text-[#5C3A1E]/30 uppercase tracking-[0.15em]">your details</span>
-                <div className="flex-1 h-px bg-[#D4AF37]/15" />
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
+                <span className="text-[10px] text-[#5C3A1E]/40 uppercase tracking-[0.15em] whitespace-nowrap">After payment</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
               </div>
 
-              {/* Form fields — compact */}
-              <div className="space-y-3.5">
+              {/* Form fields */}
+              <div className="space-y-4">
                 <div>
-                  <Label className="text-[#5C3A1E]/80 text-xs font-medium">Name <span className="text-[#8B0000]">*</span></Label>
+                  <Label className="text-[#5C3A1E]/80 text-xs font-medium">Your Name <span className="text-[#8B0000]">*</span></Label>
                   <Input
                     value={form.name}
                     onChange={e => setForm({ ...form, name: e.target.value })}
-                    placeholder="Your name"
-                    className="mt-1 h-10 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm"
+                    placeholder="Enter your full name"
+                    className="mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm"
                     data-testid="blessing-name-input"
                   />
                 </div>
                 <div>
-                  <Label className="text-[#5C3A1E]/80 text-xs font-medium">Phone <span className="text-[#8B0000]">*</span></Label>
+                  <Label className="text-[#5C3A1E]/80 text-xs font-medium">Phone Number <span className="text-[#8B0000]">*</span></Label>
                   <Input
                     value={form.phone}
-                    onChange={e => setForm({ ...form, phone: e.target.value })}
-                    placeholder="+91 XXXXX XXXXX"
-                    className="mt-1 h-10 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm"
+                    onChange={e => { setForm({ ...form, phone: e.target.value }); setPhoneError(""); }}
+                    onBlur={handlePhoneBlur}
+                    placeholder="+91 98765 43210"
+                    className={`mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm ${phoneError ? 'border-red-400 focus:border-red-400' : ''}`}
                     data-testid="blessing-phone-input"
                   />
+                  {phoneError && <p className="text-red-500 text-[11px] mt-1">{phoneError}</p>}
                 </div>
                 <div>
                   <Label className="text-[#5C3A1E]/80 text-xs font-medium">Your Blessing <span className="text-[#8B0000]">*</span></Label>
                   <Textarea
                     value={form.message}
                     onChange={e => setForm({ ...form, message: e.target.value })}
-                    placeholder="Write your heartfelt blessing..."
-                    className="mt-1 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm min-h-[70px] resize-none"
+                    placeholder="Wishing Shvetha & Aadi a lifetime of love and happiness..."
+                    className="mt-1.5 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm min-h-[80px] resize-none"
                     data-testid="blessing-message-input"
                   />
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <Label className="text-[#5C3A1E]/80 text-xs font-medium">UTR</Label>
+                    <Label className="text-[#5C3A1E]/80 text-xs font-medium">UTR / Reference</Label>
                     <span className="text-[10px] text-[#5C3A1E]/30">(optional)</span>
                     <button
                       className="relative"
@@ -207,11 +250,11 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                       onClick={() => setShowTooltip(!showTooltip)}
                       type="button"
                     >
-                      <HelpCircle className="w-3 h-3 text-[#5C3A1E]/30" />
+                      <HelpCircle className="w-3.5 h-3.5 text-[#5C3A1E]/30" />
                       {showTooltip && (
-                        <div className="absolute left-5 -top-1 w-52 p-2.5 bg-white rounded-lg shadow-lg border border-[#E8DDD0] text-left z-10">
+                        <div className="absolute left-5 -top-1 w-56 p-3 bg-white rounded-xl shadow-lg border border-[#E8DDD0] text-left z-10">
                           <p className="text-[11px] text-[#5C3A1E]/70 leading-relaxed">
-                            Find the UTR number in your UPI app's transaction history or payment confirmation.
+                            Find the UTR/Reference number in your UPI app's transaction history or payment confirmation message.
                           </p>
                         </div>
                       )}
@@ -220,8 +263,8 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   <Input
                     value={form.utr}
                     onChange={e => setForm({ ...form, utr: e.target.value })}
-                    placeholder="12-digit UTR number"
-                    className="mt-1 h-10 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm"
+                    placeholder="12-digit transaction reference"
+                    className="mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm"
                     data-testid="blessing-utr-input"
                   />
                 </div>
@@ -231,20 +274,45 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
               <Button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="w-full mt-6 h-12 bg-[#8B0000] hover:bg-[#6B0000] text-white font-serif text-[15px] rounded-xl shadow-md transition-all"
+                className="w-full mt-6 h-14 bg-gradient-to-r from-[#8B0000] to-[#6B0000] hover:from-[#7B0000] hover:to-[#5B0000] text-white font-serif text-base rounded-2xl shadow-lg transition-all active:scale-[0.98]"
                 data-testid="submit-blessing-btn"
               >
-                {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "I've sent my blessing ✨"}
+                {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirm My Blessing"}
               </Button>
+
+              {/* Bottom padding for scroll */}
+              <div className="h-2" />
             </div>
           )}
         </div>
+
+        {/* Scroll indicator */}
+        {showScrollHint && !creating && !success && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce pointer-events-none">
+            <span className="text-[9px] text-[#5C3A1E]/30 uppercase tracking-wider mb-1">Scroll</span>
+            <ChevronDown className="w-4 h-4 text-[#5C3A1E]/30" />
+          </div>
+        )}
       </div>
 
       <style>{`
         @keyframes slideUp {
           from { transform: translateY(20px); opacity: 0; }
           to { transform: translateY(0); opacity: 1; }
+        }
+        .upi-scroll-container::-webkit-scrollbar {
+          width: 6px;
+        }
+        .upi-scroll-container::-webkit-scrollbar-track {
+          background: rgba(212, 175, 55, 0.1);
+          border-radius: 3px;
+        }
+        .upi-scroll-container::-webkit-scrollbar-thumb {
+          background: rgba(139, 0, 0, 0.2);
+          border-radius: 3px;
+        }
+        .upi-scroll-container::-webkit-scrollbar-thumb:hover {
+          background: rgba(139, 0, 0, 0.3);
         }
       `}</style>
     </div>

@@ -11,7 +11,7 @@ import { Separator } from "../components/ui/separator";
 import { ArrowLeft, ShoppingBag, Heart, Gift, Check } from "lucide-react";
 import { toast } from "sonner";
 
-const PRESET_AMOUNTS = [500, 1000, 2500, 5000, 10000];
+const PRESET_AMOUNTS = [1000, 2500, 5000, 10000, 20000];
 
 export default function PotPage() {
   const { slug } = useParams();
@@ -151,23 +151,47 @@ export default function PotPage() {
                 <button
                   key={item.id}
                   onClick={() => setSelectedItem(selectedItem?.id === item.id ? null : item)}
-                  className={`text-left p-4 rounded-lg border transition-all ${
+                  className={`text-left p-4 rounded-xl border-2 transition-all duration-200 group cursor-pointer ${
                     selectedItem?.id === item.id
-                      ? 'border-gold bg-gold/5 gold-glow'
-                      : 'border-border/40 bg-card hover:border-gold/30'
+                      ? 'border-gold bg-gold/10 shadow-md shadow-gold/10'
+                      : 'border-border/30 bg-card hover:border-gold/50 hover:bg-gold/5 hover:shadow-sm'
                   }`}
                   data-testid={`pot-item-${item.id}`}
                 >
                   <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-sans font-medium text-foreground text-sm">{item.title}</p>
-                      {item.description && <p className="text-muted-foreground text-xs mt-1">{item.description}</p>}
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                        selectedItem?.id === item.id 
+                          ? 'bg-gold/20' 
+                          : 'bg-muted group-hover:bg-gold/10'
+                      }`}>
+                        <Gift className={`w-4 h-4 transition-colors ${
+                          selectedItem?.id === item.id 
+                            ? 'text-gold' 
+                            : 'text-muted-foreground group-hover:text-gold/70'
+                        }`} />
+                      </div>
+                      <div>
+                        <p className={`font-sans font-medium text-sm transition-colors ${
+                          selectedItem?.id === item.id 
+                            ? 'text-foreground' 
+                            : 'text-foreground group-hover:text-foreground'
+                        }`}>{item.title}</p>
+                        {item.description && <p className="text-muted-foreground text-xs mt-0.5">{item.description}</p>}
+                      </div>
                     </div>
-                    {selectedItem?.id === item.id && <Check className="w-4 h-4 text-gold" />}
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                      selectedItem?.id === item.id 
+                        ? 'border-gold bg-gold' 
+                        : 'border-border/50 group-hover:border-gold/50'
+                    }`}>
+                      {selectedItem?.id === item.id && <Check className="w-3.5 h-3.5 text-white" />}
+                    </div>
                   </div>
                 </button>
               ))}
             </div>
+            <p className="text-xs text-muted-foreground/60 mt-2 text-center italic">Tap to select a specific item</p>
           </div>
         )}
 
