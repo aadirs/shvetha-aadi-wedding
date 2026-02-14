@@ -88,6 +88,7 @@ CREATE INDEX IF NOT EXISTS idx_allocations_status ON allocations(status);
 CREATE INDEX IF NOT EXISTS idx_sessions_status ON contribution_sessions(status);
 CREATE INDEX IF NOT EXISTS idx_sessions_razorpay_order ON contribution_sessions(razorpay_order_id);
 CREATE INDEX IF NOT EXISTS idx_webhook_gateway ON webhook_events(gateway_event_id);
+CREATE INDEX IF NOT EXISTS idx_settings_key ON site_settings(setting_key);
 
 -- Disable RLS for simplicity (service key bypasses anyway)
 ALTER TABLE pots ENABLE ROW LEVEL SECURITY;
