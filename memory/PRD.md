@@ -80,6 +80,7 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - **contribution_sessions**: id, razorpay_order_id, status (created/pending/paid/failed), donor_name, donor_email, donor_phone, donor_message, total_amount_paise, fee_amount_paise, paid_at, created_at, utr, payment_method, submitted_at
 - **allocations**: id, session_id, pot_id, pot_item_id, amount_paise, status (pending/paid/failed)
 - **webhook_events**: id, body, headers, created_at
+- **site_settings**: id, setting_key (unique), setting_value, updated_at
 
 ## Key API Endpoints
 - `GET /api/config` — Returns payment_provider setting
