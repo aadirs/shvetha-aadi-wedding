@@ -186,33 +186,60 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                 </div>
               </div>
 
-              {/* MOBILE: Pay button first, then QR */}
+              {/* MOBILE: Pay button first (prominent), then OR, then QR */}
               <div className="sm:hidden mb-5">
                 <a href={upiLink} className="block" data-testid="upi-pay-btn-mobile">
                   <Button className="w-full h-14 bg-gradient-to-r from-[#8B0000] to-[#6B0000] hover:from-[#7B0000] hover:to-[#5B0000] text-white font-serif text-base rounded-2xl gap-3 shadow-lg transition-all active:scale-[0.98]">
                     <Smartphone className="w-5 h-5" />
-                    Pay ₹{totalRupees} via UPI
+                    Pay ₹{totalRupees} via UPI App
                   </Button>
                 </a>
-                <p className="text-center text-[11px] text-[#5C3A1E]/40 mt-3">or scan QR code below</p>
+                
+                {/* OR Divider - Mobile */}
+                <div className="flex items-center gap-3 my-4">
+                  <div className="flex-1 h-px bg-[#D4AF37]/30" />
+                  <span className="text-xs font-medium text-[#5C3A1E]/50 px-2">OR</span>
+                  <div className="flex-1 h-px bg-[#D4AF37]/30" />
+                </div>
+                
+                {/* QR Code for Mobile */}
+                <div className="bg-white rounded-2xl p-4 border border-[#E8DDD0]/80 shadow-sm">
+                  <div className="flex flex-col items-center">
+                    <p className="text-[11px] text-[#5C3A1E]/50 mb-3 font-medium">Scan QR Code</p>
+                    <div className="p-2 bg-white rounded-xl border border-gray-100" data-testid="upi-qr-code-mobile">
+                      <QRCodeSVG value={upiLink} size={140} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={2} />
+                    </div>
+                    <p className="text-[10px] text-[#5C3A1E]/30 mt-2">Works with any UPI app</p>
+                  </div>
+                </div>
               </div>
 
-              {/* QR Code section */}
-              <div className="bg-white rounded-2xl p-4 border border-[#E8DDD0]/80 shadow-sm mb-5">
-                <div className="flex flex-col items-center">
-                  <div className="p-3 bg-white rounded-xl border border-gray-100" data-testid="upi-qr-code">
-                    <QRCodeSVG value={upiLink} size={160} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={3} />
+              {/* DESKTOP: QR Code first (prominent), then OR, then Pay button */}
+              <div className="hidden sm:block mb-5">
+                <div className="bg-white rounded-2xl p-5 border border-[#E8DDD0]/80 shadow-sm">
+                  <div className="flex flex-col items-center">
+                    <p className="text-[11px] text-[#5C3A1E]/50 mb-3 font-medium">Scan QR Code to Pay</p>
+                    <div className="p-3 bg-white rounded-xl border border-gray-100" data-testid="upi-qr-code">
+                      <QRCodeSVG value={upiLink} size={180} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={3} />
+                    </div>
+                    <p className="text-[10px] text-[#5C3A1E]/30 mt-3">Works with any UPI app</p>
                   </div>
-                  <p className="text-[11px] text-[#5C3A1E]/40 mt-3 mb-2">Scan with any UPI app</p>
-                  
-                  {/* DESKTOP: Pay button below QR */}
-                  <a href={upiLink} className="w-full hidden sm:block" data-testid="upi-pay-btn">
-                    <Button className="w-full h-11 bg-gradient-to-r from-[#8B0000] to-[#6B0000] hover:from-[#7B0000] hover:to-[#5B0000] text-white font-serif text-sm rounded-xl gap-2 shadow-md transition-all">
-                      <Smartphone className="w-4 h-4" />
-                      Pay via UPI App
-                    </Button>
-                  </a>
                 </div>
+                
+                {/* OR Divider - Desktop */}
+                <div className="flex items-center gap-3 my-4">
+                  <div className="flex-1 h-px bg-[#D4AF37]/30" />
+                  <span className="text-xs font-medium text-[#5C3A1E]/50 px-2">OR</span>
+                  <div className="flex-1 h-px bg-[#D4AF37]/30" />
+                </div>
+                
+                {/* Pay button for Desktop */}
+                <a href={upiLink} className="block" data-testid="upi-pay-btn">
+                  <Button className="w-full h-12 bg-gradient-to-r from-[#8B0000] to-[#6B0000] hover:from-[#7B0000] hover:to-[#5B0000] text-white font-serif text-sm rounded-xl gap-2 shadow-md transition-all">
+                    <Smartphone className="w-4 h-4" />
+                    Pay via UPI App
+                  </Button>
+                </a>
               </div>
 
               {/* Instruction with ornate divider */}
