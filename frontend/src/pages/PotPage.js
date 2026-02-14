@@ -256,7 +256,7 @@ export default function PotPage() {
               } text-white`}
               data-testid="add-to-cart-btn"
             >
-              {added ? <><Check className="w-4 h-4 mr-1" /> Added</> : <><ShoppingBag className="w-4 h-4 mr-1" /> Add</>}
+              {added ? <><Check className="w-4 h-4 mr-1" /> Added</> : <><GiftBoxIcon className="w-4 h-4 mr-1" /> Add</>}
             </Button>
           </div>
         </div>
