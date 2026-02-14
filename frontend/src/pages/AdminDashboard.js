@@ -46,6 +46,9 @@ export default function AdminDashboard() {
             <Link to="/admin/contributions" className="text-white/70 hover:text-white text-sm font-sans flex items-center gap-1">
               <Users className="w-4 h-4" /> Contributions
             </Link>
+            <Link to="/admin/settings" className="text-white/70 hover:text-white text-sm font-sans flex items-center gap-1">
+              <Settings className="w-4 h-4" /> Settings
+            </Link>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/" className="text-white/60 text-xs hover:text-white">View Site</Link>
