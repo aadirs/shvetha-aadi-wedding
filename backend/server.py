@@ -367,23 +367,33 @@ async def confirm_upi_blessing(request: Request):
         raise HTTPException(400, f"Session already {sessions[0]['status']}")
 
     now_iso = datetime.now(timezone.utc).isoformat()
+    
+    # Base update data (always works)
     update_data = {
         "donor_name": donor_name,
         "donor_phone": donor_phone,
         "donor_message": donor_message,
         "status": "paid",
-        "paid_at": now_iso,
-        "submitted_at": now_iso  # Log when blessing was submitted
+        "paid_at": now_iso
     }
-    if utr:
-        update_data["utr"] = utr
+    
+    # Try with submitted_at first
     try:
-        await sb_patch("contribution_sessions", update_data, {"id": f"eq.{session_id}"})
-    except Exception:
-        # submitted_at or utr column may not exist — try without them
-        update_data.pop("utr", None)
-        update_data.pop("submitted_at", None)
-        await sb_patch("contribution_sessions", update_data, {"id": f"eq.{session_id}"})
+        full_update = {**update_data, "submitted_at": now_iso}
+        if utr:
+            full_update["utr"] = utr
+        await sb_patch("contribution_sessions", full_update, {"id": f"eq.{session_id}"})
+        logger.info(f"Blessing confirmed with submitted_at for session {session_id}")
+    except Exception as e:
+        logger.warning(f"Could not save with submitted_at/utr, trying without: {e}")
+        # Fallback - try without submitted_at and utr
+        try:
+            await sb_patch("contribution_sessions", update_data, {"id": f"eq.{session_id}"})
+            logger.info(f"Blessing confirmed (without submitted_at) for session {session_id}")
+        except Exception as e2:
+            logger.error(f"Failed to update session {session_id}: {e2}")
+            raise HTTPException(500, "Could not save your blessing. Please try again.")
+    
     await sb_patch("allocations", {"status": "paid"}, {"session_id": f"eq.{session_id}"})
 
     return {"status": "paid", "session_id": session_id, "donor_name": donor_name}
