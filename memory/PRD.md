@@ -49,11 +49,26 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - **Updated totals** — Pot progress counts paid status (covers both Razorpay and UPI confirmed)
 - All tests passing: 20/20 backend, 100% frontend
 
+### Phase 4 (Feb 14, 2026) - 9-Point UI/UX Improvements
+- **UPI Modal Redesign** — Combined QR code + form in single elegant modal
+  - Mobile: "Pay ₹X via UPI" button prominent ABOVE QR code
+  - Desktop: QR code displayed with pay button below
+- **Scroll Indicator** — "Scroll" text + ChevronDown at modal bottom
+- **Phone Validation** — Validates Indian mobile numbers: `/^(\+91|91)?[6-9]\d{9}$/`
+- **Blessing Placeholder** — Pre-filled with "Wishing Shvetha & Aadi a lifetime of love and happiness..."
+- **submitted_at Timestamp** — Backend saves submission time in contribution_sessions
+- **Thank You Page Animation** — Animated progress bar fills to 100% with shimmer effect
+- **Removed Duplicate Toast** — No more toast on blessing submission (just confetti + redirect)
+- **Preset Amounts Updated** — ₹1,000, ₹2,500, ₹5,000, ₹10,000, ₹20,000
+- **Gift Items Clickable Styling** — Gift icons + radio indicators + hover states + "Tap to select" hint
+- **Cart Drawer Redesign** — Elegant pot cards with Sparkles icons, gradient backgrounds, visual grouping
+- **Admin Contributions** — Now shows "Submitted" column with date/time
+- All tests passing: 27/27 backend, 100% frontend
+
 ## DB Schema
 - **pots**: id, title, slug, story, cover_image_url, goal_amount, created_at, archived
 - **pot_items**: id, pot_id, title, amount, description, image_url, sort_order
-- **contribution_sessions**: id, razorpay_order_id, status (created/pending/paid/failed), donor_name, donor_email, donor_phone, donor_message, total_amount_paise, fee_amount_paise, paid_at, created_at
-  - Note: `utr` and `payment_method` columns pending (need Supabase dashboard access)
+- **contribution_sessions**: id, razorpay_order_id, status (created/pending/paid/failed), donor_name, donor_email, donor_phone, donor_message, total_amount_paise, fee_amount_paise, paid_at, created_at, utr, payment_method, submitted_at
 - **allocations**: id, session_id, pot_id, pot_item_id, amount_paise, status (pending/paid/failed)
 - **webhook_events**: id, body, headers, created_at
 
@@ -61,24 +76,25 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - `GET /api/config` — Returns payment_provider setting
 - `GET /api/pots` / `GET /api/pots/:slug` — Public pot listing
 - `POST /api/upi/session/create` — Create UPI session (no donor info)
-- `POST /api/upi/blessing/confirm` — Submit blessing after UPI payment
+- `POST /api/upi/blessing/confirm` — Submit blessing after UPI payment (saves submitted_at)
 - `POST /api/session/create-or-update` — Razorpay session
 - `POST /api/razorpay/order/create` — Razorpay order
 - `POST /api/admin/contributions/:id/status` — Mark Received/Failed
 
 ## P1 (Next)
-- [ ] Add `utr` and `payment_method` columns to Supabase (requires dashboard access)
 - [ ] Email confirmation to donors after payment
 - [ ] Supabase realtime subscription for live total updates
+- [ ] Social sharing feature for individual pots
 
 ## P2 (Backlog)
 - [ ] Image upload for pot covers (currently URL-based)
 - [ ] QR code sharing for individual pots
 - [ ] Admin: bulk archive, reorder pots
 - [ ] PWA support for mobile home screen
+- [ ] Multi-language support (Hindi, Tamil, etc.)
 
 ## Current Config
 - `PAYMENT_PROVIDER=upi` (both frontend and backend)
-- UPI ID: `861805225@ybl`
+- UPI ID: `8618052253@ybl`
 - Admin: Aadishve / 061097
 - Preview URL: https://shvetha-aadi-gifts.preview.emergentagent.com
