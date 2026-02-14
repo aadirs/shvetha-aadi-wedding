@@ -83,13 +83,15 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - **site_settings**: id, setting_key (unique), setting_value, updated_at
 
 ## Key API Endpoints
-- `GET /api/config` — Returns payment_provider setting
+- `GET /api/config` — Returns payment_provider setting and dynamic upi_id
 - `GET /api/pots` / `GET /api/pots/:slug` — Public pot listing
 - `POST /api/upi/session/create` — Create UPI session (no donor info)
 - `POST /api/upi/blessing/confirm` — Submit blessing after UPI payment (saves submitted_at)
 - `POST /api/session/create-or-update` — Razorpay session
 - `POST /api/razorpay/order/create` — Razorpay order
 - `POST /api/admin/contributions/:id/status` — Mark Received/Failed
+- `GET /api/admin/settings` — Get UPI settings
+- `PUT /api/admin/settings` — Update UPI settings
 
 ## P1 (Next)
 - [ ] Email confirmation to donors after payment
