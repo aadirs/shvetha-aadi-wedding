@@ -65,6 +65,15 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - **Admin Contributions** — Now shows "Submitted" column with date/time
 - All tests passing: 27/27 backend, 100% frontend
 
+### Phase 5 (Feb 14, 2026) - Admin UPI Settings
+- **Admin Settings Page** — New `/admin/settings` page to configure UPI ID
+- **Dynamic UPI ID** — UPI ID fetched from database, not hardcoded
+- **site_settings Table** — Stores key-value config (upi_id, upi_name)
+- **Live Preview** — Shows how UPI ID will appear in QR code
+- **Important Notes** — Guidance for admins on changing UPI settings
+- **Backend Endpoints** — `GET/PUT /api/admin/settings`
+- **Config API Updated** — `GET /api/config` now returns dynamic `upi_id`
+
 ## DB Schema
 - **pots**: id, title, slug, story, cover_image_url, goal_amount, created_at, archived
 - **pot_items**: id, pot_id, title, amount, description, image_url, sort_order
