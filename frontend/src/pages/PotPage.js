@@ -8,8 +8,25 @@ import { Progress } from "../components/ui/progress";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
-import { ArrowLeft, ShoppingBag, Heart, Gift, Check } from "lucide-react";
+import { ArrowLeft, Heart, Gift, Check } from "lucide-react";
 import { toast } from "sonner";
+
+// South Indian style gift box icon
+function GiftBoxIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <rect x="3" y="10" width="18" height="11" rx="1" stroke="currentColor" strokeWidth="1.5" fill="none" />
+      <path d="M2 8.5C2 7.67 2.67 7 3.5 7h17c.83 0 1.5.67 1.5 1.5V10H2V8.5z" stroke="currentColor" strokeWidth="1.5" fill="none" />
+      <rect x="10.5" y="7" width="3" height="14" fill="currentColor" opacity="0.3" />
+      <rect x="2" y="13" width="20" height="3" fill="currentColor" opacity="0.3" />
+      <path d="M9 7C9 5.5 7.5 4 6 4.5C4.5 5 5 6.5 6 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      <path d="M15 7C15 5.5 16.5 4 18 4.5C19.5 5 19 6.5 18 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      <circle cx="12" cy="6" r="1.5" fill="currentColor" />
+      <circle cx="6" cy="16" r="0.75" fill="currentColor" opacity="0.5" />
+      <circle cx="18" cy="16" r="0.75" fill="currentColor" opacity="0.5" />
+    </svg>
+  );
+}
 
 const PRESET_AMOUNTS = [1000, 2500, 5000, 10000, 20000];
 
