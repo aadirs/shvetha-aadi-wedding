@@ -32,6 +32,7 @@ ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', '')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '')
 JWT_SECRET = os.environ.get('JWT_SECRET', 'default-secret')
 PAYMENT_PROVIDER = os.environ.get('PAYMENT_PROVIDER', 'razorpay')
+DEFAULT_UPI_ID = os.environ.get('DEFAULT_UPI_ID', '8618052253@ybl')
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
