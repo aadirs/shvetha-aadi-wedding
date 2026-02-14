@@ -11,8 +11,8 @@ import { Textarea } from "../components/ui/textarea";
 import { X, Smartphone, HelpCircle, Loader2, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
-const UPI_ID = "8618052253@ybl";
-const UPI_NAME = "Shvetha%20%26%20Aadi%20Wedding%20Gift";
+const DEFAULT_UPI_ID = "8618052253@ybl";
+const DEFAULT_UPI_NAME = "Shvetha%20%26%20Aadi%20Wedding%20Gift";
 
 function fireGoldenConfetti() {
   const colors = ["#D4AF37", "#F5D78E", "#C9A55C", "#FFE4C4", "#FFDAB9", "#E8C991"];
