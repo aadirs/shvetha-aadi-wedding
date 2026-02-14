@@ -11,6 +11,7 @@ export default function ThankYou() {
   const donorName = params.get("name") || "Guest";
   const [confirmed, setConfirmed] = useState(false);
   const [countdown, setCountdown] = useState(12);
+  const [progressValue, setProgressValue] = useState(0);
   const pollRef = useRef(null);
 
   // Poll for payment confirmation
@@ -30,6 +31,22 @@ export default function ThankYou() {
     }, 2000);
     return () => clearInterval(pollRef.current);
   }, [sessionId]);
+
+  // Animated progress bar (simulates contribution being processed)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgressValue(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        // Ease-out effect: faster at start, slower at end
+        const increment = Math.max(1, (100 - prev) * 0.08);
+        return Math.min(prev + increment, 100);
+      });
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
 
   // Countdown & redirect
   useEffect(() => {
@@ -109,9 +126,31 @@ export default function ThankYou() {
           Dhanyavaad
         </h1>
 
-        <p className="text-champagne/60 font-serif italic text-base sm:text-lg mb-8 leading-relaxed thankyou-sub">
+        <p className="text-champagne/60 font-serif italic text-base sm:text-lg mb-6 leading-relaxed thankyou-sub">
           {donorName}, your generosity lights up our journey together
         </p>
+
+        {/* Animated Progress Bar */}
+        <div className="mb-8 thankyou-progress">
+          <div className="flex items-center justify-between text-xs text-gold/50 mb-2 font-sans">
+            <span>Processing your blessing</span>
+            <span>{Math.round(progressValue)}%</span>
+          </div>
+          <div className="relative h-2 bg-white/10 rounded-full overflow-hidden">
+            <div 
+              className="absolute inset-y-0 left-0 bg-gradient-to-r from-gold/60 via-gold to-gold/60 rounded-full transition-all duration-100 ease-out"
+              style={{ width: `${progressValue}%` }}
+            />
+            {/* Shimmer effect */}
+            <div 
+              className="absolute inset-y-0 w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"
+              style={{ left: `${progressValue - 10}%` }}
+            />
+          </div>
+          {progressValue >= 100 && (
+            <p className="text-gold/60 text-xs mt-2 animate-fade-in">Blessing received with gratitude</p>
+          )}
+        </div>
 
         {/* Couple names */}
         <div className="mb-8 thankyou-couple">
@@ -164,6 +203,24 @@ export default function ThankYou() {
           <span className="w-12 h-px bg-gold/40" />
         </div>
       </div>
+
+      {/* Add shimmer animation */}
+      <style>{`
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(400%); }
+        }
+        .animate-shimmer {
+          animation: shimmer 2s infinite;
+        }
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
