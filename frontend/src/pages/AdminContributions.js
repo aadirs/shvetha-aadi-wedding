@@ -69,7 +69,8 @@ export default function AdminContributions() {
                   <th className="text-left p-3 font-medium">Amount</th>
                   <th className="text-left p-3 font-medium">Message</th>
                   <th className="text-left p-3 font-medium">Status</th>
-                  <th className="text-left p-3 font-medium">Date</th>
+                  <th className="text-left p-3 font-medium">Submitted</th>
+                  <th className="text-left p-3 font-medium">Paid</th>
                   <th className="text-left p-3 font-medium">Actions</th>
                 </tr>
               </thead>
@@ -79,6 +80,7 @@ export default function AdminContributions() {
                     <td className="p-3">
                       <p className="font-medium">{c.donor_name || "—"}</p>
                       <p className="text-xs text-gray-400">{c.donor_email || c.donor_phone || ""}</p>
+                      {c.utr && <p className="text-xs text-blue-500 mt-0.5">UTR: {c.utr}</p>}
                     </td>
                     <td className="p-3 font-medium">₹{(c.total_amount_paise / 100).toLocaleString("en-IN")}</td>
                     <td className="p-3 text-xs text-gray-600 max-w-[200px] truncate">{c.donor_message || "—"}</td>
@@ -90,6 +92,9 @@ export default function AdminContributions() {
                           "bg-gray-100 text-gray-600"}`}>
                         {c.status}
                       </span>
+                    </td>
+                    <td className="p-3 text-xs text-gray-500 whitespace-nowrap">
+                      {c.submitted_at ? new Date(c.submitted_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "—"}
                     </td>
                     <td className="p-3 text-xs text-gray-500 whitespace-nowrap">
                       {c.paid_at ? new Date(c.paid_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "—"}
