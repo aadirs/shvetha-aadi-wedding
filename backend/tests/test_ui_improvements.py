@@ -6,7 +6,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://shvetha-aadi-gifts.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://shvetha-aadi-gifts-1.preview.emergentagent.com')
 
 def make_request_with_retry(method, url, **kwargs):
     """Make HTTP request with retry for transient errors"""
