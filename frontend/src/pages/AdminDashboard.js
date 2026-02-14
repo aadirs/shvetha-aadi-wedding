@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
-import { LayoutDashboard, Package, Users, IndianRupee, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, Users, IndianRupee, LogOut, Settings } from "lucide-react";
 
 export default function AdminDashboard() {
   const [data, setData] = useState(null);
