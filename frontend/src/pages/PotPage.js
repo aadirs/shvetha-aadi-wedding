@@ -99,7 +99,7 @@ export default function PotPage() {
           </Link>
           {items.length > 0 && (
             <button onClick={() => setIsOpen(true)} className="relative" data-testid="nav-cart-btn">
-              <ShoppingBag className="w-5 h-5 text-foreground" />
+              <GiftBoxIcon className="w-5 h-5 text-foreground" />
               <Badge className="absolute -top-1 -right-2 bg-crimson text-white text-xs w-4 h-4 flex items-center justify-center p-0 rounded-full">
                 {items.length}
               </Badge>
