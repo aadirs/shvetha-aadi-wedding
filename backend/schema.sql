@@ -61,6 +61,23 @@ CREATE TABLE IF NOT EXISTS webhook_events (
   received_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- 6) Site settings table (for UPI ID, etc.)
+CREATE TABLE IF NOT EXISTS site_settings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  setting_key TEXT UNIQUE NOT NULL,
+  setting_value TEXT NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Insert default UPI ID
+INSERT INTO site_settings (setting_key, setting_value) 
+VALUES ('upi_id', '8618052253@ybl')
+ON CONFLICT (setting_key) DO NOTHING;
+
+INSERT INTO site_settings (setting_key, setting_value) 
+VALUES ('upi_name', 'Shvetha & Aadi Wedding Gift')
+ON CONFLICT (setting_key) DO NOTHING;
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_pots_slug ON pots(slug);
 CREATE INDEX IF NOT EXISTS idx_pots_active ON pots(is_active);
