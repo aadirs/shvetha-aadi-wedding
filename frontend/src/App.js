@@ -9,6 +9,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminPots from "./pages/AdminPots";
 import AdminContributions from "./pages/AdminContributions";
+import AdminSettings from "./pages/AdminSettings";
 import CartDrawer from "./components/CartDrawer";
 import { ShoppingBag } from "lucide-react";
 import { Badge } from "./components/ui/badge";
