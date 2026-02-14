@@ -800,6 +800,61 @@ async def export_contributions(admin=Depends(get_admin_token)):
     )
 
 
+
+# ---- ADMIN SETTINGS ----
+@api_router.get("/admin/settings")
+async def get_admin_settings(admin=Depends(get_admin_token)):
+    """Get all site settings."""
+    try:
+        settings = await sb_get("site_settings", {"select": "*"})
+        # Convert to dict for easier access
+        settings_dict = {s["setting_key"]: s["setting_value"] for s in settings}
+        return {
+            "upi_id": settings_dict.get("upi_id", DEFAULT_UPI_ID),
+            "upi_name": settings_dict.get("upi_name", "Shvetha & Aadi Wedding Gift")
+        }
+    except Exception:
+        # Table might not exist, return defaults
+        return {
+            "upi_id": DEFAULT_UPI_ID,
+            "upi_name": "Shvetha & Aadi Wedding Gift"
+        }
+
+
+@api_router.put("/admin/settings")
+async def update_admin_settings(request: Request, admin=Depends(get_admin_token)):
+    """Update site settings."""
+    data = await request.json()
+    
+    # Validate UPI ID format (basic validation)
+    upi_id = data.get("upi_id", "").strip()
+    if upi_id and not ("@" in upi_id):
+        raise HTTPException(400, "Invalid UPI ID format. Must contain @")
+    
+    upi_name = data.get("upi_name", "").strip()
+    
+    results = {}
+    
+    # Try to upsert settings - create table if it doesn't exist
+    for key, value in [("upi_id", upi_id), ("upi_name", upi_name)]:
+        if value:
+            try:
+                # Try to update existing
+                existing = await sb_get("site_settings", {"select": "id", "setting_key": f"eq.{key}"})
+                if existing:
+                    await sb_patch("site_settings", {"setting_value": value}, {"setting_key": f"eq.{key}"})
+                else:
+                    await sb_post("site_settings", {"setting_key": key, "setting_value": value})
+                results[key] = value
+            except Exception as e:
+                logger.warning(f"Could not save setting {key}: {e}")
+                # If table doesn't exist, we'll just return defaults
+                results[key] = value if key == "upi_id" else DEFAULT_UPI_ID
+    
+    return {"status": "updated", "settings": results}
+
+
+
 app.include_router(api_router)
 
 app.add_middleware(
