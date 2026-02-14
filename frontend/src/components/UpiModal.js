@@ -40,8 +40,25 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   const [showScrollHint, setShowScrollHint] = useState(true);
   const [phoneError, setPhoneError] = useState("");
   const [form, setForm] = useState({ name: "", phone: "", message: "", utr: "" });
+  const [upiConfig, setUpiConfig] = useState({ upi_id: DEFAULT_UPI_ID, upi_name: DEFAULT_UPI_NAME });
 
   const totalRupees = (totalPaise / 100).toLocaleString("en-IN");
+
+  // Fetch UPI config when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      getConfig()
+        .then(res => {
+          if (res.data.upi_id) {
+            setUpiConfig({
+              upi_id: res.data.upi_id,
+              upi_name: encodeURIComponent(res.data.upi_name || "Wedding Gift")
+            });
+          }
+        })
+        .catch(() => {}); // Use defaults on error
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen && !sessionId && !creating) {
