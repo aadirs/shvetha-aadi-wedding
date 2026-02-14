@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import confetti from "canvas-confetti";
-import { createUpiSession, confirmBlessing } from "../lib/api";
+import { createUpiSession, confirmBlessing, getConfig } from "../lib/api";
 import { useCart } from "../context/CartContext";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
