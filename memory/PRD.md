@@ -74,6 +74,13 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - **Backend Endpoints** — `GET/PUT /api/admin/settings`
 - **Config API Updated** — `GET /api/config` now returns dynamic `upi_id`
 
+### Phase 6 (Feb 14, 2026) - South Indian Gift Box Icon
+- **Cart Icon Update** — Replaced Kalash (pot) icon with South Indian style gift box
+- **GiftBoxIcon Component** — New SVG icon with decorated box, ribbon, bow, and ornamental dots
+- **Floating Cart Button** — Updated in `App.js` to use new gift box icon
+- **Cart Drawer Header** — Updated in `CartDrawer.js` to use matching gift box icon
+- **Consistent Theme** — Icon matches South Indian heritage aesthetic requested by user
+
 ## DB Schema
 - **pots**: id, title, slug, story, cover_image_url, goal_amount, created_at, archived
 - **pot_items**: id, pot_id, title, amount, description, image_url, sort_order
