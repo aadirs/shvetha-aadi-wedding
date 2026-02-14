@@ -392,7 +392,16 @@ async def confirm_upi_blessing(request: Request):
 @api_router.get("/config")
 async def get_config():
     """Return payment provider config to frontend."""
-    return {"payment_provider": PAYMENT_PROVIDER}
+    # Try to get UPI ID from database, fallback to default
+    upi_id = DEFAULT_UPI_ID
+    try:
+        settings = await sb_get("site_settings", {"select": "setting_value", "setting_key": "eq.upi_id"})
+        if settings and settings[0].get("setting_value"):
+            upi_id = settings[0]["setting_value"]
+    except Exception:
+        pass  # Table might not exist yet, use default
+    
+    return {"payment_provider": PAYMENT_PROVIDER, "upi_id": upi_id}
 
 
 
