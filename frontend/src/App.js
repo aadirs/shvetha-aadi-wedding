@@ -46,6 +46,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/pots" element={<AdminPots />} />
             <Route path="/admin/contributions" element={<AdminContributions />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
           </Routes>
           <FloatingCartButton />
           <CartDrawer />
