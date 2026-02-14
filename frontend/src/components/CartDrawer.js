@@ -10,9 +10,23 @@ import { Textarea } from "../components/ui/textarea";
 import { Switch } from "../components/ui/switch";
 import { Separator } from "../components/ui/separator";
 import { ScrollArea } from "../components/ui/scroll-area";
-import { Trash2, ShoppingBag, CreditCard, Loader2, Heart, Gift, Sparkles } from "lucide-react";
+import { Trash2, CreditCard, Loader2, Heart, Gift, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import UpiModal from "./UpiModal";
+
+// Custom Kalash icon for cart header
+function KalashIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M6 20h12c0 0 1-2 1-4s-1-4-1-4H6s-1 2-1 4 1 4 1 4z" />
+      <path d="M8 12V9c0-1 1-2 4-2s4 1 4 2v3" />
+      <circle cx="12" cy="5" r="2" />
+      <path d="M10 5c-1-1-2-1-3 0" />
+      <path d="M14 5c1-1 2-1 3 0" />
+      <path d="M7 14h10" />
+    </svg>
+  );
+}
 
 const PAYMENT_PROVIDER = process.env.REACT_APP_PAYMENT_PROVIDER || "razorpay";
 
