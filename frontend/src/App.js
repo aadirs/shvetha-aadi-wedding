@@ -13,21 +13,27 @@ import AdminSettings from "./pages/AdminSettings";
 import CartDrawer from "./components/CartDrawer";
 import { Badge } from "./components/ui/badge";
 
-// Custom Kalash/Pot icon - traditional South Indian ceremonial pot
-function KalashIcon({ className }) {
+// South Indian style gift box - decorated box with traditional aesthetic
+function GiftBoxIcon({ className }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      {/* Pot body */}
-      <path d="M6 20h12c0 0 1-2 1-4s-1-4-1-4H6s-1 2-1 4 1 4 1 4z" />
-      {/* Pot neck */}
-      <path d="M8 12V9c0-1 1-2 4-2s4 1 4 2v3" />
-      {/* Coconut on top */}
-      <circle cx="12" cy="5" r="2" />
-      {/* Mango leaves */}
-      <path d="M10 5c-1-1-2-1-3 0" />
-      <path d="M14 5c1-1 2-1 3 0" />
-      {/* Decorative band */}
-      <path d="M7 14h10" />
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      {/* Box base */}
+      <rect x="3" y="10" width="18" height="11" rx="1" stroke="currentColor" strokeWidth="1.5" fill="none" />
+      {/* Box lid */}
+      <path d="M2 8.5C2 7.67 2.67 7 3.5 7h17c.83 0 1.5.67 1.5 1.5V10H2V8.5z" stroke="currentColor" strokeWidth="1.5" fill="none" />
+      {/* Vertical ribbon */}
+      <rect x="10.5" y="7" width="3" height="14" fill="currentColor" opacity="0.3" />
+      {/* Horizontal ribbon */}
+      <rect x="2" y="13" width="20" height="3" fill="currentColor" opacity="0.3" />
+      {/* Bow - left loop */}
+      <path d="M9 7C9 5.5 7.5 4 6 4.5C4.5 5 5 6.5 6 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      {/* Bow - right loop */}
+      <path d="M15 7C15 5.5 16.5 4 18 4.5C19.5 5 19 6.5 18 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      {/* Bow center knot */}
+      <circle cx="12" cy="6" r="1.5" fill="currentColor" />
+      {/* Decorative dots on box */}
+      <circle cx="6" cy="16" r="0.75" fill="currentColor" opacity="0.5" />
+      <circle cx="18" cy="16" r="0.75" fill="currentColor" opacity="0.5" />
     </svg>
   );
 }
@@ -43,7 +49,7 @@ function FloatingCartButton() {
       className="fixed bottom-20 right-6 z-50 bg-crimson text-white rounded-full p-4 shadow-lg hover:scale-105 transition-transform"
       data-testid="floating-cart-btn"
     >
-      <KalashIcon className="w-6 h-6" />
+      <GiftBoxIcon className="w-6 h-6" />
       <Badge className="absolute -top-1 -right-1 bg-gold text-crimson text-xs w-5 h-5 flex items-center justify-center p-0 rounded-full">
         {items.length}
       </Badge>
