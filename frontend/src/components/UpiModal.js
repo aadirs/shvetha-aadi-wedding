@@ -97,7 +97,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   };
 
   const shortId = sessionId ? sessionId.split("-")[0] : "";
-  const upiLink = `upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}`;
+  const upiLink = `upi://pay?pa=${upiConfig.upi_id}&pn=${upiConfig.upi_name}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}`;
 
   async function handleSubmit() {
     if (!form.name.trim()) { toast.error("Please enter your name"); return; }
