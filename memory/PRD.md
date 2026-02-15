@@ -79,7 +79,19 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - **GiftBoxIcon Component** — New SVG icon with decorated box, ribbon, bow, and ornamental dots
 - **Floating Cart Button** — Updated in `App.js` to use new gift box icon
 - **Cart Drawer Header** — Updated in `CartDrawer.js` to use matching gift box icon
+- **Nav Cart Button** — Updated in `PotPage.js` nav bar
+- **Add Button** — Updated in `PotPage.js` to show gift box icon
 - **Consistent Theme** — Icon matches South Indian heritage aesthetic requested by user
+
+### Phase 7 (Feb 15, 2026) - Thank You Page Animation Redesign
+- **Removed Percentage Display** — No longer shows "X%" during progress animation
+- **Raised vs Goal Text** — Shows "₹<raised> of ₹<goal>" with Indian number formatting (₹2,45,000 style)
+- **Multi-Pot Support** — Uses first pot deterministically from session allocations
+- **Dynamic Progress Data** — New `/api/session/{id}/progress` endpoint returns pot progress info
+- **Animated Count Up** — Raised amount smoothly animates from before to after contribution
+- **Progress Bar Animation** — Bar width animates accordingly, capped at 100%
+- **Goal Already Met** — Shows "Goal reached — your blessing still adds to our journey ✨" when goal exceeded
+- **Existing Behavior Preserved** — 12s countdown timer and redirect still work
 
 ## DB Schema
 - **pots**: id, title, slug, story, cover_image_url, goal_amount, created_at, archived
