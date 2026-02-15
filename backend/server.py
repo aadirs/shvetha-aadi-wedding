@@ -295,6 +295,88 @@ async def get_session(session_id: str):
     return sessions[0]
 
 
+@api_router.get("/session/{session_id}/progress")
+async def get_session_progress(session_id: str):
+    """Get session allocations with pot progress data for Thank You page animation."""
+    # Get session allocations
+    allocations = await sb_get("allocations", {
+        "select": "pot_id,amount_paise",
+        "session_id": f"eq.{session_id}",
+        "order": "id.asc"
+    })
+    if not allocations:
+        raise HTTPException(404, "No allocations found for session")
+    
+    # Get the first pot deterministically (first allocation's pot)
+    first_pot_id = allocations[0]["pot_id"]
+    session_allocation_for_pot = sum(a["amount_paise"] for a in allocations if a["pot_id"] == first_pot_id)
+    
+    # Get pot details (goal)
+    pots = await sb_get("pots", {
+        "select": "id,title,goal_amount_paise",
+        "id": f"eq.{first_pot_id}"
+    })
+    if not pots:
+        raise HTTPException(404, "Pot not found")
+    pot = pots[0]
+    
+    # Calculate current raised total for this pot from paid allocations
+    # Status can be "paid" (Razorpay confirmed) or allocations from sessions with status "paid"
+    paid_allocations = await sb_get("allocations", {
+        "select": "amount_paise",
+        "pot_id": f"eq.{first_pot_id}",
+        "status": "in.(pending,paid)"  # pending = SUBMITTED (UPI awaiting confirmation), paid = RECEIVED
+    })
+    
+    # Actually we need to match the logic in pots endpoint - let's get from sessions with paid status
+    # Get all allocations for this pot where the parent session is paid
+    all_pot_allocations = await sb_get("allocations", {
+        "select": "amount_paise,session_id",
+        "pot_id": f"eq.{first_pot_id}"
+    })
+    
+    # Get sessions that are paid
+    if all_pot_allocations:
+        session_ids = list(set(a["session_id"] for a in all_pot_allocations))
+        paid_sessions = await sb_get("contribution_sessions", {
+            "select": "id",
+            "id": f"in.({','.join(session_ids)})",
+            "status": "eq.paid"
+        })
+        paid_session_ids = set(s["id"] for s in paid_sessions)
+        
+        # Sum only allocations from paid sessions
+        current_raised = sum(
+            a["amount_paise"] for a in all_pot_allocations 
+            if a["session_id"] in paid_session_ids
+        )
+    else:
+        current_raised = 0
+    
+    # The animation should show: raised BEFORE this contribution → raised AFTER
+    # So we need raised_before = current_raised - session_allocation_for_pot (if this session is already paid)
+    # Check if this session is paid
+    sessions = await sb_get("contribution_sessions", {
+        "select": "status",
+        "id": f"eq.{session_id}"
+    })
+    session_is_paid = sessions and sessions[0]["status"] == "paid"
+    
+    if session_is_paid:
+        raised_before = current_raised - session_allocation_for_pot
+    else:
+        raised_before = current_raised
+    
+    return {
+        "pot_id": first_pot_id,
+        "pot_title": pot["title"],
+        "goal_amount_paise": pot.get("goal_amount_paise") or 0,
+        "raised_before_paise": raised_before,
+        "session_contribution_paise": session_allocation_for_pot,
+        "raised_after_paise": raised_before + session_allocation_for_pot
+    }
+
+
 
 # ---- UPI FLOW ----
 @api_router.post("/upi/session/create")
