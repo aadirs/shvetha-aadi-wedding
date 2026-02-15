@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
-import { pollSession } from "../lib/api";
+import { pollSession, getSessionProgress } from "../lib/api";
 import { Heart } from "lucide-react";
+
+// Format number in Indian style (₹2,45,000)
+function formatIndianCurrency(paise) {
+  const rupees = Math.round(paise / 100);
+  return rupees.toLocaleString('en-IN');
+}
 
 export default function ThankYou() {
   const [params] = useSearchParams();
@@ -11,8 +17,80 @@ export default function ThankYou() {
   const donorName = params.get("name") || "Guest";
   const [confirmed, setConfirmed] = useState(false);
   const [countdown, setCountdown] = useState(12);
-  const [progressValue, setProgressValue] = useState(0);
+  
+  // Progress animation state
+  const [progressData, setProgressData] = useState(null);
+  const [animatedRaised, setAnimatedRaised] = useState(0);
+  const [progressPercent, setProgressPercent] = useState(0);
+  const [animationComplete, setAnimationComplete] = useState(false);
+  
   const pollRef = useRef(null);
+
+  // Fetch progress data for animation
+  useEffect(() => {
+    if (!sessionId) return;
+    
+    const fetchProgress = async () => {
+      try {
+        const res = await getSessionProgress(sessionId);
+        setProgressData(res.data);
+        // Initialize animated value to "before" amount
+        setAnimatedRaised(res.data.raised_before_paise);
+        
+        // Calculate initial progress percent
+        const goal = res.data.goal_amount_paise;
+        if (goal > 0) {
+          const initialPercent = Math.min((res.data.raised_before_paise / goal) * 100, 100);
+          setProgressPercent(initialPercent);
+        }
+      } catch (err) {
+        console.error("Could not fetch progress data:", err);
+      }
+    };
+    
+    fetchProgress();
+  }, [sessionId]);
+
+  // Animate the raised amount counting up
+  useEffect(() => {
+    if (!progressData) return;
+    
+    const { raised_before_paise, session_contribution_paise, goal_amount_paise } = progressData;
+    const targetRaised = raised_before_paise + session_contribution_paise;
+    const duration = 2500; // 2.5 seconds animation
+    const startTime = Date.now();
+    const startValue = raised_before_paise;
+    
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Ease-out cubic for smooth deceleration
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      
+      const currentRaised = Math.round(startValue + (targetRaised - startValue) * easeOut);
+      setAnimatedRaised(currentRaised);
+      
+      // Update progress bar (capped at 100%)
+      if (goal_amount_paise > 0) {
+        const percent = Math.min((currentRaised / goal_amount_paise) * 100, 100);
+        setProgressPercent(percent);
+      }
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setAnimationComplete(true);
+      }
+    };
+    
+    // Start animation after a brief delay
+    const timer = setTimeout(() => {
+      requestAnimationFrame(animate);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [progressData]);
 
   // Poll for payment confirmation
   useEffect(() => {
@@ -32,22 +110,6 @@ export default function ThankYou() {
     return () => clearInterval(pollRef.current);
   }, [sessionId]);
 
-  // Animated progress bar (simulates contribution being processed)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgressValue(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        // Ease-out effect: faster at start, slower at end
-        const increment = Math.max(1, (100 - prev) * 0.08);
-        return Math.min(prev + increment, 100);
-      });
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
-
   // Countdown & redirect
   useEffect(() => {
     const timer = setInterval(() => {
@@ -62,6 +124,10 @@ export default function ThankYou() {
     }, 1000);
     return () => clearInterval(timer);
   }, [navigate, potSlug]);
+
+  // Determine if goal was already met before this contribution
+  const goalAlreadyMet = progressData && progressData.goal_amount_paise > 0 && 
+    progressData.raised_before_paise >= progressData.goal_amount_paise;
 
   return (
     <div className="min-h-screen bg-crimson relative overflow-hidden flex items-center justify-center">
@@ -132,23 +198,57 @@ export default function ThankYou() {
 
         {/* Animated Progress Bar */}
         <div className="mb-8 thankyou-progress">
-          <div className="flex items-center justify-between text-xs text-gold/50 mb-2 font-sans">
-            <span>Processing your blessing</span>
-            <span>{Math.round(progressValue)}%</span>
-          </div>
-          <div className="relative h-2 bg-white/10 rounded-full overflow-hidden">
-            <div 
-              className="absolute inset-y-0 left-0 bg-gradient-to-r from-gold/60 via-gold to-gold/60 rounded-full transition-all duration-100 ease-out"
-              style={{ width: `${progressValue}%` }}
-            />
-            {/* Shimmer effect */}
-            <div 
-              className="absolute inset-y-0 w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"
-              style={{ left: `${progressValue - 10}%` }}
-            />
-          </div>
-          {progressValue >= 100 && (
-            <p className="text-gold/60 text-xs mt-2 animate-fade-in">Blessing received with gratitude</p>
+          {progressData && progressData.goal_amount_paise > 0 ? (
+            <>
+              <div className="flex items-center justify-center text-sm text-gold/70 mb-2 font-sans">
+                <span className="font-semibold text-gold">
+                  ₹{formatIndianCurrency(animatedRaised)}
+                </span>
+                <span className="mx-1.5 text-gold/40">of</span>
+                <span className="text-gold/60">
+                  ₹{formatIndianCurrency(progressData.goal_amount_paise)}
+                </span>
+              </div>
+              <div className="relative h-2 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-gold/60 via-gold to-gold/60 rounded-full transition-all duration-100 ease-out"
+                  style={{ width: `${progressPercent}%` }}
+                />
+                {/* Shimmer effect */}
+                {!animationComplete && (
+                  <div 
+                    className="absolute inset-y-0 w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"
+                    style={{ left: `${Math.max(0, progressPercent - 10)}%` }}
+                  />
+                )}
+              </div>
+              {/* Goal already met message */}
+              {goalAlreadyMet && animationComplete && (
+                <p className="text-gold/50 text-xs mt-2 animate-fade-in italic">
+                  Goal reached — your blessing still adds to our journey ✨
+                </p>
+              )}
+              {/* Normal completion message */}
+              {!goalAlreadyMet && animationComplete && (
+                <p className="text-gold/60 text-xs mt-2 animate-fade-in">
+                  Blessing received with gratitude
+                </p>
+              )}
+            </>
+          ) : (
+            // Fallback: no goal set, just show processing
+            <>
+              <div className="flex items-center justify-center text-xs text-gold/50 mb-2 font-sans">
+                <span>Processing your blessing</span>
+              </div>
+              <div className="relative h-2 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-gold/60 via-gold to-gold/60 rounded-full animate-pulse"
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <p className="text-gold/60 text-xs mt-2 animate-fade-in">Blessing received with gratitude</p>
+            </>
           )}
         </div>
 
