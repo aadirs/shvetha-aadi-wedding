@@ -107,6 +107,7 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - `POST /api/upi/session/create` — Create UPI session (no donor info)
 - `POST /api/upi/blessing/confirm` — Submit blessing after UPI payment (saves submitted_at)
 - `POST /api/session/create-or-update` — Razorpay session
+- `GET /api/session/{id}/progress` — Get pot progress data for Thank You page animation (NEW)
 - `POST /api/razorpay/order/create` — Razorpay order
 - `POST /api/admin/contributions/:id/status` — Mark Received/Failed
 - `GET /api/admin/settings` — Get UPI settings
