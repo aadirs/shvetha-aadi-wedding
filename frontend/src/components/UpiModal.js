@@ -325,11 +325,23 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                 </a>
               </div>
 
-              {/* Instruction with ornate divider */}
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
-                <span className="text-[10px] text-[#5C3A1E]/40 uppercase tracking-[0.15em] whitespace-nowrap">After payment</span>
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
+              {/* After Payment Section - More Prominent */}
+              <div className="relative mt-6 mb-5">
+                {/* Decorative background */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#8B0000]/5 via-[#D4AF37]/5 to-transparent rounded-2xl -mx-2 -mt-2" />
+                
+                <div className="relative">
+                  {/* Header with step indicator */}
+                  <div className="flex items-center gap-3 mb-4 px-2">
+                    <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[#8B0000] text-white text-xs font-bold shadow-sm">
+                      2
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-[#5C3A1E]">After Payment</h3>
+                      <p className="text-[10px] text-[#5C3A1E]/50">Complete your blessing details</p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Form fields */}
