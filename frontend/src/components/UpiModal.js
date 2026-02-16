@@ -217,7 +217,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   <div className="flex flex-col items-center">
                     <p className="text-[11px] text-[#5C3A1E]/50 mb-3 font-medium">Scan QR Code</p>
                     <div className="p-2 bg-white rounded-xl border border-gray-100" data-testid="upi-qr-code-mobile">
-                      <QRCodeSVG value={upiLink} size={140} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={2} />
+                      <QRCodeSVG value={qrLink} size={140} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={2} />
                     </div>
                     <p className="text-[10px] text-[#5C3A1E]/30 mt-2">Works with any UPI app</p>
                   </div>
