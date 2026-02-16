@@ -39,6 +39,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   const [showTooltip, setShowTooltip] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(true);
   const [phoneError, setPhoneError] = useState("");
+  const [showQrCode, setShowQrCode] = useState(false); // QR collapsed by default on mobile
   const [form, setForm] = useState({ name: "", phone: "", message: "", utr: "" });
   const [upiConfig, setUpiConfig] = useState({ upi_id: DEFAULT_UPI_ID, upi_name: DEFAULT_UPI_NAME });
 
