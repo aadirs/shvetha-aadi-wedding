@@ -97,7 +97,17 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   };
 
   const shortId = sessionId ? sessionId.split("-")[0] : "";
-  const upiLink = `upi://pay?pa=${upiConfig.upi_id}&pn=${upiConfig.upi_name}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}`;
+  const baseUpiLink = `upi://pay?pa=${upiConfig.upi_id}&pn=${upiConfig.upi_name}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}`;
+  
+  // Use intent:// scheme for Android to prevent WhatsApp from intercepting
+  // This opens the UPI app chooser directly
+  const isAndroid = /android/i.test(navigator.userAgent);
+  const upiLink = isAndroid 
+    ? `intent://pay?pa=${upiConfig.upi_id}&pn=${upiConfig.upi_name}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`
+    : baseUpiLink;
+  
+  // For QR code, always use the standard upi:// link
+  const qrLink = baseUpiLink;
 
   async function handleSubmit() {
     if (!form.name.trim()) { toast.error("Please enter your name"); return; }
