@@ -44,10 +44,17 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   const totalRupees = (totalPaise / 100).toLocaleString("en-IN");
   const amountForQr = (totalPaise / 100).toFixed(2);
 
-  // Platform detection
-  const isAndroid = /android/i.test(navigator.userAgent);
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isMobile = isAndroid || isIOS;
+  // Platform detection - must be inside component to work with SSR
+  const [platform, setPlatform] = useState({ isAndroid: false, isIOS: false, isMobile: false });
+  
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    const isAndroid = /android/i.test(ua);
+    const isIOS = /iphone|ipad|ipod/i.test(ua);
+    setPlatform({ isAndroid, isIOS, isMobile: isAndroid || isIOS });
+  }, []);
+  
+  const { isAndroid, isIOS, isMobile } = platform;
 
   // Fetch UPI config when modal opens
   useEffect(() => {
