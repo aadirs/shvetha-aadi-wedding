@@ -206,12 +206,22 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                 </div>
               </div>
 
+              {/* Step 1 Header */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[#8B0000] text-white text-xs font-bold shadow-sm">
+                  1
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-[#5C3A1E]">Make Payment</h3>
+                  <p className="text-[10px] text-[#5C3A1E]/50">Pay using your preferred UPI app</p>
+                </div>
+              </div>
+
               {/* MOBILE: Pay button first (prominent), then OR, then QR */}
               <div className="sm:hidden mb-5">
                 {/* iOS: Show app-specific buttons to avoid WhatsApp interception */}
                 {isIOS ? (
                   <div className="space-y-2">
-                    <p className="text-[11px] text-[#5C3A1E]/60 text-center mb-3 font-medium">Choose your UPI app</p>
                     <a href={gpayLink} className="block" data-testid="upi-gpay-btn">
                       <Button className="w-full h-12 bg-white hover:bg-gray-50 text-[#5C3A1E] font-medium text-sm rounded-xl border border-[#E8DDD0] shadow-sm transition-all active:scale-[0.98] justify-start px-4 gap-3">
                         <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100">
