@@ -99,14 +99,23 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   const shortId = sessionId ? sessionId.split("-")[0] : "";
   const baseUpiLink = `upi://pay?pa=${upiConfig.upi_id}&pn=${upiConfig.upi_name}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}`;
   
-  // Use intent:// scheme for Android to open UPI app chooser and prevent WhatsApp from intercepting
+  // Detect platform
   const isAndroid = /android/i.test(navigator.userAgent);
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  
+  // Android: Use intent:// to open app chooser and prevent WhatsApp interception
+  // iOS: We'll show specific app buttons instead
   const upiLink = isAndroid 
     ? `intent://pay?pa=${upiConfig.upi_id}&pn=${upiConfig.upi_name}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}#Intent;scheme=upi;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`
     : baseUpiLink;
   
   // For QR code, always use the standard upi:// link (scanned by UPI apps directly)
   const qrLink = baseUpiLink;
+  
+  // App-specific deep links for iOS (to avoid WhatsApp interception)
+  const gpayLink = `gpay://upi/pay?pa=${upiConfig.upi_id}&pn=${upiConfig.upi_name}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}`;
+  const phonepeLink = `phonepe://pay?pa=${upiConfig.upi_id}&pn=${upiConfig.upi_name}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}`;
+  const paytmLink = `paytmmp://pay?pa=${upiConfig.upi_id}&pn=${upiConfig.upi_name}&am=${totalPaise / 100}&cu=INR&tn=Wedding%20Gift&tr=${shortId}`;
 
   async function handleSubmit() {
     if (!form.name.trim()) { toast.error("Please enter your name"); return; }
