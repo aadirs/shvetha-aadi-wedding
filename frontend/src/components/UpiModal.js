@@ -8,7 +8,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
-import { X, Smartphone, HelpCircle, Loader2, ChevronDown } from "lucide-react";
+import { X, Smartphone, HelpCircle, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 
 const DEFAULT_UPI_ID = "8618052253@ybl";
