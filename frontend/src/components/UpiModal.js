@@ -259,15 +259,41 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   <div className="flex-1 h-px bg-[#D4AF37]/30" />
                 </div>
                 
-                {/* QR Code for Mobile */}
-                <div className="bg-white rounded-2xl p-4 border border-[#E8DDD0]/80 shadow-sm">
-                  <div className="flex flex-col items-center">
-                    <p className="text-[11px] text-[#5C3A1E]/50 mb-3 font-medium">Scan QR Code</p>
-                    <div className="p-2 bg-white rounded-xl border border-gray-100" data-testid="upi-qr-code-mobile">
-                      <QRCodeSVG value={qrLink} size={140} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={2} />
+                {/* QR Code for Mobile - Collapsible */}
+                <div className="bg-white rounded-2xl border border-[#E8DDD0]/80 shadow-sm overflow-hidden">
+                  <button 
+                    onClick={() => setShowQrCode(!showQrCode)}
+                    className="w-full px-4 py-3 flex items-center justify-between text-left"
+                    data-testid="qr-toggle-btn"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#5C3A1E]/60" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="3" width="7" height="7" rx="1" />
+                          <rect x="14" y="3" width="7" height="7" rx="1" />
+                          <rect x="3" y="14" width="7" height="7" rx="1" />
+                          <rect x="14" y="14" width="3" height="3" />
+                          <rect x="18" y="14" width="3" height="3" />
+                          <rect x="14" y="18" width="3" height="3" />
+                          <rect x="18" y="18" width="3" height="3" />
+                        </svg>
+                      </div>
+                      <span className="text-sm text-[#5C3A1E]/70 font-medium">Scan QR Code instead</span>
                     </div>
-                    <p className="text-[10px] text-[#5C3A1E]/30 mt-2">Works with any UPI app</p>
-                  </div>
+                    {showQrCode ? (
+                      <ChevronUp className="w-4 h-4 text-[#5C3A1E]/40" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-[#5C3A1E]/40" />
+                    )}
+                  </button>
+                  {showQrCode && (
+                    <div className="px-4 pb-4 flex flex-col items-center border-t border-[#E8DDD0]/50 pt-3">
+                      <div className="p-2 bg-white rounded-xl border border-gray-100" data-testid="upi-qr-code-mobile">
+                        <QRCodeSVG value={qrLink} size={160} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={2} />
+                      </div>
+                      <p className="text-[10px] text-[#5C3A1E]/30 mt-2">Works with any UPI app</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
