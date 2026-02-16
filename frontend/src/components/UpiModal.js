@@ -79,6 +79,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       setSubmitting(false);
       setShowScrollHint(true);
       setPhoneError("");
+      setShowQrCode(false);
       setForm({ name: "", phone: "", message: "", utr: "" });
     }
   }, [isOpen]);
