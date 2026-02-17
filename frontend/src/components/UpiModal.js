@@ -162,35 +162,43 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
 
   if (!isOpen) return null;
 
-  // OR Divider component
+  // OR Divider component with more breathing space
   const OrDivider = () => (
-    <div className="flex items-center gap-3 my-4">
-      <div className="flex-1 h-px bg-[#D4AF37]/30" />
-      <span className="text-xs font-semibold text-[#5C3A1E]/50 px-2">OR</span>
-      <div className="flex-1 h-px bg-[#D4AF37]/30" />
+    <div className="flex items-center gap-4 my-5 py-1">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
+      <span className="text-xs font-semibold text-[#5C3A1E]/40 px-3 bg-[#FFFBF5] rounded-full">OR</span>
+      <div className="flex-1 h-px bg-gradient-to-l from-transparent via-[#D4AF37]/40 to-transparent" />
     </div>
   );
 
-  // Copy UPI ID Button component
+  // Copy UPI ID Button component with instructions
   const CopyUpiButton = () => (
-    <button
-      onClick={copyUpiId}
-      className="w-full flex items-center justify-between bg-[#FFF8F0] hover:bg-[#FFF5EB] rounded-xl px-4 py-3.5 border border-[#E8DDD0] transition-colors group"
-      data-testid="copy-upi-btn"
-    >
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center border border-[#E8DDD0] shadow-sm">
-          <Copy className="w-4 h-4 text-[#5C3A1E]/60" />
+    <div className="space-y-2">
+      <button
+        onClick={copyUpiId}
+        className="w-full flex items-center justify-between bg-[#FFF8F0] hover:bg-[#FFF5EB] rounded-xl px-4 py-3.5 border border-[#E8DDD0] transition-colors group"
+        data-testid="copy-upi-btn"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center border border-[#E8DDD0] shadow-sm">
+            <Copy className="w-4 h-4 text-[#5C3A1E]/60" />
+          </div>
+          <div className="text-left">
+            <p className="text-sm font-medium text-[#5C3A1E]">Copy UPI ID</p>
+            <p className="text-[11px] text-[#5C3A1E]/50 font-mono">{upiConfig.upi_id}</p>
+          </div>
         </div>
-        <div className="text-left">
-          <p className="text-sm font-medium text-[#5C3A1E]">Copy UPI ID</p>
-          <p className="text-[11px] text-[#5C3A1E]/50 font-mono">{upiConfig.upi_id}</p>
+        <div className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${copied ? 'bg-green-100 text-green-700' : 'bg-white text-[#8B0000] border border-[#8B0000]/20 group-hover:bg-[#8B0000]/5'}`}>
+          {copied ? <><Check className="w-3 h-3 inline mr-1" />Copied</> : 'Copy'}
         </div>
+      </button>
+      {/* Instructions for Copy UPI */}
+      <div className="px-3 py-2.5 bg-[#FFF8F0]/50 rounded-xl border border-dashed border-[#D4AF37]/20">
+        <p className="text-[10px] text-[#5C3A1E]/50 leading-relaxed">
+          <span className="font-medium text-[#5C3A1E]/70">Use this if above doesn't work:</span> Open any UPI app (GPay, PhonePe, Paytm), tap "Pay", paste this UPI ID, enter <span className="font-semibold text-[#8B0000]">₹{totalRupees}</span> and complete payment.
+        </p>
       </div>
-      <div className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${copied ? 'bg-green-100 text-green-700' : 'bg-white text-[#8B0000] border border-[#8B0000]/20 group-hover:bg-[#8B0000]/5'}`}>
-        {copied ? <><Check className="w-3 h-3 inline mr-1" />Copied</> : 'Copy'}
-      </div>
-    </button>
+    </div>
   );
 
   return (
