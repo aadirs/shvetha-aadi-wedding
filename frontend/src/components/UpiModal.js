@@ -246,9 +246,9 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                           className="w-full text-left group"
                           data-testid="copy-upi-btn"
                         >
-                          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#FFF8F0] to-[#FFFBF5] rounded-xl border border-[#E8DDD0] group-hover:border-[#8B0000]/30 group-active:scale-[0.99] transition-all">
-                            <p className="text-lg font-mono font-semibold text-[#8B0000] tracking-wide">{upiConfig.upi_id}</p>
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${copied ? 'bg-green-500' : 'bg-[#8B0000]'}`}>
+                          <div className="flex items-center justify-between gap-4 p-4 bg-gradient-to-r from-[#FFF8F0] to-[#FFFBF5] rounded-xl border border-[#E8DDD0] group-hover:border-[#8B0000]/30 group-active:scale-[0.99] transition-all">
+                            <p className="text-base font-mono font-semibold text-[#8B0000] tracking-wide truncate flex-1">{upiConfig.upi_id}</p>
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${copied ? 'bg-green-500' : 'bg-[#8B0000]'}`}>
                               {copied ? <Check className="w-5 h-5 text-white" /> : <Copy className="w-5 h-5 text-white" />}
                             </div>
                           </div>
