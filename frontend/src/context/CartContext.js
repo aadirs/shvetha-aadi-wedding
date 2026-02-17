@@ -19,13 +19,13 @@ export function CartProvider({ children }) {
 
   const addItem = useCallback((potId, potTitle, amountPaise, itemId, itemTitle) => {
     setItems(prev => [...prev, {
-      id: Date.now().toString() + Math.random().toString(36).slice(2),
+      cartId: Date.now().toString() + Math.random().toString(36).slice(2),
       potId, potTitle, amountPaise, itemId: itemId || null, itemTitle: itemTitle || null
     }]);
   }, []);
 
-  const removeItem = useCallback((id) => {
-    setItems(prev => prev.filter(item => item.id !== id));
+  const removeItem = useCallback((cartId) => {
+    setItems(prev => prev.filter(item => item.cartId !== cartId));
   }, []);
 
   const clearCart = useCallback(() => setItems([]), []);
