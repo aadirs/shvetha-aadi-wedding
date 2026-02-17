@@ -270,53 +270,40 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
 
                     <OrDivider />
 
-                    {/* QR Code - Expandable on mobile */}
-                    <div className="bg-white rounded-2xl border border-[#E8DDD0] shadow-sm overflow-hidden">
-                      <button 
-                        onClick={() => setShowQrCode(!showQrCode)}
-                        className="w-full px-4 py-3.5 flex items-center justify-between hover:bg-[#FFF8F0] transition-colors"
-                        data-testid="qr-toggle-btn"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">
-                            <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#5C3A1E]/60" fill="none" stroke="currentColor" strokeWidth="2">
-                              <rect x="3" y="3" width="7" height="7" rx="1" />
-                              <rect x="14" y="3" width="7" height="7" rx="1" />
-                              <rect x="3" y="14" width="7" height="7" rx="1" />
-                              <rect x="14" y="14" width="3" height="3" />
-                              <rect x="18" y="14" width="3" height="3" />
-                              <rect x="14" y="18" width="3" height="3" />
-                              <rect x="18" y="18" width="3" height="3" />
-                            </svg>
-                          </div>
-                          <div className="text-left">
-                            <p className="text-sm font-medium text-[#5C3A1E]">Scan QR Code</p>
-                            <p className="text-[11px] text-[#5C3A1E]/50">Use laptop or another phone to scan</p>
-                          </div>
-                        </div>
-                        {showQrCode ? (
-                          <ChevronUp className="w-5 h-5 text-[#5C3A1E]/40" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 text-[#5C3A1E]/40" />
-                        )}
-                      </button>
-                      
-                      {showQrCode && (
-                        <div className="px-4 pb-4 border-t border-[#E8DDD0]/50">
-                          <div className="flex flex-col items-center pt-4">
-                            <div className="p-3 bg-white rounded-xl border-2 border-dashed border-[#D4AF37]/30" data-testid="upi-qr-code-mobile">
-                              <QRCodeSVG value={qrLink} size={160} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={2} />
-                            </div>
-                            <div className="bg-[#8B0000]/5 border border-[#8B0000]/10 rounded-full px-4 py-1.5 mt-3">
-                              <span className="text-sm font-semibold text-[#8B0000]">₹{totalRupees}</span>
-                            </div>
-                            <p className="text-[10px] text-[#5C3A1E]/50 mt-3 text-center leading-relaxed max-w-[200px]">
-                              Open this page on laptop and scan with your phone's UPI app
-                            </p>
-                          </div>
-                        </div>
+                    {/* QR Code - Expandable on mobile - Minimal design */}
+                    <button 
+                      onClick={() => setShowQrCode(!showQrCode)}
+                      className="w-full flex items-center justify-center gap-2 py-3 text-[#5C3A1E]/50 hover:text-[#5C3A1E]/70 transition-colors"
+                      data-testid="qr-toggle-btn"
+                    >
+                      <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1" />
+                        <rect x="14" y="3" width="7" height="7" rx="1" />
+                        <rect x="3" y="14" width="7" height="7" rx="1" />
+                        <rect x="14" y="14" width="3" height="3" />
+                      </svg>
+                      <span className="text-xs font-medium">
+                        {showQrCode ? 'Hide QR Code' : 'Show QR Code'}
+                      </span>
+                      {showQrCode ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
                       )}
-                    </div>
+                    </button>
+                    
+                    {showQrCode && (
+                      <div className="bg-white rounded-2xl border border-[#E8DDD0] p-5 mt-2">
+                        <div className="flex flex-col items-center">
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]" data-testid="upi-qr-code-mobile">
+                            <QRCodeSVG value={qrLink} size={140} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={2} />
+                          </div>
+                          <p className="text-[11px] text-[#5C3A1E]/40 mt-3 text-center">
+                            Scan from another device
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
