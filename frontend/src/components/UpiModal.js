@@ -230,32 +230,39 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                 {/* MOBILE VIEW - Copy UPI ID Primary */}
                 {isMobile && (
                   <div className="space-y-0">
-                    {/* Copy UPI ID - Primary on mobile */}
-                    <div className="bg-white rounded-2xl border-2 border-[#8B0000]/20 shadow-md overflow-hidden">
-                      <button
-                        onClick={copyUpiId}
-                        className="w-full flex items-center justify-between px-4 py-4 hover:bg-[#FFF8F0] transition-colors"
-                        data-testid="copy-upi-btn"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#8B0000]/10 to-[#D4AF37]/10 flex items-center justify-center border border-[#8B0000]/10">
-                            <Copy className="w-5 h-5 text-[#8B0000]" />
-                          </div>
-                          <div className="text-left">
-                            <p className="text-base font-semibold text-[#5C3A1E]">Copy UPI ID</p>
-                            <p className="text-sm text-[#8B0000] font-mono font-medium">{upiConfig.upi_id}</p>
+                    {/* Copy UPI ID - Primary on mobile - Sleek design */}
+                    <div className="bg-white rounded-2xl border border-[#E8DDD0] shadow-sm overflow-hidden">
+                      {/* UPI ID Display */}
+                      <div className="px-5 pt-5 pb-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <p className="text-[11px] uppercase tracking-wider text-[#5C3A1E]/40 font-medium">UPI ID</p>
+                          <div className={`text-[10px] font-medium px-2 py-0.5 rounded-full transition-all ${copied ? 'bg-green-100 text-green-700' : 'bg-[#FFF8F0] text-[#5C3A1E]/50'}`}>
+                            {copied ? '✓ Copied' : 'Tap to copy'}
                           </div>
                         </div>
-                        <div className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${copied ? 'bg-green-500 text-white' : 'bg-[#8B0000] text-white'}`}>
-                          {copied ? <><Check className="w-4 h-4 inline mr-1" />Done!</> : 'Copy'}
-                        </div>
-                      </button>
+                        
+                        <button
+                          onClick={copyUpiId}
+                          className="w-full text-left group"
+                          data-testid="copy-upi-btn"
+                        >
+                          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#FFF8F0] to-[#FFFBF5] rounded-xl border border-[#E8DDD0] group-hover:border-[#8B0000]/30 group-active:scale-[0.99] transition-all">
+                            <p className="text-lg font-mono font-semibold text-[#8B0000] tracking-wide">{upiConfig.upi_id}</p>
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${copied ? 'bg-green-500' : 'bg-[#8B0000]'}`}>
+                              {copied ? <Check className="w-5 h-5 text-white" /> : <Copy className="w-5 h-5 text-white" />}
+                            </div>
+                          </div>
+                        </button>
+                      </div>
                       
-                      {/* Instructions */}
-                      <div className="px-4 pb-4 pt-1">
-                        <div className="bg-[#FFF8F0] rounded-xl p-3 border border-[#D4AF37]/20">
-                          <p className="text-xs text-[#5C3A1E]/70 leading-relaxed">
-                            <span className="font-semibold text-[#8B0000]">How to pay:</span> Open <span className="font-medium">GPay, PhonePe</span> or <span className="font-medium">Paytm</span> → Tap <span className="font-medium">"Pay"</span> or <span className="font-medium">"Send"</span> → Paste UPI ID → Enter <span className="font-bold text-[#8B0000]">₹{totalRupees}</span> → Pay
+                      {/* Simple Instructions */}
+                      <div className="px-5 pb-5">
+                        <div className="flex items-start gap-3 text-[#5C3A1E]/60">
+                          <div className="w-5 h-5 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span className="text-[10px] font-bold text-[#D4AF37]">?</span>
+                          </div>
+                          <p className="text-[12px] leading-relaxed">
+                            Open your UPI app → Pay → Paste ID → <span className="font-semibold text-[#8B0000]">₹{totalRupees}</span>
                           </p>
                         </div>
                       </div>
