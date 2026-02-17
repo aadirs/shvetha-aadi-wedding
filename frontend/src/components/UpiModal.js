@@ -8,7 +8,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
-import { X, HelpCircle, Loader2, Copy, Check, Smartphone } from "lucide-react";
+import { X, HelpCircle, Loader2, Copy, Check, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 
 const DEFAULT_UPI_ID = "8618052253@ybl";
@@ -38,23 +38,21 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   const [showTooltip, setShowTooltip] = useState(false);
   const [phoneError, setPhoneError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [showQrCode, setShowQrCode] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", message: "", utr: "" });
   const [upiConfig, setUpiConfig] = useState({ upi_id: DEFAULT_UPI_ID, upi_name: DEFAULT_UPI_NAME });
 
   const totalRupees = (totalPaise / 100).toLocaleString("en-IN");
   const amountForQr = (totalPaise / 100).toFixed(2);
 
-  // Platform detection - must be inside component to work with SSR
-  const [platform, setPlatform] = useState({ isAndroid: false, isIOS: false, isMobile: false });
+  // Platform detection
+  const [isMobile, setIsMobile] = useState(false);
   
   useEffect(() => {
     const ua = navigator.userAgent;
-    const isAndroid = /android/i.test(ua);
-    const isIOS = /iphone|ipad|ipod/i.test(ua);
-    setPlatform({ isAndroid, isIOS, isMobile: isAndroid || isIOS });
+    const mobile = /android|iphone|ipad|ipod/i.test(ua);
+    setIsMobile(mobile);
   }, []);
-  
-  const { isAndroid, isIOS, isMobile } = platform;
 
   // Fetch UPI config when modal opens
   useEffect(() => {
@@ -90,6 +88,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       setSubmitting(false);
       setPhoneError("");
       setCopied(false);
+      setShowQrCode(false);
       setForm({ name: "", phone: "", message: "", utr: "" });
     }
   }, [isOpen]);
@@ -115,20 +114,9 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
     }
   };
 
-  // Build UPI parameters
+  // Build QR code UPI link
   const payeeName = encodeURIComponent(upiConfig.upi_name);
-  const upiParams = `pa=${upiConfig.upi_id}&pn=${payeeName}&am=${amountForQr}&cu=INR&tn=Wedding%20Gift`;
-  
-  // QR Code link (standard upi:// for scanning)
-  const qrLink = `upi://pay?${upiParams}`;
-  
-  // Android: Intent to open UPI app chooser
-  const androidIntentLink = `intent://pay?${upiParams}#Intent;scheme=upi;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
-  
-  // iOS: App-specific deep links
-  const gpayLink = `gpay://upi/pay?${upiParams}`;
-  const phonepeLink = `phonepe://pay?${upiParams}`;
-  const paytmLink = `paytmmp://pay?${upiParams}`;
+  const qrLink = `upi://pay?pa=${upiConfig.upi_id}&pn=${payeeName}&am=${amountForQr}&cu=INR&tn=Wedding%20Gift`;
 
   async function handleSubmit() {
     if (!form.name.trim()) { toast.error("Please enter your name"); return; }
@@ -162,42 +150,14 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
 
   if (!isOpen) return null;
 
-  // OR Divider component with more breathing space
+  // Big OR Divider component
   const OrDivider = () => (
-    <div className="flex items-center gap-4 my-5 py-1">
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
-      <span className="text-xs font-semibold text-[#5C3A1E]/40 px-3 bg-[#FFFBF5] rounded-full">OR</span>
-      <div className="flex-1 h-px bg-gradient-to-l from-transparent via-[#D4AF37]/40 to-transparent" />
-    </div>
-  );
-
-  // Copy UPI ID Button component with instructions
-  const CopyUpiButton = () => (
-    <div className="space-y-2">
-      <button
-        onClick={copyUpiId}
-        className="w-full flex items-center justify-between bg-[#FFF8F0] hover:bg-[#FFF5EB] rounded-xl px-4 py-3.5 border border-[#E8DDD0] transition-colors group"
-        data-testid="copy-upi-btn"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center border border-[#E8DDD0] shadow-sm">
-            <Copy className="w-4 h-4 text-[#5C3A1E]/60" />
-          </div>
-          <div className="text-left">
-            <p className="text-sm font-medium text-[#5C3A1E]">Copy UPI ID</p>
-            <p className="text-[11px] text-[#5C3A1E]/50 font-mono">{upiConfig.upi_id}</p>
-          </div>
-        </div>
-        <div className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${copied ? 'bg-green-100 text-green-700' : 'bg-white text-[#8B0000] border border-[#8B0000]/20 group-hover:bg-[#8B0000]/5'}`}>
-          {copied ? <><Check className="w-3 h-3 inline mr-1" />Copied</> : 'Copy'}
-        </div>
-      </button>
-      {/* Instructions for Copy UPI */}
-      <div className="px-3 py-2.5 bg-[#FFF8F0]/50 rounded-xl border border-dashed border-[#D4AF37]/20">
-        <p className="text-[10px] text-[#5C3A1E]/50 leading-relaxed">
-          <span className="font-medium text-[#5C3A1E]/70">Use this if above doesn't work:</span> Open any UPI app (GPay, PhonePe, Paytm), tap "Pay", paste this UPI ID, enter <span className="font-semibold text-[#8B0000]">₹{totalRupees}</span> and complete payment.
-        </p>
+    <div className="flex items-center gap-4 my-6">
+      <div className="flex-1 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-[#D4AF37]/20" />
+      <div className="px-4 py-2 bg-[#FFF8F0] border-2 border-[#D4AF37]/30 rounded-full shadow-sm">
+        <span className="text-sm font-bold text-[#8B0000] tracking-wide">OR</span>
       </div>
+      <div className="flex-1 h-[2px] bg-gradient-to-l from-transparent via-[#D4AF37]/50 to-[#D4AF37]/20" />
     </div>
   );
 
@@ -243,7 +203,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
           ) : (
             <div className="px-6 pt-6 pb-8">
               {/* Header */}
-              <div className="text-center mb-5">
+              <div className="text-center mb-6">
                 <div className="inline-flex items-center gap-2 mb-2">
                   <span className="w-8 h-px bg-[#D4AF37]/40" />
                   <span className="text-[9px] uppercase tracking-[0.3em] text-[#8B0000]/50 font-medium">Wedding Gift</span>
@@ -263,85 +223,103 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-[#5C3A1E]">Make Payment</h3>
-                    <p className="text-[10px] text-[#5C3A1E]/50">Choose your preferred method</p>
+                    <p className="text-[10px] text-[#5C3A1E]/50">Pay using UPI</p>
                   </div>
                 </div>
 
-                {/* MOBILE VIEW */}
+                {/* MOBILE VIEW - Copy UPI ID Primary */}
                 {isMobile && (
                   <div className="space-y-0">
-                    {/* Android: Single button with intent */}
-                    {isAndroid && (
-                      <>
-                        <a href={androidIntentLink} className="block" data-testid="upi-pay-btn-android">
-                          <Button className="w-full h-14 bg-gradient-to-r from-[#8B0000] to-[#6B0000] hover:from-[#7B0000] hover:to-[#5B0000] text-white font-serif text-base rounded-2xl gap-3 shadow-lg transition-all active:scale-[0.98]">
-                            <Smartphone className="w-5 h-5" />
-                            Pay ₹{totalRupees} via UPI App
-                          </Button>
-                        </a>
-                        <OrDivider />
-                        <CopyUpiButton />
-                      </>
-                    )}
-
-                    {/* iOS: Three app-specific buttons */}
-                    {isIOS && (
-                      <>
-                        <div className="space-y-2">
-                          {/* Google Pay */}
-                          <a href={gpayLink} className="block" data-testid="upi-gpay-btn">
-                            <button className="w-full h-13 bg-white hover:bg-gray-50 text-[#5C3A1E] font-medium text-sm rounded-xl border border-[#E8DDD0] shadow-sm transition-all active:scale-[0.98] flex items-center px-4 py-3 gap-3">
-                              <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shadow-sm border border-gray-100">
-                                <svg viewBox="0 0 24 24" className="w-5 h-5">
-                                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                                </svg>
-                              </div>
-                              <span className="flex-1 text-left">Open in Google Pay</span>
-                              <span className="text-xs text-[#8B0000] font-semibold">₹{totalRupees}</span>
-                            </button>
-                          </a>
-
-                          {/* PhonePe */}
-                          <a href={phonepeLink} className="block" data-testid="upi-phonepe-btn">
-                            <button className="w-full h-13 bg-white hover:bg-gray-50 text-[#5C3A1E] font-medium text-sm rounded-xl border border-[#E8DDD0] shadow-sm transition-all active:scale-[0.98] flex items-center px-4 py-3 gap-3">
-                              <div className="w-9 h-9 rounded-lg bg-[#5f259f] flex items-center justify-center shadow-sm">
-                                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="white">
-                                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm4 0h-2v-6h2v6zm0-8h-6V7h6v2z"/>
-                                </svg>
-                              </div>
-                              <span className="flex-1 text-left">Open in PhonePe</span>
-                              <span className="text-xs text-[#8B0000] font-semibold">₹{totalRupees}</span>
-                            </button>
-                          </a>
-
-                          {/* Paytm */}
-                          <a href={paytmLink} className="block" data-testid="upi-paytm-btn">
-                            <button className="w-full h-13 bg-white hover:bg-gray-50 text-[#5C3A1E] font-medium text-sm rounded-xl border border-[#E8DDD0] shadow-sm transition-all active:scale-[0.98] flex items-center px-4 py-3 gap-3">
-                              <div className="w-9 h-9 rounded-lg bg-[#00baf2] flex items-center justify-center shadow-sm">
-                                <span className="text-white font-bold text-[9px]">Paytm</span>
-                              </div>
-                              <span className="flex-1 text-left">Open in Paytm</span>
-                              <span className="text-xs text-[#8B0000] font-semibold">₹{totalRupees}</span>
-                            </button>
-                          </a>
+                    {/* Copy UPI ID - Primary on mobile */}
+                    <div className="bg-white rounded-2xl border-2 border-[#8B0000]/20 shadow-md overflow-hidden">
+                      <button
+                        onClick={copyUpiId}
+                        className="w-full flex items-center justify-between px-4 py-4 hover:bg-[#FFF8F0] transition-colors"
+                        data-testid="copy-upi-btn"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#8B0000]/10 to-[#D4AF37]/10 flex items-center justify-center border border-[#8B0000]/10">
+                            <Copy className="w-5 h-5 text-[#8B0000]" />
+                          </div>
+                          <div className="text-left">
+                            <p className="text-base font-semibold text-[#5C3A1E]">Copy UPI ID</p>
+                            <p className="text-sm text-[#8B0000] font-mono font-medium">{upiConfig.upi_id}</p>
+                          </div>
                         </div>
-                        <OrDivider />
-                        <CopyUpiButton />
-                      </>
-                    )}
+                        <div className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${copied ? 'bg-green-500 text-white' : 'bg-[#8B0000] text-white'}`}>
+                          {copied ? <><Check className="w-4 h-4 inline mr-1" />Done!</> : 'Copy'}
+                        </div>
+                      </button>
+                      
+                      {/* Instructions */}
+                      <div className="px-4 pb-4 pt-1">
+                        <div className="bg-[#FFF8F0] rounded-xl p-3 border border-[#D4AF37]/20">
+                          <p className="text-xs text-[#5C3A1E]/70 leading-relaxed">
+                            <span className="font-semibold text-[#8B0000]">How to pay:</span> Open <span className="font-medium">GPay, PhonePe</span> or <span className="font-medium">Paytm</span> → Tap <span className="font-medium">"Pay"</span> or <span className="font-medium">"Send"</span> → Paste UPI ID → Enter <span className="font-bold text-[#8B0000]">₹{totalRupees}</span> → Pay
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <OrDivider />
+
+                    {/* QR Code - Expandable on mobile */}
+                    <div className="bg-white rounded-2xl border border-[#E8DDD0] shadow-sm overflow-hidden">
+                      <button 
+                        onClick={() => setShowQrCode(!showQrCode)}
+                        className="w-full px-4 py-3.5 flex items-center justify-between hover:bg-[#FFF8F0] transition-colors"
+                        data-testid="qr-toggle-btn"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#5C3A1E]/60" fill="none" stroke="currentColor" strokeWidth="2">
+                              <rect x="3" y="3" width="7" height="7" rx="1" />
+                              <rect x="14" y="3" width="7" height="7" rx="1" />
+                              <rect x="3" y="14" width="7" height="7" rx="1" />
+                              <rect x="14" y="14" width="3" height="3" />
+                              <rect x="18" y="14" width="3" height="3" />
+                              <rect x="14" y="18" width="3" height="3" />
+                              <rect x="18" y="18" width="3" height="3" />
+                            </svg>
+                          </div>
+                          <div className="text-left">
+                            <p className="text-sm font-medium text-[#5C3A1E]">Scan QR Code</p>
+                            <p className="text-[11px] text-[#5C3A1E]/50">Use laptop or another phone to scan</p>
+                          </div>
+                        </div>
+                        {showQrCode ? (
+                          <ChevronUp className="w-5 h-5 text-[#5C3A1E]/40" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 text-[#5C3A1E]/40" />
+                        )}
+                      </button>
+                      
+                      {showQrCode && (
+                        <div className="px-4 pb-4 border-t border-[#E8DDD0]/50">
+                          <div className="flex flex-col items-center pt-4">
+                            <div className="p-3 bg-white rounded-xl border-2 border-dashed border-[#D4AF37]/30" data-testid="upi-qr-code-mobile">
+                              <QRCodeSVG value={qrLink} size={160} level="M" bgColor="#FFFFFF" fgColor="#000000" marginSize={2} />
+                            </div>
+                            <div className="bg-[#8B0000]/5 border border-[#8B0000]/10 rounded-full px-4 py-1.5 mt-3">
+                              <span className="text-sm font-semibold text-[#8B0000]">₹{totalRupees}</span>
+                            </div>
+                            <p className="text-[10px] text-[#5C3A1E]/50 mt-3 text-center leading-relaxed max-w-[200px]">
+                              Open this page on laptop and scan with your phone's UPI app
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
-                {/* DESKTOP VIEW */}
+                {/* DESKTOP VIEW - QR Code Primary */}
                 {!isMobile && (
                   <div className="space-y-0">
-                    {/* QR Code - Primary for desktop */}
-                    <div className="bg-white rounded-2xl p-5 border border-[#E8DDD0]/80 shadow-sm">
+                    {/* QR Code - Primary on desktop */}
+                    <div className="bg-white rounded-2xl p-5 border-2 border-[#8B0000]/20 shadow-md">
                       <div className="flex flex-col items-center">
-                        <p className="text-[11px] text-[#5C3A1E]/50 mb-3 font-medium">Scan with any UPI app</p>
+                        <p className="text-sm text-[#5C3A1E]/70 mb-3 font-medium">Scan with any UPI app</p>
                         <div className="p-3 bg-white rounded-xl border-2 border-dashed border-[#D4AF37]/30" data-testid="upi-qr-code">
                           <QRCodeSVG 
                             value={qrLink} 
@@ -355,23 +333,38 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                         <div className="bg-[#8B0000]/5 border border-[#8B0000]/10 rounded-full px-4 py-1.5 mt-3">
                           <span className="text-sm font-semibold text-[#8B0000]">Pay ₹{totalRupees}</span>
                         </div>
+                        <p className="text-[10px] text-[#5C3A1E]/40 mt-2">Open GPay, PhonePe or Paytm and scan</p>
                       </div>
                     </div>
 
                     <OrDivider />
 
-                    {/* Pay via UPI App button for desktop */}
-                    <a href={qrLink} className="block" data-testid="upi-pay-btn-desktop">
-                      <Button className="w-full h-12 bg-gradient-to-r from-[#8B0000] to-[#6B0000] hover:from-[#7B0000] hover:to-[#5B0000] text-white font-serif text-sm rounded-xl gap-2 shadow-md transition-all">
-                        <Smartphone className="w-4 h-4" />
-                        Pay via UPI App
-                      </Button>
-                    </a>
-
-                    <OrDivider />
-
-                    {/* Copy UPI ID */}
-                    <CopyUpiButton />
+                    {/* Copy UPI ID - Secondary on desktop */}
+                    <div className="bg-white rounded-2xl border border-[#E8DDD0] shadow-sm overflow-hidden">
+                      <button
+                        onClick={copyUpiId}
+                        className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-[#FFF8F0] transition-colors"
+                        data-testid="copy-upi-btn"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-[#FFF8F0] flex items-center justify-center border border-[#E8DDD0]">
+                            <Copy className="w-4 h-4 text-[#5C3A1E]/60" />
+                          </div>
+                          <div className="text-left">
+                            <p className="text-sm font-medium text-[#5C3A1E]">Copy UPI ID</p>
+                            <p className="text-[11px] text-[#5C3A1E]/50 font-mono">{upiConfig.upi_id}</p>
+                          </div>
+                        </div>
+                        <div className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${copied ? 'bg-green-100 text-green-700' : 'bg-[#8B0000]/10 text-[#8B0000] border border-[#8B0000]/20'}`}>
+                          {copied ? <><Check className="w-3 h-3 inline mr-1" />Copied</> : 'Copy'}
+                        </div>
+                      </button>
+                      <div className="px-4 pb-3">
+                        <p className="text-[10px] text-[#5C3A1E]/50 leading-relaxed">
+                          Open any UPI app → Tap "Pay" → Paste UPI ID → Enter ₹{totalRupees} → Complete payment
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
