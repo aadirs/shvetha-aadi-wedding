@@ -167,9 +167,15 @@ export default function AdminContributions() {
                     <td className="p-3">
                       <p className="font-medium">{c.donor_name || "—"}</p>
                       <p className="text-xs text-gray-400">{c.donor_email || c.donor_phone || ""}</p>
-                      {c.utr && <p className="text-xs text-blue-500 mt-0.5">UTR: {c.utr}</p>}
                     </td>
                     <td className="p-3 font-medium">₹{(c.total_amount_paise / 100).toLocaleString("en-IN")}</td>
+                    <td className="p-3">
+                      {c.utr ? (
+                        <span className="font-mono text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">{c.utr}</span>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </td>
                     <td className="p-3 text-xs text-gray-600 max-w-[200px] truncate" title={c.donor_message}>{c.donor_message || "—"}</td>
                     <td className="p-3">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
