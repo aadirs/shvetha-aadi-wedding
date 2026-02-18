@@ -133,6 +133,12 @@ export default function AdminContributions() {
                   >
                     <span className="flex items-center">Amount <SortIcon columnKey="total_amount_paise" /></span>
                   </th>
+                  <th 
+                    className="text-left p-3 font-medium cursor-pointer hover:bg-gray-100 select-none"
+                    onClick={() => handleSort("utr")}
+                  >
+                    <span className="flex items-center">UTR <SortIcon columnKey="utr" /></span>
+                  </th>
                   <th className="text-left p-3 font-medium">Message</th>
                   <th 
                     className="text-left p-3 font-medium cursor-pointer hover:bg-gray-100 select-none"
