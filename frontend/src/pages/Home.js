@@ -87,9 +87,6 @@ export default function Home() {
       <footer className="text-center py-8 border-t border-border/40">
         <p className="font-signature text-2xl text-crimson mb-1">Shvetha & Aadi</p>
         <p className="text-muted-foreground text-xs font-sans">Made with love</p>
-        <Link to="/admin/login" className="text-muted-foreground/30 text-xs mt-4 inline-block hover:text-muted-foreground/60 transition-colors">
-          Admin
-        </Link>
       </footer>
     </div>
   );

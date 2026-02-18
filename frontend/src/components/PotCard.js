@@ -106,7 +106,7 @@ export default function PotCard({ pot }) {
         <div className="flex items-center justify-center gap-3">
           <Link to={`/p/${pot.slug}`}>
             <Button variant="outline" className="text-xs font-sans rounded-full border-border/40 hover:border-gold/50 px-5 h-8" data-testid={`view-pot-${pot.slug}`}>
-              View Offerings
+              View Blessings
             </Button>
           </Link>
           <Link to={`/p/${pot.slug}`}>
