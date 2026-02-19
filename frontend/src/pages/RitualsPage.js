@@ -24,7 +24,7 @@ const rituals = [
   },
   {
     title: "Kasi Yatra",
-    image: "https://images.pexels.com/photos/35872894/pexels-photo-35872894.jpeg?auto=compress&cs=tinysrgb&w=600",
+    image: "/kashi_yatra.jpg",
     description: "The groom pretends to leave for Kasi (Varanasi) to become a sage, but is convinced by the bride's father to embrace married life instead.",
     significance: "Symbolizes the choice of Grihastha (householder) life over Sanyasa (renunciation)."
   },
