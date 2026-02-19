@@ -56,7 +56,7 @@ export default function LandingPage() {
             isTransitioning ? "opacity-0" : "opacity-100"
           }`}
           style={{
-            backgroundColor: "#8B0000", // crimson from blessings
+            backgroundColor: "#8B0000",
           }}
         >
           {/* Mandala pattern overlay - matching blessings page */}
@@ -99,7 +99,6 @@ export default function LandingPage() {
               data-testid="begin-btn"
             >
               <span className="relative z-10">Begin</span>
-              {/* Hover glow effect */}
               <div 
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 style={{
@@ -122,71 +121,78 @@ export default function LandingPage() {
             backgroundPosition: "center",
           }}
         >
-          {/* Dark gradient overlay for better readability */}
+          {/* Subtle center vignette - not too dark */}
           <div 
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
             style={{
-              background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.7) 100%)',
+              background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.3) 100%)',
             }}
           />
 
-          {/* Menu Container with semi-transparent background */}
-          <div 
-            className="relative z-10 px-12 py-10 sm:px-16 sm:py-12 rounded-lg"
-            style={{
-              backgroundColor: 'rgba(139, 0, 0, 0.85)', // crimson with transparency
-              backdropFilter: 'blur(8px)',
-              boxShadow: '0 0 60px rgba(0,0,0,0.5), inset 0 0 30px rgba(212, 175, 55, 0.1)',
-              border: '1px solid rgba(212, 175, 55, 0.3)',
-            }}
-          >
-            {/* Decorative top line */}
-            <div className="flex justify-center mb-8">
-              <div className="w-20 h-px bg-gold/50" />
-            </div>
-
-            {/* Menu Items */}
-            <nav className="flex flex-col items-center">
-              {menuItems.map((item, index) => (
-                <div
-                  key={item.path}
-                  className={`transition-all duration-500 ${
-                    menuVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                  }`}
-                  style={{ transitionDelay: `${index * 100}ms` }}
-                >
-                  {/* Divider (except before first item) */}
-                  {index > 0 && (
-                    <div className="flex items-center justify-center my-4 sm:my-5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gold/60" />
-                    </div>
-                  )}
-                  
-                  <button
-                    onClick={() => navigate(item.path)}
-                    className="group relative text-center py-2 px-4"
-                    data-testid={`menu-${item.path.slice(1)}`}
-                  >
-                    {/* Using font-signature (Great Vibes) like blessings page titles */}
+          {/* Menu Items - with text styling for readability */}
+          <nav className="relative z-10 flex flex-col items-center px-6">
+            {menuItems.map((item, index) => (
+              <div
+                key={item.path}
+                className={`transition-all duration-500 ${
+                  menuVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                }`}
+                style={{ transitionDelay: `${index * 100}ms` }}
+              >
+                {/* Divider (except before first item) */}
+                {index > 0 && (
+                  <div className="flex items-center justify-center my-4 sm:my-5">
                     <span 
-                      className="font-signature text-3xl sm:text-4xl lg:text-5xl transition-all duration-300 text-white group-hover:text-gold"
-                    >
-                      {item.label}
-                    </span>
-                    {/* Gold underline on hover */}
-                    <span 
-                      className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-0 group-hover:w-full transition-all duration-300 bg-gold"
+                      className="w-2 h-2 rounded-full"
+                      style={{ 
+                        backgroundColor: "#D4AF37",
+                        boxShadow: "0 0 10px rgba(212, 175, 55, 0.8)",
+                      }}
                     />
-                  </button>
-                </div>
-              ))}
-            </nav>
-
-            {/* Decorative bottom line */}
-            <div className="flex justify-center mt-8">
-              <div className="w-20 h-px bg-gold/50" />
-            </div>
-          </div>
+                  </div>
+                )}
+                
+                <button
+                  onClick={() => navigate(item.path)}
+                  className="group relative text-center py-2 px-6"
+                  data-testid={`menu-${item.path.slice(1)}`}
+                >
+                  {/* Subtle backdrop behind each item */}
+                  <span 
+                    className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{
+                      backgroundColor: 'rgba(139, 0, 0, 0.6)',
+                      backdropFilter: 'blur(4px)',
+                    }}
+                  />
+                  {/* Text with strong shadow for readability */}
+                  <span 
+                    className="relative z-10 font-signature text-3xl sm:text-4xl lg:text-5xl transition-all duration-300 group-hover:text-gold"
+                    style={{
+                      color: "#FFFAF0",
+                      textShadow: `
+                        0 0 20px rgba(0,0,0,0.9),
+                        0 0 40px rgba(0,0,0,0.8),
+                        0 2px 4px rgba(0,0,0,0.9),
+                        0 4px 8px rgba(0,0,0,0.7),
+                        2px 2px 8px rgba(0,0,0,0.8),
+                        -2px -2px 8px rgba(0,0,0,0.8)
+                      `,
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                  {/* Gold underline on hover */}
+                  <span 
+                    className="absolute bottom-1 left-1/2 -translate-x-1/2 h-0.5 w-0 group-hover:w-4/5 transition-all duration-300 bg-gold"
+                    style={{
+                      boxShadow: "0 0 10px rgba(212, 175, 55, 0.8)",
+                    }}
+                  />
+                </button>
+              </div>
+            ))}
+          </nav>
         </div>
       )}
 
