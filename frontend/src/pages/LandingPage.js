@@ -56,7 +56,7 @@ export default function LandingPage() {
             isTransitioning ? "opacity-0" : "opacity-100"
           }`}
           style={{
-            backgroundImage: `url('/landing-cover.jpg')`,
+            backgroundImage: `url('/landing-desktop.jpg')`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
