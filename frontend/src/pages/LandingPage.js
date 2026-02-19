@@ -61,50 +61,48 @@ export default function LandingPage() {
       {/* Initial Full-Page Cover View */}
       {!showMenu && (
         <div
-          className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-700 ${
+          className={`fixed inset-0 transition-opacity duration-700 ${
             isTransitioning ? "opacity-0" : "opacity-100"
           }`}
           style={{
-            backgroundImage: `url('/landing-desktop.jpg')`,
+            backgroundImage: `url('${isMobile ? '/landing-mobile.jpg' : '/landing-desktop.jpg'}')`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
         >
-          {/* Begin Button - positioned inside the yellow square below text */}
-          <div className="flex flex-col items-center" style={{ marginTop: '470px' }}>
-            <button
-              onClick={handleBegin}
-              className="group relative px-14 py-4 rounded-md transition-all duration-300"
+          {/* Begin Button - absolutely positioned inside the yellow square below "Shvetha & Aadi" text */}
+          <button
+            onClick={handleBegin}
+            className="group absolute left-1/2 -translate-x-1/2 px-8 py-2.5 rounded transition-all duration-300"
+            style={{
+              top: isMobile ? '70%' : '68%',
+              backgroundColor: "#F5F0E6",
+              color: "#5C4033",
+              fontFamily: "'Playfair Display', Georgia, serif",
+              letterSpacing: "0.2em",
+              fontSize: isMobile ? "0.75rem" : "0.85rem",
+              fontWeight: "500",
+            }}
+            data-testid="begin-btn"
+          >
+            <span className="relative z-10">Begin</span>
+            {/* Golden glow on hover */}
+            <div 
+              className="absolute inset-0 rounded opacity-0 group-hover:opacity-100 transition-all duration-500"
               style={{
-                backgroundColor: "#F5F0E6", // Beige background
-                color: "#5C4033",
-                fontFamily: "'Playfair Display', Georgia, serif",
-                letterSpacing: "0.25em",
-                fontSize: "0.9rem",
-                fontWeight: "500",
+                boxShadow: `
+                  0 0 15px rgba(212, 175, 55, 0.6),
+                  0 0 30px rgba(212, 175, 55, 0.4),
+                  inset 0 0 15px rgba(212, 175, 55, 0.1)
+                `,
               }}
-              data-testid="begin-btn"
-            >
-              <span className="relative z-10">Begin</span>
-              {/* Golden glow on hover */}
-              <div 
-                className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-500"
-                style={{
-                  boxShadow: `
-                    0 0 20px rgba(212, 175, 55, 0.6),
-                    0 0 40px rgba(212, 175, 55, 0.4),
-                    0 0 60px rgba(212, 175, 55, 0.3),
-                    inset 0 0 20px rgba(212, 175, 55, 0.1)
-                  `,
-                }}
-              />
-              {/* Subtle border glow on hover */}
-              <div 
-                className="absolute inset-0 rounded-md border-2 border-transparent group-hover:border-gold/50 transition-all duration-500"
-              />
-            </button>
-          </div>
+            />
+            {/* Subtle border glow on hover */}
+            <div 
+              className="absolute inset-0 rounded border border-transparent group-hover:border-gold/50 transition-all duration-500"
+            />
+          </button>
         </div>
       )}
 
