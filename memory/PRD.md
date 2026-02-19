@@ -93,6 +93,32 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - **Goal Already Met** — Shows "Goal reached — your blessing still adds to our journey ✨" when goal exceeded
 - **Existing Behavior Preserved** — 12s countdown timer and redirect still work
 
+### Phase 8 (Feb 19, 2026) - Admin Panel Updates
+- **Removed Submitted Column** — Removed non-functional "Submitted" column from admin contributions
+- **Renamed Paid to Paid At** — Column header now shows "Paid At" for clarity
+- **Added Created At Column** — New sortable "Created At" column in contributions table
+- **Fixed favicon** — Created proper favicon.ico file with S&A emblem
+
+### Phase 9 (Feb 19, 2026) - Heritage Multi-Page Wedding Experience
+- **New Landing Page (`/`)** — Full-screen parchment background with SA emblem, "Shvetha & Aadi" text, and "Begin" button
+- **Temple Bell Sound** — Plays on "Begin" click (user-triggered, 35% volume)
+- **Courtyard Menu Transition** — Soft fade to temple courtyard background with 4 heritage-styled menu options
+- **Sanskrit Yantra Watermark** — Subtle gold geometric motif behind menu (5-8% opacity)
+- **New Pages Added:**
+  - `/story` — Our Story page with hero image, "How We Met" section, and journey milestones
+  - `/rituals` — Sacred Ceremonies page with all 10 Iyer wedding rituals in timeline (desktop) / accordion (mobile)
+  - `/celebration` — The Celebration page with venue, schedule, dress code, and parent info (extracted from invitation PDF)
+  - `/blessings` — Existing gift system moved here (UNCHANGED functionality)
+- **Heritage Navigation** — New top nav on all pages except landing, gold underline on hover
+- **Mobile Hamburger Menu** — Full-screen overlay with temple background texture
+- **Routing Updated** — `/` is now landing, `/blessings` is gift system
+- **Content Editability** — All story/rituals/celebration content in editable arrays at top of files
+
+**Assets Added:**
+- `/public/sa-emblem.png` — SA emblem from wedding invitation
+- `/public/temple-courtyard-bg.png` — Temple courtyard artwork for menu background
+- `/public/temple-bell.mp3` — Temple bell audio for "Begin" button
+
 ## DB Schema
 - **pots**: id, title, slug, story, cover_image_url, goal_amount, created_at, archived
 - **pot_items**: id, pot_id, title, amount, description, image_url, sort_order
