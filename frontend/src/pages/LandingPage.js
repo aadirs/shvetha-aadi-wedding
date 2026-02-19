@@ -76,12 +76,12 @@ export default function LandingPage() {
             onClick={handleBegin}
             className="group absolute left-1/2 -translate-x-1/2 px-8 py-2.5 rounded transition-all duration-300"
             style={{
-              top: isMobile ? '70%' : '71%',
+              top: isMobile ? '70%' : '69%',
               backgroundColor: "#F5F0E6",
               color: "#5C4033",
               fontFamily: "'Playfair Display', Georgia, serif",
               letterSpacing: "0.2em",
-              fontSize: isMobile ? "0.75rem" : "0.85rem",
+              fontSize: isMobile ? "0.75rem" : "0.8rem",
               fontWeight: "500",
             }}
             data-testid="begin-btn"
