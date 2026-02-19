@@ -52,7 +52,7 @@ export default function LandingPage() {
       {/* Initial Full-Page Cover View */}
       {!showMenu && (
         <div
-          className={`fixed inset-0 flex flex-col items-center justify-end pb-12 sm:pb-16 transition-opacity duration-700 ${
+          className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-700 ${
             isTransitioning ? "opacity-0" : "opacity-100"
           }`}
           style={{
@@ -62,38 +62,40 @@ export default function LandingPage() {
             backgroundRepeat: "no-repeat",
           }}
         >
-          {/* Begin Button - positioned at bottom */}
-          <button
-            onClick={handleBegin}
-            className="group relative px-14 py-4 rounded-md transition-all duration-300"
-            style={{
-              backgroundColor: "#F5F0E6", // Beige background
-              color: "#5C4033",
-              fontFamily: "'Playfair Display', Georgia, serif",
-              letterSpacing: "0.25em",
-              fontSize: "0.9rem",
-              fontWeight: "500",
-            }}
-            data-testid="begin-btn"
-          >
-            <span className="relative z-10">Begin</span>
-            {/* Golden glow on hover */}
-            <div 
-              className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-500"
+          {/* Begin Button - positioned inside the yellow square below text */}
+          <div className="flex flex-col items-center" style={{ marginTop: '280px' }}>
+            <button
+              onClick={handleBegin}
+              className="group relative px-14 py-4 rounded-md transition-all duration-300"
               style={{
-                boxShadow: `
-                  0 0 20px rgba(212, 175, 55, 0.6),
-                  0 0 40px rgba(212, 175, 55, 0.4),
-                  0 0 60px rgba(212, 175, 55, 0.3),
-                  inset 0 0 20px rgba(212, 175, 55, 0.1)
-                `,
+                backgroundColor: "#F5F0E6", // Beige background
+                color: "#5C4033",
+                fontFamily: "'Playfair Display', Georgia, serif",
+                letterSpacing: "0.25em",
+                fontSize: "0.9rem",
+                fontWeight: "500",
               }}
-            />
-            {/* Subtle border glow on hover */}
-            <div 
-              className="absolute inset-0 rounded-md border-2 border-transparent group-hover:border-gold/50 transition-all duration-500"
-            />
-          </button>
+              data-testid="begin-btn"
+            >
+              <span className="relative z-10">Begin</span>
+              {/* Golden glow on hover */}
+              <div 
+                className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-500"
+                style={{
+                  boxShadow: `
+                    0 0 20px rgba(212, 175, 55, 0.6),
+                    0 0 40px rgba(212, 175, 55, 0.4),
+                    0 0 60px rgba(212, 175, 55, 0.3),
+                    inset 0 0 20px rgba(212, 175, 55, 0.1)
+                  `,
+                }}
+              />
+              {/* Subtle border glow on hover */}
+              <div 
+                className="absolute inset-0 rounded-md border-2 border-transparent group-hover:border-gold/50 transition-all duration-500"
+              />
+            </button>
+          </div>
         </div>
       )}
 
