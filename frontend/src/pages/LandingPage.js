@@ -61,7 +61,7 @@ export default function LandingPage() {
             <img
               src="/sa-emblem.png"
               alt="S&A Emblem"
-              className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 object-contain mb-8"
+              className="w-72 h-auto sm:w-96 lg:w-[450px] object-contain mb-8"
               data-testid="sa-emblem"
             />
             
