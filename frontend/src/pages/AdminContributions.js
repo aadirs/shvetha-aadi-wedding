@@ -181,9 +181,6 @@ export default function AdminContributions() {
                       </span>
                     </td>
                     <td className="p-3 text-xs text-gray-500 whitespace-nowrap">
-                      {c.submitted_at ? new Date(c.submitted_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "—"}
-                    </td>
-                    <td className="p-3 text-xs text-gray-500 whitespace-nowrap">
                       {c.paid_at ? new Date(c.paid_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "—"}
                     </td>
                     <td className="p-3">
