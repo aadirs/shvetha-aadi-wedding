@@ -14,8 +14,8 @@ const brideData = {
   name: "Shvetha",
   role: "The Bride",
   tagline: "The one who plans everything",
-  // Anushka Sharma - Replace with actual Shvetha photo
-  image: "https://m.media-amazon.com/images/M/MV5BOGEwMjFhNjItNGYxYy00MTcwLWIzYjYtZjBiNjJjZTA4MTFhXkEyXkFqcGc@._V1_UX500_CR0,0,500,281_AL_.jpg",
+  // Replace with actual Shvetha photo - using placeholder for now
+  image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=600&fit=crop&crop=face",
   bio: "A dreamer with a spreadsheet. Part-time perfectionist, full-time foodie. Believes that every problem can be solved with the right playlist and a cup of chai.",
   funFacts: [
     { icon: Coffee, text: "Runs on filter coffee" },
