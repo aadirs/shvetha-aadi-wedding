@@ -77,32 +77,31 @@ export default function LandingPage() {
             className="group absolute left-1/2 -translate-x-1/2 px-8 py-2.5 rounded transition-all duration-300"
             style={{
               top: isMobile ? '72%' : '74%',
-              backgroundColor: "#8B0000",
-              color: "#FFFAF0",
+              backgroundColor: "#F5F0E6",
+              color: "#5C4033",
               fontFamily: "'Playfair Display', Georgia, serif",
               letterSpacing: "0.2em",
               fontSize: isMobile ? "0.8rem" : "0.9rem",
               fontWeight: "500",
-              border: "1px solid rgba(212, 175, 55, 0.3)",
             }}
             data-testid="begin-btn"
           >
             <span className="relative z-10">Begin</span>
-            {/* Rich golden glow on hover */}
+            {/* Golden glow on hover */}
             <div 
               className="absolute inset-0 rounded opacity-0 group-hover:opacity-100 transition-all duration-500"
               style={{
                 boxShadow: `
-                  0 0 20px rgba(212, 175, 55, 0.8),
-                  0 0 40px rgba(212, 175, 55, 0.6),
-                  0 0 60px rgba(212, 175, 55, 0.4),
-                  inset 0 0 20px rgba(212, 175, 55, 0.2)
+                  0 0 20px rgba(212, 175, 55, 0.6),
+                  0 0 40px rgba(212, 175, 55, 0.4),
+                  0 0 60px rgba(212, 175, 55, 0.3),
+                  inset 0 0 20px rgba(212, 175, 55, 0.1)
                 `,
               }}
             />
-            {/* Golden border on hover */}
+            {/* Subtle border glow on hover */}
             <div 
-              className="absolute inset-0 rounded border-2 border-transparent group-hover:border-gold transition-all duration-500"
+              className="absolute inset-0 rounded border-2 border-transparent group-hover:border-gold/50 transition-all duration-500"
             />
           </button>
         </div>
