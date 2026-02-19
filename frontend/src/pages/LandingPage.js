@@ -6,8 +6,17 @@ export default function LandingPage() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [bgLoaded, setBgLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const audioRef = useRef(null);
   const navigate = useNavigate();
+
+  // Detect mobile vs desktop
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Preload the courtyard background image
   useEffect(() => {
