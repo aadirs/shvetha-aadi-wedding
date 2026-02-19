@@ -15,11 +15,10 @@ export default function HeritageNav() {
 
   return (
     <>
-      {/* Desktop Navigation */}
+      {/* Desktop Navigation - crimson background matching blessings */}
       <nav 
-        className="hidden md:flex items-center justify-center gap-8 py-4 px-6"
+        className="hidden md:flex items-center justify-center gap-8 py-4 px-6 bg-crimson"
         style={{ 
-          backgroundColor: "rgba(92, 64, 51, 0.95)",
           borderBottom: "1px solid rgba(212, 175, 55, 0.3)",
         }}
         data-testid="heritage-nav"
@@ -28,8 +27,8 @@ export default function HeritageNav() {
           <div key={item.path} className="flex items-center">
             {index > 0 && (
               <span 
-                className="w-1 h-1 rounded-full mr-8"
-                style={{ backgroundColor: "#D4AF37", opacity: 0.5 }}
+                className="w-1 h-1 rounded-full mr-8 bg-gold"
+                style={{ opacity: 0.5 }}
               />
             )}
             <Link
@@ -46,25 +45,23 @@ export default function HeritageNav() {
                 {item.label}
               </span>
               <span 
-                className={`absolute -bottom-1 left-0 h-px transition-all duration-300 ${
+                className={`absolute -bottom-1 left-0 h-px bg-gold transition-all duration-300 ${
                   location.pathname === item.path ? "w-full" : "w-0 group-hover:w-full"
                 }`}
-                style={{ backgroundColor: "#D4AF37" }}
               />
             </Link>
           </div>
         ))}
       </nav>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation - crimson background */}
       <nav 
-        className="md:hidden flex items-center justify-between py-3 px-4"
+        className="md:hidden flex items-center justify-between py-3 px-4 bg-crimson"
         style={{ 
-          backgroundColor: "rgba(92, 64, 51, 0.95)",
           borderBottom: "1px solid rgba(212, 175, 55, 0.3)",
         }}
       >
-        <Link to="/" className="font-serif text-gold text-lg" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+        <Link to="/" className="font-signature text-gold text-2xl">
           S & A
         </Link>
         <button
@@ -104,10 +101,7 @@ export default function HeritageNav() {
               <div key={item.path} className="text-center">
                 {index > 0 && (
                   <div className="flex items-center justify-center mb-6">
-                    <span 
-                      className="w-1.5 h-1.5 rounded-full"
-                      style={{ backgroundColor: "#D4AF37", opacity: 0.6 }}
-                    />
+                    <span className="w-1.5 h-1.5 rounded-full bg-gold" style={{ opacity: 0.7 }} />
                   </div>
                 )}
                 <Link
