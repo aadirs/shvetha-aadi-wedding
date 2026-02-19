@@ -148,15 +148,9 @@ export default function AdminContributions() {
                   </th>
                   <th 
                     className="text-left p-3 font-medium cursor-pointer hover:bg-gray-100 select-none"
-                    onClick={() => handleSort("submitted_at")}
-                  >
-                    <span className="flex items-center">Submitted <SortIcon columnKey="submitted_at" /></span>
-                  </th>
-                  <th 
-                    className="text-left p-3 font-medium cursor-pointer hover:bg-gray-100 select-none"
                     onClick={() => handleSort("paid_at")}
                   >
-                    <span className="flex items-center">Paid <SortIcon columnKey="paid_at" /></span>
+                    <span className="flex items-center">Paid At <SortIcon columnKey="paid_at" /></span>
                   </th>
                   <th className="text-left p-3 font-medium">Actions</th>
                 </tr>
