@@ -1,4 +1,5 @@
 import HeritageNav from "../components/HeritageNav";
+import { Separator } from "../components/ui/separator";
 import { MapPin, Calendar, Clock, ExternalLink } from "lucide-react";
 
 /*
@@ -55,42 +56,33 @@ const events = [
 
 export default function CelebrationPage() {
   return (
-    <div 
-      className="min-h-screen"
-      style={{ backgroundColor: "#FBF8F3" }}
-    >
+    <div className="min-h-screen mandala-bg">
       <HeritageNav />
       
-      {/* Hero Section */}
-      <header 
-        className="relative py-16 sm:py-24"
-        style={{ backgroundColor: "#5C4033" }}
-      >
+      {/* Hero Section - matching blessings page */}
+      <header className="relative overflow-hidden bg-crimson text-white">
         <div className="absolute inset-0 opacity-10">
           <div 
             className="absolute inset-0"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='20' fill='none' stroke='%23D4AF37' stroke-width='0.5'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='30' fill='none' stroke='%23D4AF37' stroke-width='0.5'/%3E%3Ccircle cx='40' cy='40' r='20' fill='none' stroke='%23D4AF37' stroke-width='0.3'/%3E%3Ccircle cx='40' cy='40' r='10' fill='none' stroke='%23D4AF37' stroke-width='0.3'/%3E%3C/svg%3E")`,
             }}
           />
         </div>
         
-        <div className="relative z-10 max-w-3xl mx-auto text-center px-6">
+        <div className="relative z-10 max-w-2xl mx-auto text-center py-16 px-6 sm:py-20">
+          <Separator className="mx-auto w-20 bg-gold/40 mb-6" />
+          <p className="text-gold uppercase tracking-[0.3em] text-xs font-sans font-semibold mb-4">
+            Join us in celebrating
+          </p>
           <h1 
-            className="font-serif text-4xl sm:text-5xl lg:text-6xl mb-4"
-            style={{ 
-              color: "#D4AF37",
-              fontFamily: "'Playfair Display', Georgia, serif",
-            }}
+            className="font-signature text-5xl sm:text-6xl lg:text-7xl text-white mb-4"
             data-testid="celebration-title"
           >
             The Celebration
           </h1>
-          <p 
-            className="font-serif text-lg italic"
-            style={{ color: "#E8DCC8" }}
-          >
-            Join us in celebrating this sacred union
+          <p className="text-champagne/80 font-serif italic text-base sm:text-lg">
+            March 5th & 6th, 2026
           </p>
         </div>
       </header>
@@ -99,28 +91,18 @@ export default function CelebrationPage() {
       <section className="py-12 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <div className="mb-8">
-            <MapPin className="w-8 h-8 mx-auto mb-4" style={{ color: "#D4AF37" }} />
-            <h2 
-              className="font-serif text-2xl sm:text-3xl mb-2"
-              style={{ 
-                color: "#5C4033",
-                fontFamily: "'Playfair Display', Georgia, serif",
-              }}
-            >
+            <MapPin className="w-8 h-8 mx-auto mb-4 text-gold" />
+            <h2 className="font-serif text-2xl sm:text-3xl mb-2 text-crimson">
               {weddingDetails.venue.name}
             </h2>
-            <p style={{ color: "#6B5B4F" }}>
+            <p className="text-foreground/70">
               {weddingDetails.venue.address}
             </p>
             <a
               href={weddingDetails.venue.mapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 mt-4 px-6 py-2 rounded-full text-sm transition-all hover:shadow-md"
-              style={{ 
-                backgroundColor: "rgba(212, 175, 55, 0.15)",
-                color: "#8B7355",
-              }}
+              className="inline-flex items-center gap-2 mt-4 px-6 py-2 rounded-full text-sm transition-all hover:shadow-md bg-gold/20 text-crimson font-medium"
               data-testid="venue-map-link"
             >
               <span>View on Google Maps</span>
@@ -131,18 +113,9 @@ export default function CelebrationPage() {
       </section>
 
       {/* Events Schedule */}
-      <section 
-        className="py-12 px-6"
-        style={{ backgroundColor: "#F5F0E6" }}
-      >
+      <section className="py-12 px-6 bg-crimson/5">
         <div className="max-w-4xl mx-auto">
-          <h2 
-            className="font-serif text-2xl sm:text-3xl text-center mb-10"
-            style={{ 
-              color: "#5C4033",
-              fontFamily: "'Playfair Display', Georgia, serif",
-            }}
-          >
+          <h2 className="font-serif text-2xl sm:text-3xl text-center mb-10 text-crimson">
             Schedule of Events
           </h2>
 
@@ -150,65 +123,46 @@ export default function CelebrationPage() {
             {events.map((event, index) => (
               <div 
                 key={index}
-                className="rounded-lg p-6 sm:p-8"
-                style={{ 
-                  backgroundColor: "#FFFFFF",
-                  border: "1px solid rgba(212, 175, 55, 0.3)",
-                }}
+                className="rounded-xl p-6 sm:p-8 bg-white shadow-sm gold-border"
                 data-testid={`event-card-${index}`}
               >
                 {/* Event Name */}
-                <h3 
-                  className="font-serif text-2xl sm:text-3xl mb-1"
-                  style={{ 
-                    color: "#5C4033",
-                    fontFamily: "'Playfair Display', Georgia, serif",
-                  }}
-                >
+                <h3 className="font-signature text-3xl sm:text-4xl mb-1 text-crimson">
                   {event.name}
                 </h3>
-                <p 
-                  className="font-serif italic text-sm mb-4"
-                  style={{ color: "#B8860B" }}
-                >
+                <p className="font-serif italic text-sm mb-4 text-gold">
                   {event.tagline}
                 </p>
 
                 {/* Decorative divider */}
-                <div 
-                  className="w-12 h-px mb-4"
-                  style={{ backgroundColor: "#D4AF37" }}
-                />
+                <div className="w-12 h-px mb-4 bg-gold" />
 
                 {/* Description */}
-                <p className="text-sm mb-6" style={{ color: "#6B5B4F" }}>
+                <p className="text-sm mb-6 text-foreground/70">
                   {event.description}
                 </p>
 
                 {/* Date & Time */}
                 <div className="space-y-2 mb-6">
                   <div className="flex items-center gap-3">
-                    <Calendar className="w-4 h-4" style={{ color: "#B8860B" }} />
-                    <span style={{ color: "#5C4033" }}>{event.date}</span>
+                    <Calendar className="w-4 h-4 text-gold" />
+                    <span className="text-crimson font-medium">{event.date}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Clock className="w-4 h-4" style={{ color: "#B8860B" }} />
-                    <span style={{ color: "#5C4033" }}>{event.time}</span>
+                    <Clock className="w-4 h-4 text-gold" />
+                    <span className="text-crimson font-medium">{event.time}</span>
                   </div>
                 </div>
 
                 {/* Dress Code */}
-                <div 
-                  className="rounded-lg p-4"
-                  style={{ backgroundColor: "rgba(212, 175, 55, 0.08)" }}
-                >
-                  <p className="text-xs uppercase tracking-wider mb-1" style={{ color: "#B8860B" }}>
+                <div className="rounded-lg p-4 bg-gold/10">
+                  <p className="text-xs uppercase tracking-wider mb-1 text-gold font-semibold">
                     Suggested Attire
                   </p>
-                  <p className="font-medium" style={{ color: "#5C4033" }}>
+                  <p className="font-medium text-crimson">
                     {event.attire}
                   </p>
-                  <p className="text-xs mt-1" style={{ color: "#8B7355" }}>
+                  <p className="text-xs mt-1 text-foreground/60">
                     {event.attireNote}
                   </p>
                 </div>
@@ -221,45 +175,33 @@ export default function CelebrationPage() {
       {/* Families Section */}
       <section className="py-12 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 
-            className="font-serif text-2xl sm:text-3xl mb-8"
-            style={{ 
-              color: "#5C4033",
-              fontFamily: "'Playfair Display', Georgia, serif",
-            }}
-          >
+          <h2 className="font-serif text-2xl sm:text-3xl mb-8 text-crimson">
             With the Blessings of Our Families
           </h2>
 
           <div className="grid sm:grid-cols-2 gap-8">
             {/* Groom's Family */}
             <div>
-              <p 
-                className="text-sm uppercase tracking-wider mb-3"
-                style={{ color: "#B8860B" }}
-              >
+              <p className="text-sm uppercase tracking-wider mb-3 text-gold font-semibold">
                 Groom's Parents
               </p>
-              <p className="font-serif text-lg" style={{ color: "#5C4033" }}>
+              <p className="font-serif text-lg text-foreground/80">
                 {weddingDetails.parents.groom.mother}
               </p>
-              <p className="font-serif text-lg" style={{ color: "#5C4033" }}>
+              <p className="font-serif text-lg text-foreground/80">
                 {weddingDetails.parents.groom.father}
               </p>
             </div>
 
             {/* Bride's Family */}
             <div>
-              <p 
-                className="text-sm uppercase tracking-wider mb-3"
-                style={{ color: "#B8860B" }}
-              >
+              <p className="text-sm uppercase tracking-wider mb-3 text-gold font-semibold">
                 Bride's Parents
               </p>
-              <p className="font-serif text-lg" style={{ color: "#5C4033" }}>
+              <p className="font-serif text-lg text-foreground/80">
                 {weddingDetails.parents.bride.mother}
               </p>
-              <p className="font-serif text-lg" style={{ color: "#5C4033" }}>
+              <p className="font-serif text-lg text-foreground/80">
                 {weddingDetails.parents.bride.father}
               </p>
             </div>
@@ -268,33 +210,18 @@ export default function CelebrationPage() {
       </section>
 
       {/* RSVP Placeholder */}
-      <section 
-        className="py-12 px-6 text-center"
-        style={{ backgroundColor: "rgba(212, 175, 55, 0.08)" }}
-      >
-        <p 
-          className="font-serif text-xl mb-4"
-          style={{ 
-            color: "#5C4033",
-            fontFamily: "'Playfair Display', Georgia, serif",
-          }}
-        >
+      <section className="py-12 px-6 text-center bg-gold/10">
+        <p className="font-signature text-3xl mb-4 text-crimson">
           We look forward to celebrating with you
         </p>
-        <p className="text-sm" style={{ color: "#8B7355" }}>
+        <p className="text-sm text-foreground/60">
           Your presence is the greatest gift
         </p>
       </section>
 
       {/* Footer */}
-      <footer 
-        className="py-8 text-center"
-        style={{ backgroundColor: "#5C4033" }}
-      >
-        <p 
-          className="font-serif text-sm"
-          style={{ color: "#D4AF37", opacity: 0.7 }}
-        >
+      <footer className="py-8 text-center bg-crimson">
+        <p className="font-serif text-sm text-gold/70">
           Shvetha & Aadi • March 2026
         </p>
       </footer>
