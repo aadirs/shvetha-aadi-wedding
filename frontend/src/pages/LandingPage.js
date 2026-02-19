@@ -75,9 +75,12 @@ export default function LandingPage() {
 
   const handleBegin = () => {
     // Play temple bell sound (user-triggered)
-    if (audioRef.current) {
-      audioRef.current.volume = 0.4;
-      audioRef.current.play().catch(() => {});
+    try {
+      const bellSound = new Audio('/temple-bell.mp3');
+      bellSound.volume = 0.5;
+      bellSound.play().catch(err => console.log('Audio play error:', err));
+    } catch (err) {
+      console.log('Audio error:', err);
     }
     
     // Start transition
