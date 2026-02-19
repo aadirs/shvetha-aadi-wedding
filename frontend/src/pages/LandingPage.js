@@ -174,7 +174,7 @@ export default function LandingPage() {
           style={{
             backgroundImage: menuBgLoaded ? `url('/temple-courtyard-bg.png')` : 'none',
             backgroundColor: '#5C4033',
-            backgroundSize: "contain",
+            backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
