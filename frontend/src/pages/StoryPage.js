@@ -147,8 +147,66 @@ function BioCard({ person, isReversed }) {
 }
 
 export default function StoryPage() {
+  const [isMuted, setIsMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
+
+  // Play BGM 5 seconds after page loads
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.volume = 0.3;
+        audioRef.current.loop = true;
+        audioRef.current.play()
+          .then(() => setIsPlaying(true))
+          .catch(err => console.log('BGM autoplay blocked:', err));
+      }
+    }, 5000);
+
+    return () => {
+      clearTimeout(timer);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
+  }, []);
+
+  const toggleMute = () => {
+    if (audioRef.current) {
+      if (isMuted) {
+        audioRef.current.volume = 0.3;
+        audioRef.current.muted = false;
+      } else {
+        audioRef.current.muted = true;
+      }
+      setIsMuted(!isMuted);
+    }
+  };
+
   return (
     <div className="min-h-screen mandala-bg">
+      {/* Background Music */}
+      <audio ref={audioRef} src="/story-bgm.mp3" preload="auto" />
+      
+      {/* Music Control Button - Fixed position */}
+      {isPlaying && (
+        <button
+          onClick={toggleMute}
+          className="fixed bottom-6 right-6 z-50 p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+          style={{ 
+            backgroundColor: '#8B0000',
+            border: '2px solid #D4AF37'
+          }}
+          title={isMuted ? "Unmute" : "Mute"}
+        >
+          {isMuted ? (
+            <VolumeX className="w-5 h-5 text-gold" />
+          ) : (
+            <Volume2 className="w-5 h-5 text-gold" />
+          )}
+        </button>
+      )}
+
       <HeritageNav />
       
       {/* Hero Section */}
