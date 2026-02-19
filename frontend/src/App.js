@@ -69,7 +69,11 @@ function App() {
       <BrowserRouter>
         <div className="min-h-screen bg-background">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/story" element={<StoryPage />} />
+            <Route path="/rituals" element={<RitualsPage />} />
+            <Route path="/celebration" element={<CelebrationPage />} />
+            <Route path="/blessings" element={<BlessingsPage />} />
             <Route path="/p/:slug" element={<PotPage />} />
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/admin/login" element={<AdminLogin />} />
