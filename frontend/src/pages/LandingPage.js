@@ -1,12 +1,20 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
   const [showMenu, setShowMenu] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [bgLoaded, setBgLoaded] = useState(false);
   const audioRef = useRef(null);
   const navigate = useNavigate();
+
+  // Preload the background image
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/temple-courtyard-bg.png';
+    img.onload = () => setBgLoaded(true);
+  }, []);
 
   const handleBegin = () => {
     // Play temple bell sound (user-triggered)
@@ -38,6 +46,9 @@ export default function LandingPage() {
       {/* Temple bell audio - deep, resonant sound */}
       <audio ref={audioRef} src="/temple-bell.mp3" preload="auto" />
 
+      {/* Preload background image (hidden) */}
+      <link rel="preload" as="image" href="/temple-courtyard-bg.png" />
+
       {/* Initial Emblem View - matching blessings page crimson theme */}
       {!showMenu && (
         <div
@@ -65,7 +76,7 @@ export default function LandingPage() {
               data-testid="sa-emblem"
             />
             
-            {/* Names - matching blessings page typography */}
+            {/* Names - using font-signature like blessings page */}
             <h1 
               className="font-signature text-5xl sm:text-6xl lg:text-7xl text-white mb-10"
               data-testid="couple-names-landing"
@@ -103,86 +114,79 @@ export default function LandingPage() {
       {/* Courtyard Menu View */}
       {showMenu && (
         <div
-          className="fixed inset-0 flex items-center justify-center animate-fade-in"
+          className={`fixed inset-0 flex items-center justify-center ${bgLoaded ? 'animate-fade-in' : ''}`}
           style={{
-            backgroundImage: `url('/temple-courtyard-bg.png')`,
+            backgroundImage: bgLoaded ? `url('/temple-courtyard-bg.png')` : 'none',
+            backgroundColor: '#5C4033',
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
-          {/* Dark overlay for readability */}
-          <div className="absolute inset-0 bg-black/30" />
-
-          {/* Sanskrit yantra watermark */}
+          {/* Dark gradient overlay for better readability */}
           <div 
-            className="absolute inset-0 flex items-center justify-center pointer-events-none animate-fade-in-slow"
-            style={{ animationDelay: "0.3s" }}
-          >
-            <svg 
-              viewBox="0 0 400 400" 
-              className="w-[500px] h-[500px] sm:w-[600px] sm:h-[600px]"
-              style={{ opacity: 0.07 }}
-            >
-              {/* Outer circle */}
-              <circle cx="200" cy="200" r="180" fill="none" stroke="#D4AF37" strokeWidth="1" />
-              <circle cx="200" cy="200" r="160" fill="none" stroke="#D4AF37" strokeWidth="0.5" />
-              <circle cx="200" cy="200" r="140" fill="none" stroke="#D4AF37" strokeWidth="0.5" />
-              {/* Inner geometric pattern */}
-              <circle cx="200" cy="200" r="100" fill="none" stroke="#D4AF37" strokeWidth="1" />
-              <circle cx="200" cy="200" r="60" fill="none" stroke="#D4AF37" strokeWidth="0.5" />
-              {/* Triangles forming Sri Yantra style */}
-              <polygon points="200,80 280,260 120,260" fill="none" stroke="#D4AF37" strokeWidth="0.5" />
-              <polygon points="200,320 120,140 280,140" fill="none" stroke="#D4AF37" strokeWidth="0.5" />
-              {/* Center */}
-              <circle cx="200" cy="200" r="10" fill="#D4AF37" fillOpacity="0.3" />
-            </svg>
-          </div>
+            className="absolute inset-0"
+            style={{
+              background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.7) 100%)',
+            }}
+          />
 
-          {/* Menu Content */}
-          <nav className="relative z-10 flex flex-col items-center px-6">
-            {menuItems.map((item, index) => (
-              <div
-                key={item.path}
-                className={`transition-all duration-500 ${
-                  menuVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                {/* Divider (except before first item) */}
-                {index > 0 && (
-                  <div className="flex items-center justify-center my-5 sm:my-6">
-                    <span 
-                      className="w-1.5 h-1.5 rounded-full"
-                      style={{ backgroundColor: "#D4AF37", opacity: 0.7 }}
-                    />
-                  </div>
-                )}
-                
-                <button
-                  onClick={() => navigate(item.path)}
-                  className="group relative text-center py-2 px-4"
-                  data-testid={`menu-${item.path.slice(1)}`}
+          {/* Menu Container with semi-transparent background */}
+          <div 
+            className="relative z-10 px-12 py-10 sm:px-16 sm:py-12 rounded-lg"
+            style={{
+              backgroundColor: 'rgba(139, 0, 0, 0.85)', // crimson with transparency
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 0 60px rgba(0,0,0,0.5), inset 0 0 30px rgba(212, 175, 55, 0.1)',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+            }}
+          >
+            {/* Decorative top line */}
+            <div className="flex justify-center mb-8">
+              <div className="w-20 h-px bg-gold/50" />
+            </div>
+
+            {/* Menu Items */}
+            <nav className="flex flex-col items-center">
+              {menuItems.map((item, index) => (
+                <div
+                  key={item.path}
+                  className={`transition-all duration-500 ${
+                    menuVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                  }`}
+                  style={{ transitionDelay: `${index * 100}ms` }}
                 >
-                  <span 
-                    className="font-serif text-2xl sm:text-3xl lg:text-4xl transition-all duration-300"
-                    style={{
-                      color: "#FFF8E7",
-                      fontFamily: "'Playfair Display', Georgia, serif",
-                      letterSpacing: "0.08em",
-                      textShadow: "0 2px 8px rgba(0,0,0,0.5)",
-                    }}
+                  {/* Divider (except before first item) */}
+                  {index > 0 && (
+                    <div className="flex items-center justify-center my-4 sm:my-5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold/60" />
+                    </div>
+                  )}
+                  
+                  <button
+                    onClick={() => navigate(item.path)}
+                    className="group relative text-center py-2 px-4"
+                    data-testid={`menu-${item.path.slice(1)}`}
                   >
-                    {item.label}
-                  </span>
-                  {/* Gold underline on hover */}
-                  <span 
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-0 group-hover:w-full transition-all duration-300"
-                    style={{ backgroundColor: "#D4AF37" }}
-                  />
-                </button>
-              </div>
-            ))}
-          </nav>
+                    {/* Using font-signature (Great Vibes) like blessings page titles */}
+                    <span 
+                      className="font-signature text-3xl sm:text-4xl lg:text-5xl transition-all duration-300 text-white group-hover:text-gold"
+                    >
+                      {item.label}
+                    </span>
+                    {/* Gold underline on hover */}
+                    <span 
+                      className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-0 group-hover:w-full transition-all duration-300 bg-gold"
+                    />
+                  </button>
+                </div>
+              ))}
+            </nav>
+
+            {/* Decorative bottom line */}
+            <div className="flex justify-center mt-8">
+              <div className="w-20 h-px bg-gold/50" />
+            </div>
+          </div>
         </div>
       )}
 
@@ -191,16 +195,8 @@ export default function LandingPage() {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-        @keyframes fade-in-slow {
-          from { opacity: 0; }
-          to { opacity: 0.07; }
-        }
         .animate-fade-in {
           animation: fade-in 0.8s ease-out forwards;
-        }
-        .animate-fade-in-slow {
-          animation: fade-in-slow 1.5s ease-out forwards;
-          opacity: 0;
         }
       `}</style>
     </div>
