@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { fetchPots } from "../lib/api";
 import PotCard from "../components/PotCard";
 import { Separator } from "../components/ui/separator";
+import HeritageNav from "../components/HeritageNav";
 
-export default function Home() {
+export default function BlessingsPage() {
   const [pots, setPots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
