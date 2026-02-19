@@ -18,6 +18,7 @@ export default function BlessingsPage() {
 
   return (
     <div className="min-h-screen mandala-bg">
+      <HeritageNav />
       {/* Hero Header */}
       <header className="relative overflow-hidden bg-crimson text-white" data-testid="wedding-header">
         <div className="absolute inset-0 opacity-10">
