@@ -63,7 +63,7 @@ export default function LandingPage() {
           }}
         >
           {/* Begin Button - positioned inside the yellow square below text */}
-          <div className="flex flex-col items-center" style={{ marginTop: '360px' }}>
+          <div className="flex flex-col items-center" style={{ marginTop: '420px' }}>
             <button
               onClick={handleBegin}
               className="group relative px-14 py-4 rounded-md transition-all duration-300"
