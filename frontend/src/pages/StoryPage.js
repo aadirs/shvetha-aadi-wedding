@@ -34,7 +34,8 @@ const groomData = {
   name: "Aadi",
   role: "The Groom", 
   tagline: "The one who goes with the flow",
-  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Virat_Kohli_during_the_India_vs_Aus_4th_Test_match_at_Narendra_Modi_Stadium_on_09_March_2023.jpg/500px-Virat_Kohli_during_the_India_vs_Aus_4th_Test_match_at_Narendra_Modi_Stadium_on_09_March_2023.jpg",
+  // Virat Kohli - Replace with actual Aadi photo
+  image: "https://m.media-amazon.com/images/M/MV5BNjliMjYyNjktNjRlNC00YTU3LWJmMTgtYzU1M2MwOGY5MWE2XkEyXkFqcGc@._V1_UX500_CR0,27,500,281_AL_.jpg",
   bio: "Professional overthinker turned reluctant decision-maker. Firm believer that 'five more minutes' is a valid life philosophy. Still trying to figure out adulting.",
   funFacts: [
     { icon: Gamepad2, text: "Gaming is cardio, right?" },
