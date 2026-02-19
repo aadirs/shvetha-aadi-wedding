@@ -201,11 +201,11 @@ export default function RitualsPage() {
               {expandedIndex === index && (
                 <div className="px-4 pb-4 border-t border-gold/10">
                   {/* Image */}
-                  <div className="rounded-lg overflow-hidden my-4">
+                  <div className="rounded-lg overflow-hidden my-4 bg-cream">
                     <img 
                       src={ritual.image} 
                       alt={ritual.title}
-                      className="w-full h-40 object-cover"
+                      className="w-full h-56 object-contain"
                     />
                   </div>
                   <p className="text-sm mb-3 text-foreground/70">
