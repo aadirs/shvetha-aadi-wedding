@@ -9,7 +9,7 @@ export default function LandingPage() {
   const audioRef = useRef(null);
   const navigate = useNavigate();
 
-  // Preload the background image
+  // Preload the courtyard background image
   useEffect(() => {
     const img = new Image();
     img.src = '/temple-courtyard-bg.png';
@@ -46,67 +46,54 @@ export default function LandingPage() {
       {/* Temple bell audio - deep, resonant sound */}
       <audio ref={audioRef} src="/temple-bell.mp3" preload="auto" />
 
-      {/* Preload background image (hidden) */}
+      {/* Preload courtyard background */}
       <link rel="preload" as="image" href="/temple-courtyard-bg.png" />
 
-      {/* Initial Emblem View - matching blessings page crimson theme */}
+      {/* Initial Full-Page Cover View */}
       {!showMenu && (
         <div
-          className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-700 ${
+          className={`fixed inset-0 flex flex-col items-center justify-end pb-12 sm:pb-16 transition-opacity duration-700 ${
             isTransitioning ? "opacity-0" : "opacity-100"
           }`}
           style={{
-            backgroundColor: "#8B0000",
+            backgroundImage: `url('/landing-cover.jpg')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
         >
-          {/* Mandala pattern overlay - matching blessings page */}
-          <div 
-            className="absolute inset-0 opacity-10"
+          {/* Begin Button - positioned at bottom */}
+          <button
+            onClick={handleBegin}
+            className="group relative px-14 py-4 rounded-md transition-all duration-300"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='30' fill='none' stroke='%23D4AF37' stroke-width='0.5'/%3E%3Ccircle cx='40' cy='40' r='20' fill='none' stroke='%23D4AF37' stroke-width='0.3'/%3E%3Ccircle cx='40' cy='40' r='10' fill='none' stroke='%23D4AF37' stroke-width='0.3'/%3E%3C/svg%3E")`,
+              backgroundColor: "#F5F0E6", // Beige background
+              color: "#5C4033",
+              fontFamily: "'Playfair Display', Georgia, serif",
+              letterSpacing: "0.25em",
+              fontSize: "0.9rem",
+              fontWeight: "500",
             }}
-          />
-
-          {/* SA Emblem */}
-          <div className="relative z-10 flex flex-col items-center">
-            <img
-              src="/sa-emblem.png"
-              alt="S&A Emblem"
-              className="w-72 h-auto sm:w-96 lg:w-[450px] object-contain mb-8"
-              data-testid="sa-emblem"
-            />
-            
-            {/* Names - using font-signature like blessings page */}
-            <h1 
-              className="font-signature text-5xl sm:text-6xl lg:text-7xl text-white mb-10"
-              data-testid="couple-names-landing"
-            >
-              Shvetha & Aadi
-            </h1>
-
-            {/* Begin Button - gold border, elegant */}
-            <button
-              onClick={handleBegin}
-              className="group relative px-12 py-3 border-2 transition-all duration-300"
+            data-testid="begin-btn"
+          >
+            <span className="relative z-10">Begin</span>
+            {/* Golden glow on hover */}
+            <div 
+              className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-500"
               style={{
-                borderColor: "#D4AF37",
-                background: "transparent",
-                color: "#D4AF37",
-                fontFamily: "'Playfair Display', Georgia, serif",
-                letterSpacing: "0.25em",
-                fontSize: "0.875rem",
+                boxShadow: `
+                  0 0 20px rgba(212, 175, 55, 0.6),
+                  0 0 40px rgba(212, 175, 55, 0.4),
+                  0 0 60px rgba(212, 175, 55, 0.3),
+                  inset 0 0 20px rgba(212, 175, 55, 0.1)
+                `,
               }}
-              data-testid="begin-btn"
-            >
-              <span className="relative z-10">Begin</span>
-              <div 
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{
-                  boxShadow: "0 0 30px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.1)",
-                }}
-              />
-            </button>
-          </div>
+            />
+            {/* Subtle border glow on hover */}
+            <div 
+              className="absolute inset-0 rounded-md border-2 border-transparent group-hover:border-gold/50 transition-all duration-500"
+            />
+          </button>
         </div>
       )}
 
