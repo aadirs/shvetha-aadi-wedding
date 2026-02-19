@@ -162,27 +162,36 @@ export default function LandingPage() {
                 boxShadow: '0 0 30px rgba(212, 175, 55, 0.6), 0 0 60px rgba(212, 175, 55, 0.3)',
               }}
             />
-          </button>
+            </button>
+          )}
         </div>
       )}
 
       {/* Courtyard Menu View */}
       {showMenu && (
         <div
-          className={`fixed inset-0 flex items-center justify-center ${bgLoaded ? 'animate-fade-in' : ''}`}
+          className={`fixed inset-0 flex items-center justify-center ${menuBgLoaded ? 'animate-fade-in' : ''}`}
           style={{
-            backgroundImage: bgLoaded ? `url('/temple-courtyard-bg.png')` : 'none',
+            backgroundImage: menuBgLoaded ? `url('/temple-courtyard-bg.png')` : 'none',
             backgroundColor: '#5C4033',
             backgroundSize: "contain",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
         >
+          {/* Loading state for menu */}
+          {!menuBgLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <LotusLoader />
+            </div>
+          )}
+
           {/* Subtle center vignette - not too dark */}
-          <div 
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.3) 100%)',
+          {menuBgLoaded && (
+            <div 
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.3) 100%)',
             }}
           />
 
