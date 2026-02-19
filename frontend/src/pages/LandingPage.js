@@ -74,14 +74,14 @@ export default function LandingPage() {
           {/* Begin Button - absolutely positioned inside the yellow square below "Shvetha & Aadi" text */}
           <button
             onClick={handleBegin}
-            className="group absolute left-1/2 -translate-x-1/2 px-8 py-2.5 rounded transition-all duration-300"
+            className="group absolute left-1/2 -translate-x-1/2 px-6 py-2 rounded transition-all duration-300"
             style={{
-              top: isMobile ? '70%' : '69%',
+              top: isMobile ? '70%' : '72%',
               backgroundColor: "#F5F0E6",
               color: "#5C4033",
               fontFamily: "'Playfair Display', Georgia, serif",
-              letterSpacing: "0.2em",
-              fontSize: isMobile ? "0.75rem" : "0.8rem",
+              letterSpacing: "0.15em",
+              fontSize: isMobile ? "0.7rem" : "0.75rem",
               fontWeight: "500",
             }}
             data-testid="begin-btn"
