@@ -24,13 +24,13 @@ const rituals = [
   },
   {
     title: "Kasi Yatra",
-    image: "/kashi_yatra.jpg",
+    image: "/kashi_yatra.png",
     description: "The groom pretends to leave for Kasi (Varanasi) to become a sage, but is convinced by the bride's father to embrace married life instead.",
     significance: "Symbolizes the choice of Grihastha (householder) life over Sanyasa (renunciation)."
   },
   {
     title: "Oonjal",
-    image: "https://images.unsplash.com/photo-1735052709927-b2ef7615b42b?w=600&q=80",
+    image: "/oonjal.jpg",
     description: "The couple sits on a decorated swing while married women sing traditional songs and perform aarti.",
     significance: "The swinging represents life's ups and downs, teaching the couple to face them together with balance."
   },
