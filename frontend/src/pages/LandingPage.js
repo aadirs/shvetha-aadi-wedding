@@ -76,7 +76,7 @@ export default function LandingPage() {
             onClick={handleBegin}
             className="group absolute left-1/2 -translate-x-1/2 px-8 py-2.5 rounded transition-all duration-300"
             style={{
-              top: isMobile ? '72%' : '74%',
+              top: isMobile ? '72%' : '76%',
               backgroundColor: "#F5F0E6",
               color: "#5C4033",
               fontFamily: "'Playfair Display', Georgia, serif",
