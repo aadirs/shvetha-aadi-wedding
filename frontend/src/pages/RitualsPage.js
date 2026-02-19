@@ -157,11 +157,11 @@ export default function RitualsPage() {
 
               {/* Image */}
               <div className={`w-5/12 ${index % 2 === 0 ? "pl-12" : "pr-12"}`}>
-                <div className="rounded-xl overflow-hidden shadow-lg gold-border">
+                <div className="rounded-xl overflow-hidden shadow-lg gold-border bg-cream">
                   <img 
                     src={ritual.image} 
                     alt={ritual.title}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-64 object-contain"
                   />
                 </div>
               </div>
