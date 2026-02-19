@@ -156,7 +156,7 @@ export default function StoryPage() {
     const timer = setTimeout(() => {
       if (audioRef.current) {
         audioRef.current.volume = 0.3;
-        audioRef.current.loop = true;
+        audioRef.current.loop = false;
         audioRef.current.play()
           .then(() => setIsPlaying(true))
           .catch(err => console.log('BGM autoplay blocked:', err));
