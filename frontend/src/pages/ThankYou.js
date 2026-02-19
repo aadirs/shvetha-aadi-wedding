@@ -116,7 +116,7 @@ export default function ThankYou() {
       setCountdown(prev => {
         if (prev <= 1) {
           clearInterval(timer);
-          navigate(potSlug ? `/p/${potSlug}` : "/");
+          navigate(potSlug ? `/p/${potSlug}` : "/blessings");
           return 0;
         }
         return prev - 1;
