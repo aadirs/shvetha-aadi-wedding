@@ -71,37 +71,33 @@ export default function LandingPage() {
             backgroundRepeat: "no-repeat",
           }}
         >
-          {/* Begin Button - positioned below the golden square */}
+          {/* Begin Button - positioned below the golden square with elegant heritage styling */}
           <button
             onClick={handleBegin}
-            className="group absolute left-1/2 -translate-x-1/2 px-8 py-2.5 rounded transition-all duration-300"
+            className="group absolute left-1/2 -translate-x-1/2 px-10 py-3 transition-all duration-500"
             style={{
-              top: isMobile ? '74%' : '78%',
-              backgroundColor: "#F5F0E6",
-              color: "#5C4033",
+              top: isMobile ? '78%' : '82%',
+              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(139, 69, 19, 0.2) 100%)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(212, 175, 55, 0.5)',
+              borderRadius: '2px',
+              color: "#D4AF37",
               fontFamily: "'Great Vibes', cursive",
-              letterSpacing: "0.05em",
-              fontSize: isMobile ? "1.3rem" : "1.5rem",
-              fontWeight: "400",
+              fontSize: isMobile ? "1.4rem" : "1.6rem",
+              textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)',
             }}
             data-testid="begin-btn"
           >
             <span className="relative z-10">Begin</span>
-            {/* Golden glow on hover */}
+            {/* Elegant golden glow on hover */}
             <div 
-              className="absolute inset-0 rounded opacity-0 group-hover:opacity-100 transition-all duration-500"
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
               style={{
-                boxShadow: `
-                  0 0 20px rgba(212, 175, 55, 0.6),
-                  0 0 40px rgba(212, 175, 55, 0.4),
-                  0 0 60px rgba(212, 175, 55, 0.3),
-                  inset 0 0 20px rgba(212, 175, 55, 0.1)
-                `,
+                background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(139, 69, 19, 0.35) 100%)',
+                borderRadius: '2px',
+                boxShadow: '0 0 25px rgba(212, 175, 55, 0.4), 0 0 50px rgba(212, 175, 55, 0.2)',
               }}
-            />
-            {/* Subtle border glow on hover */}
-            <div 
-              className="absolute inset-0 rounded border-2 border-transparent group-hover:border-gold/50 transition-all duration-500"
             />
           </button>
         </div>
