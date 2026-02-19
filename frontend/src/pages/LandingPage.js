@@ -209,9 +209,9 @@ export default function LandingPage() {
                 >
                   {/* Divider (except before first item) */}
                   {index > 0 && (
-                    <div className="flex items-center justify-center my-4 sm:my-5">
+                    <div className="flex items-center justify-center my-2 sm:my-3">
                       <span 
-                        className="w-2 h-2 rounded-full"
+                        className="w-1.5 h-1.5 rounded-full"
                         style={{ 
                           backgroundColor: "#D4AF37",
                           boxShadow: "0 0 10px rgba(212, 175, 55, 0.8)",
