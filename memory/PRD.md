@@ -119,6 +119,16 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - `/public/temple-courtyard-bg.png` — Temple courtyard artwork for menu background
 - `/public/temple-bell.mp3` — Temple bell audio for "Begin" button
 
+### Phase 10 (Feb 19, 2026) - Responsive Landing Page with Custom Covers
+- **Separate Mobile/Desktop Cover Images** — Landing page now uses different background images for mobile (<768px) and desktop views
+- **Begin Button Repositioning** — Button is now smaller, positioned BELOW "SHVETHA & AADI" text, inside the golden square area
+- **Responsive Detection** — Uses window resize listener to dynamically switch between mobile and desktop layouts
+- **UTR Column Activated** — User added `utr` column to Supabase, UTR values are now being saved and displayed in admin panel
+
+**Assets Added:**
+- `/public/landing-desktop.jpg` — Desktop cover image with golden frame
+- `/public/landing-mobile.jpg` — Mobile cover image (portrait orientation)
+
 ## DB Schema
 - **pots**: id, title, slug, story, cover_image_url, goal_amount, created_at, archived
 - **pot_items**: id, pot_id, title, amount, description, image_url, sort_order
