@@ -14,7 +14,7 @@ const brideData = {
   name: "Shvetha",
   role: "The Bride",
   tagline: "The one who plans everything",
-  image: "https://images.pexels.com/photos/7669966/pexels-photo-7669966.jpeg?auto=compress&cs=tinysrgb&w=600",
+  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Anushka_Sharma_at_Positive_Health_Awards_%28cropped%29.jpg/500px-Anushka_Sharma_at_Positive_Health_Awards_%28cropped%29.jpg",
   bio: "A dreamer with a spreadsheet. Part-time perfectionist, full-time foodie. Believes that every problem can be solved with the right playlist and a cup of chai.",
   funFacts: [
     { icon: Coffee, text: "Runs on filter coffee" },
