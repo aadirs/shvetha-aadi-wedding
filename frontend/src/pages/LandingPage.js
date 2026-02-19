@@ -71,32 +71,29 @@ export default function LandingPage() {
             backgroundRepeat: "no-repeat",
           }}
         >
-          {/* Begin Button - positioned below the golden square with elegant heritage styling */}
+          {/* Begin Button - positioned below the golden square with clear visibility */}
           <button
             onClick={handleBegin}
-            className="group absolute left-1/2 -translate-x-1/2 px-10 py-3 transition-all duration-500"
+            className="group absolute left-1/2 -translate-x-1/2 px-12 py-3 transition-all duration-500"
             style={{
               top: isMobile ? '78%' : '82%',
-              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(139, 69, 19, 0.2) 100%)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(212, 175, 55, 0.5)',
-              borderRadius: '2px',
-              color: "#D4AF37",
+              background: '#FFFAF0',
+              border: '2px solid #D4AF37',
+              borderRadius: '4px',
+              color: "#8B4513",
               fontFamily: "'Great Vibes', cursive",
-              fontSize: isMobile ? "1.4rem" : "1.6rem",
-              textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)',
+              fontSize: isMobile ? "1.5rem" : "1.8rem",
+              boxShadow: '0 4px 20px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3)',
             }}
             data-testid="begin-btn"
           >
             <span className="relative z-10">Begin</span>
-            {/* Elegant golden glow on hover */}
+            {/* Golden glow on hover */}
             <div 
               className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
               style={{
-                background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(139, 69, 19, 0.35) 100%)',
-                borderRadius: '2px',
-                boxShadow: '0 0 25px rgba(212, 175, 55, 0.4), 0 0 50px rgba(212, 175, 55, 0.2)',
+                borderRadius: '4px',
+                boxShadow: '0 0 30px rgba(212, 175, 55, 0.6), 0 0 60px rgba(212, 175, 55, 0.3)',
               }}
             />
           </button>
