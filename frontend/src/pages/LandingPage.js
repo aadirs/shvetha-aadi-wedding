@@ -1,11 +1,52 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+// South Indian style loading spinner component
+const LotusLoader = () => (
+  <div className="flex flex-col items-center justify-center">
+    <div className="relative w-16 h-16">
+      {/* Rotating outer petals */}
+      <div className="absolute inset-0 animate-spin-slow">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-3 h-6 rounded-full"
+            style={{
+              background: 'linear-gradient(to top, #D4AF37, #F5DEB3)',
+              left: '50%',
+              top: '50%',
+              transformOrigin: '50% 0%',
+              transform: `translateX(-50%) rotate(${i * 45}deg) translateY(-12px)`,
+              opacity: 0.8,
+            }}
+          />
+        ))}
+      </div>
+      {/* Center circle */}
+      <div 
+        className="absolute top-1/2 left-1/2 w-4 h-4 rounded-full -translate-x-1/2 -translate-y-1/2"
+        style={{ background: 'linear-gradient(135deg, #8B0000, #CD5C5C)' }}
+      />
+    </div>
+    <p 
+      className="mt-4 text-sm tracking-widest"
+      style={{ 
+        color: '#D4AF37', 
+        fontFamily: "'Playfair Display', serif",
+        animation: 'pulse 1.5s ease-in-out infinite'
+      }}
+    >
+      Loading...
+    </p>
+  </div>
+);
+
 export default function LandingPage() {
   const [showMenu, setShowMenu] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [bgLoaded, setBgLoaded] = useState(false);
+  const [landingBgLoaded, setLandingBgLoaded] = useState(false);
+  const [menuBgLoaded, setMenuBgLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const audioRef = useRef(null);
   const navigate = useNavigate();
@@ -18,11 +59,18 @@ export default function LandingPage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Preload landing page background
+  useEffect(() => {
+    const img = new Image();
+    img.src = isMobile ? '/landing-mobile.jpg' : '/landing-desktop.jpg';
+    img.onload = () => setLandingBgLoaded(true);
+  }, [isMobile]);
+
   // Preload the courtyard background image
   useEffect(() => {
     const img = new Image();
     img.src = '/temple-courtyard-bg.png';
-    img.onload = () => setBgLoaded(true);
+    img.onload = () => setMenuBgLoaded(true);
   }, []);
 
   const handleBegin = () => {
@@ -38,10 +86,19 @@ export default function LandingPage() {
     // After fade out, show courtyard menu
     setTimeout(() => {
       setShowMenu(true);
-      // Stagger menu items appearance
-      setTimeout(() => setMenuVisible(true), 100);
+      // Stagger menu items appearance only after bg is loaded
+      if (menuBgLoaded) {
+        setTimeout(() => setMenuVisible(true), 100);
+      }
     }, 800);
   };
+
+  // When menu bg loads and we're on menu screen, show items
+  useEffect(() => {
+    if (showMenu && menuBgLoaded && !menuVisible) {
+      setTimeout(() => setMenuVisible(true), 100);
+    }
+  }, [showMenu, menuBgLoaded, menuVisible]);
 
   const menuItems = [
     { label: "Our Story", path: "/story" },
