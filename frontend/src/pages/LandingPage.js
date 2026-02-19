@@ -71,18 +71,18 @@ export default function LandingPage() {
             backgroundRepeat: "no-repeat",
           }}
         >
-          {/* Begin Button - positioned at bottom edge of golden square (half in, half out) */}
+          {/* Begin Button - positioned below the golden square */}
           <button
             onClick={handleBegin}
             className="group absolute left-1/2 -translate-x-1/2 px-8 py-2.5 rounded transition-all duration-300"
             style={{
-              top: isMobile ? '72%' : '76%',
+              top: isMobile ? '74%' : '78%',
               backgroundColor: "#F5F0E6",
               color: "#5C4033",
-              fontFamily: "'Playfair Display', Georgia, serif",
-              letterSpacing: "0.2em",
-              fontSize: isMobile ? "0.8rem" : "0.9rem",
-              fontWeight: "500",
+              fontFamily: "'Great Vibes', cursive",
+              letterSpacing: "0.05em",
+              fontSize: isMobile ? "1.3rem" : "1.5rem",
+              fontWeight: "400",
             }}
             data-testid="begin-btn"
           >
