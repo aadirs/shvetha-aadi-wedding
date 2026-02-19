@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
@@ -11,7 +11,7 @@ export default function LandingPage() {
   const handleBegin = () => {
     // Play temple bell sound (user-triggered)
     if (audioRef.current) {
-      audioRef.current.volume = 0.35;
+      audioRef.current.volume = 0.4;
       audioRef.current.play().catch(() => {});
     }
     
@@ -35,24 +35,24 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen w-full overflow-hidden">
-      {/* Temple bell audio */}
+      {/* Temple bell audio - deep, resonant sound */}
       <audio ref={audioRef} src="/temple-bell.mp3" preload="auto" />
 
-      {/* Initial Emblem View */}
+      {/* Initial Emblem View - matching blessings page crimson theme */}
       {!showMenu && (
         <div
           className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-700 ${
             isTransitioning ? "opacity-0" : "opacity-100"
           }`}
           style={{
-            background: "linear-gradient(180deg, #F5F0E6 0%, #EDE4D3 50%, #E8DCC8 100%)",
+            backgroundColor: "#8B0000", // crimson from blessings
           }}
         >
-          {/* Parchment texture overlay */}
+          {/* Mandala pattern overlay - matching blessings page */}
           <div 
-            className="absolute inset-0 opacity-30"
+            className="absolute inset-0 opacity-10"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='30' fill='none' stroke='%23D4AF37' stroke-width='0.5'/%3E%3Ccircle cx='40' cy='40' r='20' fill='none' stroke='%23D4AF37' stroke-width='0.3'/%3E%3Ccircle cx='40' cy='40' r='10' fill='none' stroke='%23D4AF37' stroke-width='0.3'/%3E%3C/svg%3E")`,
             }}
           />
 
@@ -65,29 +65,24 @@ export default function LandingPage() {
               data-testid="sa-emblem"
             />
             
-            {/* Names */}
+            {/* Names - matching blessings page typography */}
             <h1 
-              className="font-serif text-3xl sm:text-4xl lg:text-5xl tracking-wide mb-10"
-              style={{ 
-                color: "#5C4033",
-                fontFamily: "'Playfair Display', Georgia, serif",
-                letterSpacing: "0.15em"
-              }}
+              className="font-signature text-5xl sm:text-6xl lg:text-7xl text-white mb-10"
+              data-testid="couple-names-landing"
             >
               Shvetha & Aadi
             </h1>
 
-            {/* Begin Button */}
+            {/* Begin Button - gold border, elegant */}
             <button
               onClick={handleBegin}
-              className="group relative px-10 py-3 border transition-all duration-300 hover:shadow-lg"
+              className="group relative px-12 py-3 border-2 transition-all duration-300"
               style={{
-                borderColor: "#B8860B",
-                borderWidth: "1px",
+                borderColor: "#D4AF37",
                 background: "transparent",
-                color: "#8B7355",
+                color: "#D4AF37",
                 fontFamily: "'Playfair Display', Georgia, serif",
-                letterSpacing: "0.2em",
+                letterSpacing: "0.25em",
                 fontSize: "0.875rem",
               }}
               data-testid="begin-btn"
@@ -97,7 +92,7 @@ export default function LandingPage() {
               <div 
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 style={{
-                  boxShadow: "0 0 20px rgba(184, 134, 11, 0.3)",
+                  boxShadow: "0 0 30px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.1)",
                 }}
               />
             </button>
@@ -116,7 +111,7 @@ export default function LandingPage() {
           }}
         >
           {/* Dark overlay for readability */}
-          <div className="absolute inset-0 bg-black/25" />
+          <div className="absolute inset-0 bg-black/30" />
 
           {/* Sanskrit yantra watermark */}
           <div 
@@ -126,7 +121,7 @@ export default function LandingPage() {
             <svg 
               viewBox="0 0 400 400" 
               className="w-[500px] h-[500px] sm:w-[600px] sm:h-[600px]"
-              style={{ opacity: 0.06 }}
+              style={{ opacity: 0.07 }}
             >
               {/* Outer circle */}
               <circle cx="200" cy="200" r="180" fill="none" stroke="#D4AF37" strokeWidth="1" />
@@ -155,10 +150,10 @@ export default function LandingPage() {
               >
                 {/* Divider (except before first item) */}
                 {index > 0 && (
-                  <div className="flex items-center justify-center my-4 sm:my-5">
+                  <div className="flex items-center justify-center my-5 sm:my-6">
                     <span 
-                      className="w-1 h-1 rounded-full"
-                      style={{ backgroundColor: "#D4AF37", opacity: 0.6 }}
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ backgroundColor: "#D4AF37", opacity: 0.7 }}
                     />
                   </div>
                 )}
@@ -169,19 +164,19 @@ export default function LandingPage() {
                   data-testid={`menu-${item.path.slice(1)}`}
                 >
                   <span 
-                    className="font-serif text-xl sm:text-2xl lg:text-3xl transition-all duration-300"
+                    className="font-serif text-2xl sm:text-3xl lg:text-4xl transition-all duration-300"
                     style={{
                       color: "#FFF8E7",
                       fontFamily: "'Playfair Display', Georgia, serif",
-                      letterSpacing: "0.1em",
-                      textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+                      letterSpacing: "0.08em",
+                      textShadow: "0 2px 8px rgba(0,0,0,0.5)",
                     }}
                   >
                     {item.label}
                   </span>
                   {/* Gold underline on hover */}
                   <span 
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 h-px w-0 group-hover:w-full transition-all duration-300"
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-0 group-hover:w-full transition-all duration-300"
                     style={{ backgroundColor: "#D4AF37" }}
                   />
                 </button>
@@ -198,7 +193,7 @@ export default function LandingPage() {
         }
         @keyframes fade-in-slow {
           from { opacity: 0; }
-          to { opacity: 0.06; }
+          to { opacity: 0.07; }
         }
         .animate-fade-in {
           animation: fade-in 0.8s ease-out forwards;
