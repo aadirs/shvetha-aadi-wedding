@@ -222,20 +222,20 @@ export default function LandingPage() {
                   
                   <button
                     onClick={() => navigate(item.path)}
-                    className="group relative text-center py-2 px-6"
+                    className="group relative text-center py-1 px-6"
                     data-testid={`menu-${item.path.slice(1)}`}
                   >
-                    {/* Subtle backdrop behind each item */}
+                    {/* Cream backdrop on hover like Begin button */}
                     <span 
-                      className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      className="absolute inset-0 rounded opacity-0 group-hover:opacity-100 transition-all duration-300"
                       style={{
-                        backgroundColor: 'rgba(139, 0, 0, 0.6)',
-                        backdropFilter: 'blur(4px)',
+                        backgroundColor: '#FFFAF0',
+                        boxShadow: '0 0 30px rgba(212, 175, 55, 0.8), 0 0 60px rgba(212, 175, 55, 0.5)',
                       }}
                     />
-                    {/* Text with strong shadow for readability */}
+                    {/* Text with shadow, gold color on hover */}
                     <span 
-                      className="relative z-10 text-3xl sm:text-4xl lg:text-5xl transition-all duration-300 group-hover:text-gold"
+                      className="relative z-10 text-xl sm:text-2xl lg:text-3xl transition-all duration-300"
                       style={{
                         color: "#FFFAF0",
                         fontFamily: "'Playfair Display', Georgia, serif",
@@ -244,21 +244,21 @@ export default function LandingPage() {
                           0 0 20px rgba(0,0,0,0.9),
                           0 0 40px rgba(0,0,0,0.8),
                           0 2px 4px rgba(0,0,0,0.9),
-                          0 4px 8px rgba(0,0,0,0.7),
-                          2px 2px 8px rgba(0,0,0,0.8),
-                          -2px -2px 8px rgba(0,0,0,0.8)
+                          0 4px 8px rgba(0,0,0,0.7)
                         `,
                       }}
                     >
-                      {item.label}
+                      <span className="group-hover:hidden">{item.label}</span>
+                      <span 
+                        className="hidden group-hover:inline"
+                        style={{ 
+                          color: '#8B4513',
+                          textShadow: '0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.6)'
+                        }}
+                      >
+                        {item.label}
+                      </span>
                     </span>
-                    {/* Gold underline on hover */}
-                    <span 
-                      className="absolute bottom-1 left-1/2 -translate-x-1/2 h-0.5 w-0 group-hover:w-4/5 transition-all duration-300 bg-gold"
-                      style={{
-                        boxShadow: "0 0 10px rgba(212, 175, 55, 0.8)",
-                      }}
-                    />
                   </button>
                 </div>
               ))}
