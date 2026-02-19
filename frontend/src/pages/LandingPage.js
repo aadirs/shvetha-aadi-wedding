@@ -192,73 +192,76 @@ export default function LandingPage() {
               className="absolute inset-0 pointer-events-none"
               style={{
                 background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.3) 100%)',
-            }}
-          />
+              }}
+            />
+          )}
 
-          {/* Menu Items - with text styling for readability */}
-          <nav className="relative z-10 flex flex-col items-center px-6">
-            {menuItems.map((item, index) => (
-              <div
-                key={item.path}
-                className={`transition-all duration-500 ${
-                  menuVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                {/* Divider (except before first item) */}
-                {index > 0 && (
-                  <div className="flex items-center justify-center my-4 sm:my-5">
+          {/* Menu Items - only show after background loads */}
+          {menuBgLoaded && (
+            <nav className="relative z-10 flex flex-col items-center px-6">
+              {menuItems.map((item, index) => (
+                <div
+                  key={item.path}
+                  className={`transition-all duration-500 ${
+                    menuVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                  }`}
+                  style={{ transitionDelay: `${index * 100}ms` }}
+                >
+                  {/* Divider (except before first item) */}
+                  {index > 0 && (
+                    <div className="flex items-center justify-center my-4 sm:my-5">
+                      <span 
+                        className="w-2 h-2 rounded-full"
+                        style={{ 
+                          backgroundColor: "#D4AF37",
+                          boxShadow: "0 0 10px rgba(212, 175, 55, 0.8)",
+                        }}
+                      />
+                    </div>
+                  )}
+                  
+                  <button
+                    onClick={() => navigate(item.path)}
+                    className="group relative text-center py-2 px-6"
+                    data-testid={`menu-${item.path.slice(1)}`}
+                  >
+                    {/* Subtle backdrop behind each item */}
                     <span 
-                      className="w-2 h-2 rounded-full"
-                      style={{ 
-                        backgroundColor: "#D4AF37",
+                      className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{
+                        backgroundColor: 'rgba(139, 0, 0, 0.6)',
+                        backdropFilter: 'blur(4px)',
+                      }}
+                    />
+                    {/* Text with strong shadow for readability */}
+                    <span 
+                      className="relative z-10 font-signature text-3xl sm:text-4xl lg:text-5xl transition-all duration-300 group-hover:text-gold"
+                      style={{
+                        color: "#FFFAF0",
+                        textShadow: `
+                          0 0 20px rgba(0,0,0,0.9),
+                          0 0 40px rgba(0,0,0,0.8),
+                          0 2px 4px rgba(0,0,0,0.9),
+                          0 4px 8px rgba(0,0,0,0.7),
+                          2px 2px 8px rgba(0,0,0,0.8),
+                          -2px -2px 8px rgba(0,0,0,0.8)
+                        `,
+                      }}
+                    >
+                      {item.label}
+                    </span>
+                    {/* Gold underline on hover */}
+                    <span 
+                      className="absolute bottom-1 left-1/2 -translate-x-1/2 h-0.5 w-0 group-hover:w-4/5 transition-all duration-300 bg-gold"
+                      style={{
                         boxShadow: "0 0 10px rgba(212, 175, 55, 0.8)",
                       }}
                     />
-                  </div>
-                )}
-                
-                <button
-                  onClick={() => navigate(item.path)}
-                  className="group relative text-center py-2 px-6"
-                  data-testid={`menu-${item.path.slice(1)}`}
-                >
-                  {/* Subtle backdrop behind each item */}
-                  <span 
-                    className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    style={{
-                      backgroundColor: 'rgba(139, 0, 0, 0.6)',
-                      backdropFilter: 'blur(4px)',
-                    }}
-                  />
-                  {/* Text with strong shadow for readability */}
-                  <span 
-                    className="relative z-10 font-signature text-3xl sm:text-4xl lg:text-5xl transition-all duration-300 group-hover:text-gold"
-                    style={{
-                      color: "#FFFAF0",
-                      textShadow: `
-                        0 0 20px rgba(0,0,0,0.9),
-                        0 0 40px rgba(0,0,0,0.8),
-                        0 2px 4px rgba(0,0,0,0.9),
-                        0 4px 8px rgba(0,0,0,0.7),
-                        2px 2px 8px rgba(0,0,0,0.8),
-                        -2px -2px 8px rgba(0,0,0,0.8)
-                      `,
-                    }}
-                  >
-                    {item.label}
-                  </span>
-                  {/* Gold underline on hover */}
-                  <span 
-                    className="absolute bottom-1 left-1/2 -translate-x-1/2 h-0.5 w-0 group-hover:w-4/5 transition-all duration-300 bg-gold"
-                    style={{
-                      boxShadow: "0 0 10px rgba(212, 175, 55, 0.8)",
-                    }}
-                  />
-                </button>
-              </div>
-            ))}
-          </nav>
+                  </button>
+                </div>
+              ))}
+            </nav>
+          )}
         </div>
       )}
 
@@ -269,6 +272,17 @@ export default function LandingPage() {
         }
         .animate-fade-in {
           animation: fade-in 0.8s ease-out forwards;
+        }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 3s linear infinite;
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
         }
       `}</style>
     </div>
