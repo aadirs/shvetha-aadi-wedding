@@ -1,6 +1,7 @@
+import { useEffect, useRef, useState } from "react";
 import HeritageNav from "../components/HeritageNav";
 import { Separator } from "../components/ui/separator";
-import { Heart, Music, Coffee, Book, Camera, Plane, Utensils, Dumbbell, Film, Gamepad2 } from "lucide-react";
+import { Heart, Music, Coffee, Book, Camera, Plane, Utensils, Dumbbell, Film, Gamepad2, Volume2, VolumeX } from "lucide-react";
 
 /*
  * HOW TO UPDATE CONTENT:
