@@ -46,7 +46,9 @@ function FloatingCartButton() {
   const { items, setIsOpen } = useCart();
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
-  if (isAdmin || items.length === 0) return null;
+  const isLanding = location.pathname === "/";
+  // Hide on admin pages, landing page, or when cart is empty
+  if (isAdmin || isLanding || items.length === 0) return null;
   return (
     <button
       onClick={() => setIsOpen(true)}
