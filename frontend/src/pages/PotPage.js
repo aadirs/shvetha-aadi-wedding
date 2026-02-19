@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { fetchPot, fetchContributors } from "../lib/api";
 import { useCart } from "../context/CartContext";
 import ContributorFeed from "../components/ContributorFeed";
+import HeritageNav from "../components/HeritageNav";
 import { Button } from "../components/ui/button";
 import { Progress } from "../components/ui/progress";
 import { Badge } from "../components/ui/badge";
