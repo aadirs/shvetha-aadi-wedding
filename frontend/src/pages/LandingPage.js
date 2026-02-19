@@ -238,7 +238,8 @@ export default function LandingPage() {
                       className="relative z-10 text-3xl sm:text-4xl lg:text-5xl transition-all duration-300 group-hover:text-gold"
                       style={{
                         color: "#FFFAF0",
-                        fontFamily: "'Great Vibes', cursive",
+                        fontFamily: "'Playfair Display', Georgia, serif",
+                        letterSpacing: "0.1em",
                         textShadow: `
                           0 0 20px rgba(0,0,0,0.9),
                           0 0 40px rgba(0,0,0,0.8),
