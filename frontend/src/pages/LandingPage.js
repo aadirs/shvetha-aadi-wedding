@@ -74,11 +74,23 @@ export default function LandingPage() {
   }, []);
 
   const handleBegin = () => {
-    // Play temple bell sound (user-triggered)
+    // Play temple bell sound (user-triggered) with fade out
     try {
       const bellSound = new Audio('/temple-bell.mp3');
-      bellSound.volume = 0.5;
+      bellSound.volume = 0.6;
       bellSound.play().catch(err => console.log('Audio play error:', err));
+      
+      // After 5 seconds, start fading out over 2 seconds
+      setTimeout(() => {
+        const fadeOut = setInterval(() => {
+          if (bellSound.volume > 0.05) {
+            bellSound.volume = Math.max(0, bellSound.volume - 0.05);
+          } else {
+            bellSound.pause();
+            clearInterval(fadeOut);
+          }
+        }, 100); // Fade step every 100ms
+      }, 5000);
     } catch (err) {
       console.log('Audio error:', err);
     }
