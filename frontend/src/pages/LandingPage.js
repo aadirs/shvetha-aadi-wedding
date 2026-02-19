@@ -122,32 +122,41 @@ export default function LandingPage() {
             isTransitioning ? "opacity-0" : "opacity-100"
           }`}
           style={{
-            backgroundImage: `url('${isMobile ? '/landing-mobile.jpg' : '/landing-desktop.jpg'}')`,
+            backgroundImage: landingBgLoaded ? `url('${isMobile ? '/landing-mobile.jpg' : '/landing-desktop.jpg'}')` : 'none',
+            backgroundColor: '#5C4033',
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
         >
-          {/* Begin Button - positioned below the golden square with clear visibility */}
-          <button
-            onClick={handleBegin}
-            className="group absolute left-1/2 -translate-x-1/2 px-12 py-3 transition-all duration-500"
-            style={{
-              top: isMobile ? '78%' : '82%',
-              background: '#FFFAF0',
-              border: '2px solid #D4AF37',
-              borderRadius: '4px',
-              color: "#8B4513",
-              fontFamily: "'Great Vibes', cursive",
-              fontSize: isMobile ? "1.5rem" : "1.8rem",
-              boxShadow: '0 4px 20px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3)',
-            }}
-            data-testid="begin-btn"
-          >
-            <span className="relative z-10">Begin</span>
-            {/* Golden glow on hover */}
-            <div 
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
+          {/* Loading state for landing page */}
+          {!landingBgLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <LotusLoader />
+            </div>
+          )}
+
+          {/* Begin Button - only show after background loads */}
+          {landingBgLoaded && (
+            <button
+              onClick={handleBegin}
+              className="group absolute left-1/2 -translate-x-1/2 px-12 py-3 transition-all duration-500 animate-fade-in"
+              style={{
+                top: isMobile ? '78%' : '82%',
+                background: '#FFFAF0',
+                border: '2px solid #D4AF37',
+                borderRadius: '4px',
+                color: "#8B4513",
+                fontFamily: "'Great Vibes', cursive",
+                fontSize: isMobile ? "1.5rem" : "1.8rem",
+                boxShadow: '0 4px 20px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3)',
+              }}
+              data-testid="begin-btn"
+            >
+              <span className="relative z-10">Begin</span>
+              {/* Golden glow on hover */}
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
               style={{
                 borderRadius: '4px',
                 boxShadow: '0 0 30px rgba(212, 175, 55, 0.6), 0 0 60px rgba(212, 175, 55, 0.3)',
