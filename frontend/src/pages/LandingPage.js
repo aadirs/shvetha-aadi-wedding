@@ -107,8 +107,9 @@ export default function LandingPage() {
           style={{
             backgroundImage: bgLoaded ? `url('/temple-courtyard-bg.png')` : 'none',
             backgroundColor: '#5C4033',
-            backgroundSize: "cover",
+            backgroundSize: "contain",
             backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
         >
           {/* Subtle center vignette - not too dark */}
