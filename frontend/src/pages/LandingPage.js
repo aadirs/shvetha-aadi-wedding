@@ -235,9 +235,12 @@ export default function LandingPage() {
                     />
                     {/* Text with strong shadow for readability */}
                     <span 
-                      className="relative z-10 font-signature text-3xl sm:text-4xl lg:text-5xl transition-all duration-300 group-hover:text-gold"
+                      className="relative z-10 text-3xl sm:text-4xl lg:text-5xl transition-all duration-300 group-hover:text-gold"
                       style={{
                         color: "#FFFAF0",
+                        fontFamily: "'Playfair Display', Georgia, serif",
+                        fontWeight: "500",
+                        letterSpacing: "0.05em",
                         textShadow: `
                           0 0 20px rgba(0,0,0,0.9),
                           0 0 40px rgba(0,0,0,0.8),
