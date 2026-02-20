@@ -161,7 +161,7 @@ export default function StoryPage() {
           .then(() => setIsPlaying(true))
           .catch(err => console.log('BGM autoplay blocked:', err));
       }
-    }, 5000);
+    }, 3000);
 
     return () => {
       clearTimeout(timer);

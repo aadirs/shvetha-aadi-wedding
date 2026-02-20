@@ -24,19 +24,19 @@ const rituals = [
   },
   {
     title: "Kasi Yatra",
-    image: "/kashi_yatra.png",
+    image: "/Kasi_Yatra.png",
     description: "The groom pretends to leave for Kasi (Varanasi) to become a sage, but is convinced by the bride's father to embrace married life instead.",
     significance: "Symbolizes the choice of Grihastha (householder) life over Sanyasa (renunciation)."
   },
   {
     title: "Oonjal",
-    image: "/oonjal.jpg",
+    image: "/Oonjal.png",
     description: "The couple sits on a decorated swing while married women sing traditional songs and perform aarti.",
     significance: "The swinging represents life's ups and downs, teaching the couple to face them together with balance."
   },
   {
     title: "Kanyadanam",
-    image: "https://images.pexels.com/photos/5759233/pexels-photo-5759233.jpeg?auto=compress&cs=tinysrgb&w=600",
+    image: "/Kanyadanam.png",
     description: "The bride's father ceremonially gives his daughter's hand to the groom, with sacred water flowing through their joined hands.",
     significance: "Considered the highest form of danam (gift), symbolizing the parents' trust and blessings."
   },
