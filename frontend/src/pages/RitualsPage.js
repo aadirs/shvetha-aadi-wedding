@@ -18,7 +18,7 @@ import { ChevronDown } from "lucide-react";
 const rituals = [
   {
     title: "Vratham",
-    image: "https://images.unsplash.com/photo-1721786838752-aada8c94d732?w=600&q=80",
+    image: "/Vratham.png",
     description: "A day of prayers and preparation where the bride and groom observe fasting and seek blessings from the divine.",
     significance: "Purifies the mind and body, preparing the couple for the sacred union ahead."
   },
@@ -42,37 +42,37 @@ const rituals = [
   },
   {
     title: "Mangalya Dharanam",
-    image: "https://images.pexels.com/photos/7669966/pexels-photo-7669966.jpeg?auto=compress&cs=tinysrgb&w=600",
+    image: "/Mangalya_Dharanam.png",
     description: "The groom ties the sacred Mangalyam (Thali) around the bride's neck with three knots.",
     significance: "The three knots represent commitment of mind, speech, and body. This is the defining moment of the wedding."
   },
   {
     title: "Sapthapadi",
-    image: "https://images.pexels.com/photos/35355920/pexels-photo-35355920.jpeg?auto=compress&cs=tinysrgb&w=600",
+    image: "/Sapthapadi.png",
     description: "The couple takes seven steps together around the sacred fire, each step representing a vow.",
     significance: "Seven vows for food, strength, prosperity, wisdom, progeny, health, and friendship."
   },
   {
     title: "Pradhana Homam",
-    image: "https://images.unsplash.com/photo-1712339144667-02161a9106cd?w=600&q=80",
+    image: "/Pradhana_Homam.png",
     description: "The main fire ceremony where offerings are made to Agni (fire god) with sacred mantras.",
     significance: "Agni serves as the divine witness to the marriage vows and carries prayers to the gods."
   },
   {
     title: "Ammi Midithal",
-    image: "https://images.unsplash.com/photo-1576470134211-0323f4308598?w=600&q=80",
+    image: "/Ammi_Midithal.png",
     description: "The bride places her foot on a grinding stone while the groom holds it.",
     significance: "Symbolizes steadfastness—like the stone, the bride should remain firm in her new home."
   },
   {
     title: "Arundhati Nakshatram",
-    image: "https://images.pexels.com/photos/36053876/pexels-photo-36053876.jpeg?auto=compress&cs=tinysrgb&w=600",
+    image: "/Arundhati_Nakshatram.png",
     description: "The couple is shown the stars Arundhati and Vasishta in the night sky.",
     significance: "Arundhati and Vasishta are the ideal couple in Hindu mythology, representing eternal devotion."
   },
   {
     title: "Gruhapravesham",
-    image: "https://images.pexels.com/photos/35441106/pexels-photo-35441106.jpeg?auto=compress&cs=tinysrgb&w=600",
+    image: "/Gruhapravesham.png",
     description: "The bride ceremonially enters her new home, welcomed with aarti and auspicious rituals.",
     significance: "Marks the beginning of the bride's new journey as she brings Lakshmi (prosperity) to her new home."
   }
