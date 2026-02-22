@@ -19,63 +19,57 @@ const rituals = [
   {
     title: "Vratham",
     image: "/Vratham.png",
-    description: "A day of prayers and preparation where the bride and groom observe fasting and seek blessings from the divine.",
-    significance: "Purifies the mind and body, preparing the couple for the sacred union ahead."
+    description: "Long before the sacred vows of the wedding day, both the bride and groom observe Vratham — a day devoted to spiritual preparation and purification. On this day, family members wake early, perform prayers at home, and tie a protective sacred thread around the wrists of the couple to ward off negative energies. Both the bride and groom fast and sit in prayerful reflection, seeking blessings for a harmonious married life ahead. Through mantras and offerings to deities and ancestors, Vratham becomes a moment of serene focus, grounding the couple in tradition and sanctity long before the wedding rituals begin in earnest.",
+    significance: "Vratham purifies the body and mind, inviting divine blessings and preparing the couple spiritually and emotionally for the sacred journey of marriage."
   },
   {
     title: "Kasi Yatra",
     image: "/Kasi_Yatra.png",
-    description: "The groom pretends to leave for Kasi (Varanasi) to become a sage, but is convinced by the bride's father to embrace married life instead.",
-    significance: "Symbolizes the choice of Grihastha (householder) life over Sanyasa (renunciation)."
-  },
+    description: "In this playful yet symbolic ritual, the groom dons traditional attire, carries his umbrella, slippers and a walking stick, and theatrically declares his intent to leave for Kasi (Varanasi) in pursuit of spiritual renunciation. As he makes his mock ‘pre-wedding pilgrimage’ towards ascetic life, laughter and anticipation fill the air. The bride’s father steps forward and gently persuades the groom to embrace married life instead, highlighting the beauty and responsibilities of the householder path. This light-hearted enactment allows the groom to set aside any jitters and wholeheartedly commit to his new life with his bride.",
+    significance: "Kasi Yatra represents the transition from the solitary pursuit of spiritual life to choosing *grihastha* — the life of a householder — reaffirming the importance of partnership and shared duty."
+    },
+  {
+    title: "Maalai Maatrudhal",
+    image: "/Maalai_Maatrudhal.png",
+    description: "Once the ceremonial procession arrives at the mandap, the bride and groom are welcomed with garlands brought by their maternal uncles. In a joyful exchange, they attempt to place these garlands around each other’s necks. Amid the laughter and light encouragement from relatives, the couple completes three garland exchanges, symbolizing mutual acceptance. This spirited yet heartfelt moment weaves warmth into the ceremony and visually expresses the beginning of their unity.",
+    significance: "The exchange of garlands signifies the bride and groom’s acceptance of each other as companions in life’s journey."
+    },
   {
     title: "Oonjal",
     image: "/Oonjal.png",
-    description: "The couple sits on a decorated swing while married women sing traditional songs and perform aarti.",
-    significance: "The swinging represents life's ups and downs, teaching the couple to face them together with balance."
-  },
+    description: "The beautifully adorned swing — the *Oonjal* — becomes the centrepiece of a joyful ritual once the couple is seated upon it. Women from both families gather around, singing traditional songs while showering the couple with warmth and blessings. The bride and groom are offered a mixture of banana and milk, symbolizing nourishment and sweetness in married life. Coloured rice balls, prepared with turmeric, are gently placed around the couple or lightly tossed to ward off negative forces. This tradition blends festivity with meaning, infusing laughter, music, and familial affection.",
+    significance: "Oonjal represents life’s rhythmic balance — teaching the couple to face life’s ups and downs together with grace and harmony."
+    },
   {
     title: "Kanyadanam",
     image: "/Kanyadanam.png",
-    description: "The bride's father ceremonially gives his daughter's hand to the groom, with sacred water flowing through their joined hands.",
-    significance: "Considered the highest form of danam (gift), symbolizing the parents' trust and blessings."
-  },
+    description: "Kanyadanam — the giving away of the bride — stands as one of the most emotional moments of the ceremony. The bride’s father places his daughter’s hand into the groom’s hand as Vedic mantras fill the air. A sacred thread is tied around their joined hands, sealing the transfer of responsibility and hope. This gesture not only honors the bride’s upbringing but also entrusts her future and happiness to the union she is entering. The congregation witnesses this profound act of love, trust, and earnest blessings for the couple’s journey ahead.",
+    significance: "Kanyadanam symbolizes the parents’ heartfelt blessing and trust as they entrust their daughter into her husband’s care, honoring both duty and devotion."
+    },
   {
     title: "Mangalya Dharanam",
     image: "/Mangalya_Dharanam.png",
-    description: "The groom ties the sacred Mangalyam (Thali) around the bride's neck with three knots.",
-    significance: "The three knots represent commitment of mind, speech, and body. This is the defining moment of the wedding."
-  },
-  {
+    description: "To the resonant strains of the nadaswaram, the groom takes the sacred mangalyam (also called thaali), a beautiful necklace signifying marital union. With reverence and devotion, he ties it around the bride’s neck with slow, meaningful precision, often making three sacred knots. Family members shower them with flowers and turmeric rice, while the priest invokes blessings through ancient mantras. This defining moment is heart-stoppingly beautiful — it crystallizes the union between two souls as they step into lifelong partnership.",
+    significance: "The tying of the mangalyam symbolizes the bond of marriage — a pledge of love, duty, protection, and shared life ahead."
+    },
+    {
     title: "Sapthapadi",
     image: "/Sapthapadi.png",
-    description: "The couple takes seven steps together around the sacred fire, each step representing a vow.",
-    significance: "Seven vows for food, strength, prosperity, wisdom, progeny, health, and friendship."
-  },
-  {
-    title: "Pradhana Homam",
-    image: "/Pradhana_Homam.png",
-    description: "The main fire ceremony where offerings are made to Agni (fire god) with sacred mantras.",
-    significance: "Agni serves as the divine witness to the marriage vows and carries prayers to the gods."
-  },
+    description: "Sapthapadi — the Seven Steps — is the heart of the wedding vows. Standing before the consecrated fire (Agni), the couple takes seven steps together, each step accompanied by sacred mantras. As they walk side by side, each footfall represents a vow made to one another — for nourishment, strength, prosperity, wisdom, spiritual growth, harmony, and lifelong companionship. This tactile commitment of stepping forward together makes Sapthapadi one of the most spiritually grounding and emotionally resonant parts of the ceremony.",
+    significance: "The seven steps embody seven sacred vows, forming the spiritual foundation of the couple’s life together."
+    },
   {
     title: "Ammi Midithal",
     image: "/Ammi_Midithal.png",
-    description: "The bride places her foot on a grinding stone while the groom holds it.",
-    significance: "Symbolizes steadfastness—like the stone, the bride should remain firm in her new home."
-  },
+    description: "After Sapthapadi, the bride gently places her foot on a small grinding stone, and the groom holds it with supportive hands. Though simple in action, the symbolism runs deep: like the firm stone, the bride is encouraged to stand steadfast in her new home. Family and friends look on as this gesture becomes a metaphor for resilience, stability, and an unshakable spirit in the face of life’s uncertainties.",
+    significance: "This act symbolizes the bride’s strength and perseverance, qualities essential for a balanced and supportive married life."
+    },
   {
     title: "Arundhati Nakshatram",
     image: "/Arundhati_Nakshatram.png",
-    description: "The couple is shown the stars Arundhati and Vasishta in the night sky.",
-    significance: "Arundhati and Vasishta are the ideal couple in Hindu mythology, representing eternal devotion."
-  },
-  {
-    title: "Gruhapravesham",
-    image: "/Gruhapravesham.png",
-    description: "The bride ceremonially enters her new home, welcomed with aarti and auspicious rituals.",
-    significance: "Marks the beginning of the bride's new journey as she brings Lakshmi (prosperity) to her new home."
-  }
+    description: "As evening descends and stars begin to glitter above, the priest gently directs the couple’s gaze toward the celestial duo of Arundhati and Vasishta. In Hindu mythology, Arundhati and Vasishta represent the ideal marital partnership — devoted, harmonious, and deeply supportive. The bride and groom are reminded of this divine couple’s enduring unity and encouraged to emulate that constancy. This quiet, reflective moment under the night sky anchors the ceremony in cosmic symbolism and shared purpose.",
+    significance: "The Arundhati Nakshatram ritual inspires the couple to embody fidelity, devotion, and mutual support throughout their life together."
+    }
 ];
 
 export default function RitualsPage() {

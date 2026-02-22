@@ -1,7 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import HeritageNav from "../components/HeritageNav";
 import { Separator } from "../components/ui/separator";
-import { Heart, Music, Coffee, Book, Camera, Plane, Utensils, Dumbbell, Film, Gamepad2, Volume2, VolumeX } from "lucide-react";
+import {
+  Heart,
+  Music,
+  Coffee,
+  Book,
+  Camera,
+  Plane,
+  Utensils,
+  Dumbbell,
+  Film,
+  Gamepad2,
+  Volume2,
+  VolumeX,
+  PenTool,
+  Flower,
+  Swords,
+  Candy
+} from "lucide-react";
 
 /*
  * HOW TO UPDATE CONTENT:
@@ -14,52 +31,41 @@ import { Heart, Music, Coffee, Book, Camera, Plane, Utensils, Dumbbell, Film, Ga
 const brideData = {
   name: "Shvetha",
   role: "The Bride",
-  tagline: "The one who plans everything",
-  // Replace with actual Shvetha photo - using placeholder for now
-  image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=600&fit=crop&crop=face",
-  bio: "A dreamer with a spreadsheet. Part-time perfectionist, full-time foodie. Believes that every problem can be solved with the right playlist and a cup of chai.",
+  tagline: "Designing spaces. Designing this wedding. Designing Aadi’s life.",
+  image: "/bride.png",
+  imagePosition: "center 10%",
+  bio: "Shvetha is an architect and interior designer with the kind of eye that notices everything, from proportions and lighting to symmetry and the one cushion that is slightly off. She designs homes, wedding cards, aesthetics, and occasionally future plans without informing the people involved. A disciplined yoga practitioner who treats flexibility like a personality trait, she is highly competitive, charmingly dramatic, and fully capable of pretend crying her way to victory if necessary. She loves grand romance and cinematic emotions, and believes every good love story deserves proper pacing and background music. Efficient at binge watching romance dramas, she can survive an entire day with breaks only for food and restroom. Somehow, she chose to fall in love with a man whose idea of romance includes protein calculations.",
   funFacts: [
-    { icon: Coffee, text: "Runs on filter coffee" },
-    { icon: Book, text: "Has 47 unread books" },
-    { icon: Music, text: "Shower concert champion" },
+    { icon: PenTool, text: "Can mentally renovate a space in under a minute" },
+    { icon: Flower, text: "Yoga is not optional. It is a lifestyle." },
+    { icon: Heart, text: "Can finish an entire romance season in one sitting" },
   ],
   favorites: {
-    movie: "Any romcom ever made",
-    food: "Anything her mom makes",
-    hobby: "Planning Aadi's life",
+    movie: "Slow-burn romance with dramatic confessions",
+    food: "Anything comforting and beautifully made",
+    hobby: "Redesigning things that were perfectly fine",
   },
-  quirk: "Will reorganize your entire kitchen if left unattended",
+  quirk: "Will break your entire house or at least couple of walls and redesign if left unattended"
 };
 
 const groomData = {
   name: "Aadi",
-  role: "The Groom", 
-  tagline: "The one who goes with the flow",
-  // Replace with actual Aadi photo - using placeholder for now
-  image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=600&fit=crop&crop=face",
-  bio: "Professional overthinker turned reluctant decision-maker. Firm believer that 'five more minutes' is a valid life philosophy. Still trying to figure out adulting.",
+  role: "The Groom",
+  tagline: "Powered by data, discipline, and unnecessary amounts of protein.",
+  image: "/groom.png",
+  imagePosition: "right 55%",
+  bio: "Aadi is a data analyst who trusts numbers more than vibes, but somehow ended up engaged to a woman powered entirely by vibes. He lives in spreadsheets, thinks in patterns, and has probably optimised this bio twice already. A mix martial artist who treats training like an anime arc, consistent, intense, mildly dramatic. He loves the gym, loves getting other people into the gym, and will calmly dismantle protein myths whether you asked or not.",
   funFacts: [
-    { icon: Gamepad2, text: "Gaming is cardio, right?" },
-    { icon: Film, text: "Movie encyclopedia" },
-    { icon: Utensils, text: "Biryani connoisseur" },
+    { icon: Dumbbell, text: "Has definitely convinced someone to increase protein intake" },
+    { icon: Swords, text: "Mood directly linked to workout frequency" },
+    { icon: Candy, text: "Chocolate has a short lifespan around him" },
   ],
   favorites: {
-    movie: "Anything with a good twist",
-    food: "Biryani (non-negotiable)",
-    hobby: "Pretending to work from home",
+    movie: "Anything anime. Subtitles preferred.",
+    food: "Protein. Always protein.",
+    hobby: "Recruiting unsuspecting friends into fitness",
   },
-  quirk: "Can nap anywhere, anytime, any position",
-};
-
-const coupleData = {
-  image: "/couple-hero.jpg",
-  howTheyMet: "What started as awkward small talk turned into 3-hour phone calls, random food adventures, and the realization that they're basically the same person in different fonts.",
-  whyTheyWork: [
-    "She plans, he shows up (usually on time)",
-    "She talks, he listens (and nods at the right moments)", 
-    "She dreams big, he dreams of naps",
-    "Together, they're chaos with a schedule",
-  ],
+  quirk: "Can make food disappear at alarming speed"
 };
 
 function BioCard({ person, isReversed }) {
@@ -73,14 +79,8 @@ function BioCard({ person, isReversed }) {
               src={person.image} 
               alt={person.name}
               className="w-full h-80 lg:h-96 object-cover"
+              style={{ objectPosition: person.imagePosition || 'center center' }}
             />
-          </div>
-          {/* Name tag */}
-          <div 
-            className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-6 py-2 rounded-full shadow-lg"
-            style={{ backgroundColor: '#8B0000' }}
-          >
-            <span className="font-signature text-2xl text-gold">{person.name}</span>
           </div>
         </div>
       </div>
@@ -174,7 +174,7 @@ export default function StoryPage() {
   const toggleMute = () => {
     if (audioRef.current) {
       if (isMuted) {
-        audioRef.current.volume = 0.3;
+        audioRef.current.volume = 0.1;
         audioRef.current.muted = false;
       } else {
         audioRef.current.muted = true;
@@ -226,7 +226,7 @@ export default function StoryPage() {
             Meet the chaos crew
           </p>
           <h1 className="font-signature text-5xl sm:text-6xl lg:text-7xl text-white mb-4">
-            Our Story
+            The Couple
           </h1>
           <p className="text-champagne/80 font-serif italic text-base sm:text-lg">
             Two weirdos who found each other
@@ -260,71 +260,18 @@ export default function StoryPage() {
         </div>
       </section>
 
-      {/* Together Section */}
-      <section className="py-16 px-6">
-        <div className="max-w-4xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-12">
-            <p className="text-gold uppercase tracking-widest text-xs font-semibold mb-2">And then...</p>
-            <h2 className="font-signature text-4xl sm:text-5xl text-crimson mb-4">They Found Each Other</h2>
-            <div className="flex items-center justify-center gap-3">
-              <span className="w-12 h-px bg-gold" />
-              <span className="w-2 h-2 rounded-full bg-gold" />
-              <span className="w-12 h-px bg-gold" />
-            </div>
-          </div>
-
-          {/* Couple Image */}
-          <div className="mb-12">
-            <div className="rounded-2xl overflow-hidden gold-border shadow-2xl">
-              <img 
-                src={coupleData.image} 
-                alt="Shvetha and Aadi together"
-                className="w-full h-80 sm:h-[450px] object-cover"
-              />
-            </div>
-          </div>
-
-          {/* How They Met */}
-          <div className="text-center mb-12">
-            <p className="font-serif text-lg text-foreground/80 leading-relaxed max-w-2xl mx-auto">
-              {coupleData.howTheyMet}
-            </p>
-          </div>
-
-          {/* Why They Work */}
-          <div 
-            className="p-8 rounded-2xl text-center"
-            style={{ backgroundColor: 'rgba(139, 0, 0, 0.05)', border: '1px solid rgba(212, 175, 55, 0.2)' }}
-          >
-            <p className="text-gold uppercase tracking-widest text-xs font-semibold mb-6">Why It Works</p>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {coupleData.whyTheyWork.map((reason, idx) => (
-                <div 
-                  key={idx}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white/50"
-                >
-                  <span className="text-gold">✓</span>
-                  <span className="text-sm text-foreground/70 text-left">{reason}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Final CTA */}
-      <section className="py-12 px-6 bg-crimson text-center">
+      <section className="py-6 px-6 bg-crimson text-center">
         <p className="font-signature text-3xl text-white mb-2">
           March 6th, 2026
         </p>
         <p className="text-champagne/70 text-sm">
-          The day these two officially become each other's problem
+          The day these two officially becomes each other's problem
         </p>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 text-center bg-crimson">
+      <footer className="py-4 text-center bg-crimson">
         <p className="font-serif text-sm text-gold/70">
           Shvetha & Aadi
         </p>

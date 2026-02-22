@@ -116,9 +116,9 @@ export default function LandingPage() {
   }, [showMenu, menuBgLoaded, menuVisible]);
 
   const menuItems = [
-    { label: "Our Story", path: "/story" },
-    { label: "Sacred Ceremonies", path: "/rituals" },
+    { label: "The Couple", path: "/story" },
     { label: "The Celebration", path: "/celebration" },
+    { label: "Sacred Ceremonies", path: "/rituals" },
     { label: "Gifts & Blessings", path: "/blessings" },
   ];
 

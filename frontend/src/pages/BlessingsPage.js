@@ -86,9 +86,10 @@ export default function BlessingsPage() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-8 border-t border-border/40">
-        <p className="font-signature text-2xl text-crimson mb-1">Shvetha & Aadi</p>
-        <p className="text-muted-foreground text-xs font-sans">Made with love</p>
+      <footer className="py-8 text-center bg-crimson">
+        <p className="font-serif text-sm text-gold/70">
+          Shvetha & Aadi • March 2026
+        </p>
       </footer>
     </div>
   );

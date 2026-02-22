@@ -17,7 +17,7 @@ const weddingDetails = {
   venue: {
     name: "Angana, The Courtyard",
     address: "Pattareddy Palya, Kaggalipura, Kanakapura Road, Bengaluru",
-    mapUrl: "https://maps.google.com/?q=Angana+The+Courtyard+Kaggalipura+Bengaluru",
+    mapUrl: "https://maps.app.goo.gl/h1Qucmn8o812jmbL9",
   },
   
   // Parent names
@@ -40,7 +40,7 @@ const events = [
     description: "Under lamps, under stars, join us for an enchanting evening celebrating the union of two families through the timeless arts of music and dance.",
     date: "March 5th, 2026",
     time: "6:30 PM onwards",
-    attire: "Ivory, Gold, Off-white",
+    attire: "Ivory, Gold",
     attireNote: "Elegant traditional or semi-formal",
   },
   {
@@ -157,7 +157,7 @@ export default function CelebrationPage() {
                 {/* Dress Code */}
                 <div className="rounded-lg p-4 bg-gold/10">
                   <p className="text-xs uppercase tracking-wider mb-1 text-gold font-semibold">
-                    Suggested Attire
+                    Attire
                   </p>
                   <p className="font-medium text-crimson">
                     {event.attire}
@@ -213,9 +213,6 @@ export default function CelebrationPage() {
       <section className="py-12 px-6 text-center bg-gold/10">
         <p className="font-signature text-3xl mb-4 text-crimson">
           We look forward to celebrating with you
-        </p>
-        <p className="text-sm text-foreground/60">
-          Your presence is the greatest gift
         </p>
       </section>
 
