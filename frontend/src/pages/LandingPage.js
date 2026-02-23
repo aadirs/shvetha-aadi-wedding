@@ -311,20 +311,22 @@ export default function LandingPage() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
         }
-        /* Mobile menu button glow - subtle golden ghost button effect */
+        /* Mobile menu button glow - golden ghost button effect for touch affordance */
         @media (max-width: 639px) {
           .menu-btn-glow {
             opacity: 1 !important;
-            background-color: rgba(255, 250, 240, 0.15) !important;
-            border: 1px solid rgba(212, 175, 55, 0.5) !important;
-            animation: subtle-glow 3s ease-in-out infinite;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(255, 250, 240, 0.12) 50%, rgba(212, 175, 55, 0.08) 100%) !important;
+            border: 1px solid rgba(212, 175, 55, 0.55) !important;
+            animation: subtle-glow 2.5s ease-in-out infinite;
           }
           @keyframes subtle-glow {
             0%, 100% { 
-              box-shadow: 0 0 12px rgba(212, 175, 55, 0.25), inset 0 0 8px rgba(212, 175, 55, 0.1);
+              box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), 0 0 5px rgba(212, 175, 55, 0.15), inset 0 0 10px rgba(212, 175, 55, 0.12);
+              border-color: rgba(212, 175, 55, 0.5);
             }
             50% { 
-              box-shadow: 0 0 18px rgba(212, 175, 55, 0.35), inset 0 0 12px rgba(212, 175, 55, 0.15);
+              box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), 0 0 8px rgba(212, 175, 55, 0.2), inset 0 0 15px rgba(212, 175, 55, 0.18);
+              border-color: rgba(212, 175, 55, 0.65);
             }
           }
         }
