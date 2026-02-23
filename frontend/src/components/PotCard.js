@@ -102,17 +102,15 @@ export default function PotCard({ pot }) {
           </div>
         )}
 
-        {/* CTA: Wax seal button + View */}
-        <div className="flex items-center justify-center gap-3">
+        {/* CTA: Single crimson button */}
+        <div className="flex items-center justify-center">
           <Link to={`/p/${pot.slug}`}>
-            <Button variant="outline" className="text-xs font-sans rounded-full border-border/40 hover:border-gold/50 px-5 h-8" data-testid={`view-pot-${pot.slug}`}>
-              View Blessings
+            <Button 
+              className="text-xs font-sans rounded-full px-6 h-9 bg-crimson hover:bg-crimson/90 text-white border-0" 
+              data-testid={`view-pot-${pot.slug}`}
+            >
+              View Collection
             </Button>
-          </Link>
-          <Link to={`/p/${pot.slug}`}>
-            <button className="wax-seal" data-testid={`contribute-pot-${pot.slug}`}>
-              <span className="wax-seal-text">Gift</span>
-            </button>
           </Link>
         </div>
       </div>
