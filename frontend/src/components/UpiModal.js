@@ -307,56 +307,100 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   </div>
                 )}
 
-                {/* DESKTOP VIEW - QR Code Primary */}
+                {/* DESKTOP VIEW - Copy UPI ID Primary, QR Code Collapsible */}
                 {!isMobile && (
                   <div className="space-y-0">
-                    {/* QR Code - Primary on desktop */}
-                    <div className="bg-white rounded-2xl p-5 border-2 border-[#8B0000]/20 shadow-md">
-                      <div className="flex flex-col items-center">
-                        <p className="text-sm text-[#5C3A1E]/70 mb-3 font-medium">Scan with any UPI app</p>
-                        <div className="p-3 bg-white rounded-xl border-2 border-dashed border-[#D4AF37]/30" data-testid="upi-qr-code">
-                          <QRCodeSVG 
-                            value={qrLink} 
-                            size={180} 
-                            level="M" 
-                            bgColor="#FFFFFF" 
-                            fgColor="#000000" 
-                            marginSize={2}
-                          />
+                    {/* Copy UPI ID - Primary on desktop */}
+                    <div className="bg-white rounded-2xl border border-[#E8DDD0] shadow-sm overflow-hidden">
+                      {/* UPI ID Display */}
+                      <div className="px-5 pt-5 pb-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <p className="text-[11px] uppercase tracking-wider text-[#5C3A1E]/40 font-medium">UPI ID</p>
+                          <div className={`text-[10px] font-medium px-2 py-0.5 rounded-full transition-all ${copied ? 'bg-green-100 text-green-700' : 'bg-[#FFF8F0] text-[#5C3A1E]/50'}`}>
+                            {copied ? '✓ Copied' : 'Click to copy'}
+                          </div>
                         </div>
-                        <div className="bg-[#8B0000]/5 border border-[#8B0000]/10 rounded-full px-4 py-1.5 mt-3">
-                          <span className="text-sm font-semibold text-[#8B0000]">Pay ₹{totalRupees}</span>
+                        
+                        <button
+                          onClick={copyUpiId}
+                          className="w-full text-left group"
+                          data-testid="copy-upi-btn"
+                        >
+                          <div className="flex items-center justify-between gap-5 p-4 bg-gradient-to-r from-[#FFF8F0] to-[#FFFBF5] rounded-xl border border-[#E8DDD0] group-hover:border-[#8B0000]/30 group-active:scale-[0.99] transition-all">
+                            <p className="text-sm font-mono font-semibold text-[#8B0000] tracking-wide">{upiConfig.upi_id}</p>
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${copied ? 'bg-green-500' : 'bg-[#8B0000]'}`}>
+                              {copied ? <Check className="w-5 h-5 text-white" /> : <Copy className="w-5 h-5 text-white" />}
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                      
+                      {/* Instructions */}
+                      <div className="px-5 pb-5">
+                        <div className="flex items-start gap-3 text-[#5C3A1E]/60">
+                          <div className="w-5 h-5 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span className="text-[10px] font-bold text-[#D4AF37]">?</span>
+                          </div>
+                          <p className="text-[12px] leading-relaxed">
+                            Open your UPI app → Pay → Paste ID → <span className="font-semibold text-[#8B0000]">₹{totalRupees}</span>
+                          </p>
                         </div>
-                        <p className="text-[10px] text-[#5C3A1E]/40 mt-2">Open GPay, PhonePe or Paytm and scan</p>
                       </div>
                     </div>
 
                     <OrDivider />
 
-                    {/* Copy UPI ID - Secondary on desktop */}
+                    {/* QR Code - Collapsible on desktop */}
                     <div className="bg-white rounded-2xl border border-[#E8DDD0] shadow-sm overflow-hidden">
-                      <button
-                        onClick={copyUpiId}
-                        className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-[#FFF8F0] transition-colors"
-                        data-testid="copy-upi-btn"
+                      <button 
+                        onClick={() => setShowQrCode(!showQrCode)}
+                        className="w-full flex items-center justify-between px-5 py-4 hover:bg-[#FFF8F0]/50 transition-colors"
+                        data-testid="qr-toggle-btn-desktop"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-[#FFF8F0] flex items-center justify-center border border-[#E8DDD0]">
-                            <Copy className="w-4 h-4 text-[#5C3A1E]/60" />
+                            <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#5C3A1E]/60" fill="none" stroke="currentColor" strokeWidth="2">
+                              <rect x="3" y="3" width="7" height="7" rx="1" />
+                              <rect x="14" y="3" width="7" height="7" rx="1" />
+                              <rect x="3" y="14" width="7" height="7" rx="1" />
+                              <rect x="14" y="14" width="3" height="3" />
+                            </svg>
                           </div>
                           <div className="text-left">
-                            <p className="text-sm font-medium text-[#5C3A1E]">Copy UPI ID</p>
-                            <p className="text-[11px] text-[#5C3A1E]/50 font-mono">{upiConfig.upi_id}</p>
+                            <p className="text-sm font-medium text-[#5C3A1E]">Scan QR Code</p>
+                            <p className="text-[11px] text-[#5C3A1E]/50">Pay using any UPI app</p>
                           </div>
                         </div>
-                        <div className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${copied ? 'bg-green-100 text-green-700' : 'bg-[#8B0000]/10 text-[#8B0000] border border-[#8B0000]/20'}`}>
-                          {copied ? <><Check className="w-3 h-3 inline mr-1" />Copied</> : 'Copy'}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-[#5C3A1E]/40">{showQrCode ? 'Hide' : 'Show'}</span>
+                          {showQrCode ? (
+                            <ChevronUp className="w-5 h-5 text-[#5C3A1E]/40" />
+                          ) : (
+                            <ChevronDown className="w-5 h-5 text-[#5C3A1E]/40" />
+                          )}
                         </div>
                       </button>
-                      <div className="px-4 pb-3">
-                        <p className="text-[10px] text-[#5C3A1E]/50 leading-relaxed">
-                          Open any UPI app → Tap "Pay" → Paste UPI ID → Enter ₹{totalRupees} → Complete payment
-                        </p>
+                      
+                      {/* Collapsible QR Code Content */}
+                      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showQrCode ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <div className="px-5 pb-5 pt-2 border-t border-[#E8DDD0]">
+                          <div className="flex flex-col items-center">
+                            <div className="p-3 bg-white rounded-xl border-2 border-dashed border-[#D4AF37]/30" data-testid="upi-qr-code">
+                              <QRCodeSVG 
+                                value={qrLink} 
+                                size={160} 
+                                level="M" 
+                                bgColor="#FFFFFF" 
+                                fgColor="#000000" 
+                                marginSize={2}
+                              />
+                            </div>
+                            <div className="bg-[#8B0000]/5 border border-[#8B0000]/10 rounded-full px-4 py-1.5 mt-3">
+                              <span className="text-sm font-semibold text-[#8B0000]">Pay ₹{totalRupees}</span>
+                            </div>
+                            <p className="text-[10px] text-[#5C3A1E]/40 mt-2">Open GPay, PhonePe or Paytm and scan</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
