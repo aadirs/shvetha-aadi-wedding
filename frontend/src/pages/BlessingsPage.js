@@ -84,6 +84,10 @@ export default function BlessingsPage() {
     fetchPots()
       .then(r => { setPots(r.data); setLoading(false); })
       .catch(e => { setError(e.response?.data?.detail || "Could not load pots"); setLoading(false); });
+    
+    fetchAllBlessings()
+      .then(r => { setBlessings(r.data); setBlessingsLoading(false); })
+      .catch(() => setBlessingsLoading(false));
   }, []);
 
   return (
