@@ -315,14 +315,16 @@ export default function LandingPage() {
         @media (max-width: 639px) {
           .menu-btn-glow {
             opacity: 1 !important;
+            background-color: rgba(255, 250, 240, 0.15) !important;
+            border: 1px solid rgba(212, 175, 55, 0.5) !important;
             animation: subtle-glow 3s ease-in-out infinite;
           }
           @keyframes subtle-glow {
             0%, 100% { 
-              box-shadow: 0 0 10px rgba(212, 175, 55, 0.2), inset 0 0 6px rgba(212, 175, 55, 0.08);
+              box-shadow: 0 0 12px rgba(212, 175, 55, 0.25), inset 0 0 8px rgba(212, 175, 55, 0.1);
             }
             50% { 
-              box-shadow: 0 0 14px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.12);
+              box-shadow: 0 0 18px rgba(212, 175, 55, 0.35), inset 0 0 12px rgba(212, 175, 55, 0.15);
             }
           }
         }
