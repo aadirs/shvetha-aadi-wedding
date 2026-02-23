@@ -16,7 +16,7 @@ export default function ThankYou() {
   const potSlug = params.get("pot");
   const donorName = params.get("name") || "Guest";
   const [confirmed, setConfirmed] = useState(false);
-  const [countdown, setCountdown] = useState(12);
+  const [highlightButton, setHighlightButton] = useState(false);
   
   // Progress animation state
   const [progressData, setProgressData] = useState(null);
