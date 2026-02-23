@@ -61,6 +61,8 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   const [messageError, setMessageError] = useState("");
   const [copied, setCopied] = useState(false);
   const [showQrCode, setShowQrCode] = useState(false);
+  const [countryCode, setCountryCode] = useState("+91");
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", message: "", utr: "" });
   const [upiConfig, setUpiConfig] = useState({ upi_id: DEFAULT_UPI_ID, upi_name: DEFAULT_UPI_NAME });
 
