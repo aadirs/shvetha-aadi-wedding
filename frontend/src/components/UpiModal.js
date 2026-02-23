@@ -113,12 +113,13 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       setSubmitting(false);
       setPhoneError("");
       setNameError("");
+      setEmailError("");
       setMessageError("");
       setCopied(false);
       setShowQrCode(false);
       setCountryCode("+91");
       setShowCountryDropdown(false);
-      setForm({ name: "", phone: "", message: "", utr: "" });
+      setForm({ name: "", phone: "", email: "", message: "", utr: "" });
     }
   }, [isOpen]);
 
@@ -128,6 +129,19 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       setPhoneError("Please enter a valid phone number");
     } else {
       setPhoneError("");
+    }
+  };
+
+  // Email validation
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const handleEmailBlur = () => {
+    if (form.email.trim() && !isValidEmail(form.email)) {
+      setEmailError("Please enter a valid email address");
+    } else {
+      setEmailError("");
     }
   };
 
