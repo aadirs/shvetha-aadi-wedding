@@ -446,7 +446,7 @@ async def create_upi_session(request: Request):
 
 @api_router.post("/upi/blessing/confirm")
 async def confirm_upi_blessing(request: Request):
-    """After UPI payment, donor submits name/phone/message/UTR."""
+    """After UPI payment, donor submits name/phone/email/message/UTR."""
     data = await request.json()
     client_ip = request.client.host if request.client else "unknown"
     rate_limit(client_ip, max_req=20, window=60)
@@ -454,11 +454,17 @@ async def confirm_upi_blessing(request: Request):
     session_id = data.get("session_id")
     donor_name = html.escape(data.get("donor_name", "").strip())
     donor_phone = data.get("donor_phone", "").strip()
+    donor_email = data.get("donor_email", "").strip().lower()
     donor_message = html.escape(data.get("donor_message", "").strip()) if data.get("donor_message") else ""
     utr = data.get("utr", "").strip()
 
-    if not session_id or not donor_name or not donor_phone or not donor_message:
-        raise HTTPException(400, "Session ID, name, phone, and blessing message are required")
+    if not session_id or not donor_name or not donor_phone or not donor_email or not donor_message:
+        raise HTTPException(400, "Session ID, name, phone, email, and blessing message are required")
+
+    # Basic email validation
+    import re
+    if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', donor_email):
+        raise HTTPException(400, "Please provide a valid email address")
 
     sessions = await sb_get("contribution_sessions", {"select": "id,status", "id": f"eq.{session_id}"})
     if not sessions:
@@ -472,6 +478,7 @@ async def confirm_upi_blessing(request: Request):
     update_data = {
         "donor_name": donor_name,
         "donor_phone": donor_phone,
+        "donor_email": donor_email,
         "donor_message": donor_message,
         "status": "paid",
         "paid_at": now_iso
