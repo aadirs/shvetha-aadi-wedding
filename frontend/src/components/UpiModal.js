@@ -123,10 +123,34 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   const qrLink = `upi://pay?pa=${upiConfig.upi_id}&pn=${payeeName}&am=${amountForQr}&cu=INR&tn=Wedding%20Gift`;
 
   async function handleSubmit() {
-    if (!form.name.trim()) { toast.error("Please enter your name"); return; }
-    if (!form.phone.trim()) { toast.error("Please enter your phone number"); return; }
-    if (!isValidPhone(form.phone)) { toast.error("Please enter a valid phone number"); setPhoneError("Please enter a valid Indian mobile number"); return; }
-    if (!form.message.trim()) { toast.error("Please write a blessing for the couple"); return; }
+    // Reset errors
+    setNameError("");
+    setPhoneError("");
+    setMessageError("");
+    
+    // Validate all fields and collect errors
+    let hasError = false;
+    
+    if (!form.name.trim()) {
+      setNameError("Please enter your name");
+      hasError = true;
+    }
+    if (!form.phone.trim()) {
+      setPhoneError("Please enter your phone number");
+      hasError = true;
+    } else if (!isValidPhone(form.phone)) {
+      setPhoneError("Please enter a valid Indian mobile number");
+      hasError = true;
+    }
+    if (!form.message.trim()) {
+      setMessageError("Please write a blessing for the couple");
+      hasError = true;
+    }
+    
+    if (hasError) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
 
     setSubmitting(true);
     try {
