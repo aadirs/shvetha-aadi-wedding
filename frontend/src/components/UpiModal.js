@@ -482,7 +482,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                     value={form.phone}
                     onChange={e => { setForm({ ...form, phone: e.target.value }); setPhoneError(""); }}
                     onBlur={handlePhoneBlur}
-                    placeholder="+91 98765 43210"
+                    placeholder="+91 98765 43210 or +1 234 567 8900"
                     className={`mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm placeholder:text-[#5C3A1E]/30 ${phoneError ? 'border-red-400 focus:border-red-400' : ''}`}
                     data-testid="blessing-phone-input"
                   />
