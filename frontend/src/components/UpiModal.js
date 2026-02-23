@@ -21,10 +21,21 @@ function fireGoldenConfetti() {
   setTimeout(() => confetti({ particleCount: 30, spread: 60, startVelocity: 15, gravity: 0.5, ticks: 180, origin: { y: 0.5, x: 0.7 }, colors, scalar: 0.8 }), 700);
 }
 
-// Phone validation: Indian mobile numbers
+// Phone validation: Indian and International numbers
 function isValidPhone(phone) {
-  const cleaned = phone.replace(/[\s\-\(\)]/g, "");
-  return /^(\+91|91)?[6-9]\d{9}$/.test(cleaned);
+  const cleaned = phone.replace(/[\s\-\(\)\.]/g, "");
+  
+  // Indian mobile: 10 digits starting with 6-9, optionally with +91 or 91
+  const indianPattern = /^(\+91|91)?[6-9]\d{9}$/;
+  
+  // International: + followed by country code (1-3 digits) and number (7-14 digits total)
+  // Covers most international formats like +1, +44, +971, etc.
+  const internationalPattern = /^\+[1-9]\d{7,14}$/;
+  
+  // Also allow numbers without + that are 7-15 digits (for flexibility)
+  const genericPattern = /^[1-9]\d{6,14}$/;
+  
+  return indianPattern.test(cleaned) || internationalPattern.test(cleaned) || genericPattern.test(cleaned);
 }
 
 export default function UpiModal({ isOpen, onClose, allocations, totalPaise, potSlug }) {
