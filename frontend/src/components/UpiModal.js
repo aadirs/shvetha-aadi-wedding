@@ -111,7 +111,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   // Phone validation on blur
   const handlePhoneBlur = () => {
     if (form.phone.trim() && !isValidPhone(form.phone)) {
-      setPhoneError("Please enter a valid Indian mobile number");
+      setPhoneError("Please enter a valid phone number");
     } else {
       setPhoneError("");
     }
