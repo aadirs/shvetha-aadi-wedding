@@ -458,11 +458,12 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   <Label className="text-[#5C3A1E]/80 text-xs font-medium">Your Name <span className="text-[#8B0000]">*</span></Label>
                   <Input
                     value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
+                    onChange={e => { setForm({ ...form, name: e.target.value }); setNameError(""); }}
                     placeholder="Enter your full name"
-                    className="mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm"
+                    className={`mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm placeholder:text-[#5C3A1E]/30 ${nameError ? 'border-red-400 focus:border-red-400' : ''}`}
                     data-testid="blessing-name-input"
                   />
+                  {nameError && <p className="text-red-500 text-[11px] mt-1">{nameError}</p>}
                 </div>
                 <div>
                   <Label className="text-[#5C3A1E]/80 text-xs font-medium">Phone Number <span className="text-[#8B0000]">*</span></Label>
@@ -471,7 +472,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                     onChange={e => { setForm({ ...form, phone: e.target.value }); setPhoneError(""); }}
                     onBlur={handlePhoneBlur}
                     placeholder="+91 98765 43210"
-                    className={`mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm ${phoneError ? 'border-red-400 focus:border-red-400' : ''}`}
+                    className={`mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm placeholder:text-[#5C3A1E]/30 ${phoneError ? 'border-red-400 focus:border-red-400' : ''}`}
                     data-testid="blessing-phone-input"
                   />
                   {phoneError && <p className="text-red-500 text-[11px] mt-1">{phoneError}</p>}
@@ -480,9 +481,9 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   <Label className="text-[#5C3A1E]/80 text-xs font-medium">Your Blessing <span className="text-[#8B0000]">*</span></Label>
                   <Textarea
                     value={form.message}
-                    onChange={e => setForm({ ...form, message: e.target.value })}
+                    onChange={e => { setForm({ ...form, message: e.target.value }); setMessageError(""); }}
                     placeholder="Wishing Shvetha & Aadi a lifetime of love and happiness..."
-                    className="mt-1.5 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm min-h-[80px] resize-none"
+                    className={`mt-1.5 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm min-h-[80px] resize-none placeholder:text-[#5C3A1E]/30 ${messageError ? 'border-red-400 focus:border-red-400' : ''}`}
                     data-testid="blessing-message-input"
                   />
                 </div>
