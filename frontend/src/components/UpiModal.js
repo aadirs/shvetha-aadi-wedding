@@ -115,18 +115,23 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       setMessageError("");
       setCopied(false);
       setShowQrCode(false);
+      setCountryCode("+91");
+      setShowCountryDropdown(false);
       setForm({ name: "", phone: "", message: "", utr: "" });
     }
   }, [isOpen]);
 
   // Phone validation on blur
   const handlePhoneBlur = () => {
-    if (form.phone.trim() && !isValidPhone(form.phone)) {
+    if (form.phone.trim() && !isValidPhoneNumber(form.phone)) {
       setPhoneError("Please enter a valid phone number");
     } else {
       setPhoneError("");
     }
   };
+
+  // Get selected country info
+  const selectedCountry = COUNTRY_CODES.find(c => c.code === countryCode) || COUNTRY_CODES[0];
 
   // Copy UPI ID to clipboard
   const copyUpiId = async () => {
