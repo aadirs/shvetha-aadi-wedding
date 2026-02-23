@@ -575,6 +575,19 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   {phoneError && <p className="text-red-500 text-[11px] mt-1">{phoneError}</p>}
                 </div>
                 <div>
+                  <Label className="text-[#5C3A1E]/80 text-xs font-medium">Email <span className="text-[#8B0000]">*</span></Label>
+                  <Input
+                    type="email"
+                    value={form.email}
+                    onChange={e => { setForm({ ...form, email: e.target.value }); setEmailError(""); }}
+                    onBlur={handleEmailBlur}
+                    placeholder="your.email@example.com"
+                    className={`mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm placeholder:text-[#5C3A1E]/30 ${emailError ? 'border-red-400 focus:border-red-400' : ''}`}
+                    data-testid="blessing-email-input"
+                  />
+                  {emailError && <p className="text-red-500 text-[11px] mt-1">{emailError}</p>}
+                </div>
+                <div>
                   <Label className="text-[#5C3A1E]/80 text-xs font-medium">Your Blessing <span className="text-[#8B0000]">*</span></Label>
                   <Textarea
                     value={form.message}
