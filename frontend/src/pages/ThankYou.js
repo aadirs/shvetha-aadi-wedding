@@ -317,6 +317,19 @@ export default function ThankYou() {
         .animate-fade-in {
           animation: fade-in 0.5s ease-out;
         }
+        @keyframes pulse-subtle {
+          0%, 100% { 
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.3);
+          }
+          50% { 
+            transform: scale(1.08);
+            box-shadow: 0 15px 35px -5px rgba(212, 175, 55, 0.4);
+          }
+        }
+        .animate-pulse-subtle {
+          animation: pulse-subtle 2s ease-in-out infinite;
+        }
       `}</style>
     </div>
   );
