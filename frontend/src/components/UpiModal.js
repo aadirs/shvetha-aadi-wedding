@@ -497,14 +497,57 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                 </div>
                 <div>
                   <Label className="text-[#5C3A1E]/80 text-xs font-medium">Phone Number <span className="text-[#8B0000]">*</span></Label>
-                  <Input
-                    value={form.phone}
-                    onChange={e => { setForm({ ...form, phone: e.target.value }); setPhoneError(""); }}
-                    onBlur={handlePhoneBlur}
-                    placeholder="+91 98765 43210 or +1 234 567 8900"
-                    className={`mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm placeholder:text-[#5C3A1E]/30 ${phoneError ? 'border-red-400 focus:border-red-400' : ''}`}
-                    data-testid="blessing-phone-input"
-                  />
+                  <div className="flex gap-2 mt-1.5">
+                    {/* Country Code Dropdown */}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                        className={`h-11 px-3 bg-white border rounded-xl flex items-center gap-2 text-sm transition-all hover:border-[#8B0000]/30 ${phoneError ? 'border-red-400' : 'border-[#E8DDD0]'}`}
+                        data-testid="country-code-btn"
+                      >
+                        <span className="text-base">{selectedCountry.flag}</span>
+                        <span className="text-[#5C3A1E] font-medium">{countryCode}</span>
+                        <ChevronDown className={`w-4 h-4 text-[#5C3A1E]/50 transition-transform ${showCountryDropdown ? 'rotate-180' : ''}`} />
+                      </button>
+                      
+                      {/* Dropdown Menu */}
+                      {showCountryDropdown && (
+                        <div className="absolute top-full left-0 mt-1 w-56 max-h-48 overflow-y-auto bg-white border border-[#E8DDD0] rounded-xl shadow-lg z-20">
+                          {COUNTRY_CODES.map((country) => (
+                            <button
+                              key={country.code}
+                              type="button"
+                              onClick={() => {
+                                setCountryCode(country.code);
+                                setShowCountryDropdown(false);
+                              }}
+                              className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm hover:bg-[#FFF8F0] transition-colors ${countryCode === country.code ? 'bg-[#FFF8F0]' : ''}`}
+                            >
+                              <span className="text-base">{country.flag}</span>
+                              <span className="text-[#5C3A1E] font-medium">{country.code}</span>
+                              <span className="text-[#5C3A1E]/50 text-xs">{country.country}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Phone Number Input */}
+                    <Input
+                      value={form.phone}
+                      onChange={e => { 
+                        // Only allow digits
+                        const value = e.target.value.replace(/[^\d]/g, '');
+                        setForm({ ...form, phone: value }); 
+                        setPhoneError(""); 
+                      }}
+                      onBlur={handlePhoneBlur}
+                      placeholder="98765 43210"
+                      className={`flex-1 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm placeholder:text-[#5C3A1E]/30 ${phoneError ? 'border-red-400 focus:border-red-400' : ''}`}
+                      data-testid="blessing-phone-input"
+                    />
+                  </div>
                   {phoneError && <p className="text-red-500 text-[11px] mt-1">{phoneError}</p>}
                 </div>
                 <div>
