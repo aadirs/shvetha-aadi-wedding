@@ -307,50 +307,10 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   </div>
                 )}
 
-                {/* DESKTOP VIEW - Copy UPI ID Primary, QR Code Collapsible */}
+                {/* DESKTOP VIEW - QR Code on top (collapsible), Copy UPI ID below */}
                 {!isMobile && (
                   <div className="space-y-0">
-                    {/* Copy UPI ID - Primary on desktop */}
-                    <div className="bg-white rounded-2xl border border-[#E8DDD0] shadow-sm overflow-hidden">
-                      {/* UPI ID Display */}
-                      <div className="px-5 pt-5 pb-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <p className="text-[11px] uppercase tracking-wider text-[#5C3A1E]/40 font-medium">UPI ID</p>
-                          <div className={`text-[10px] font-medium px-2 py-0.5 rounded-full transition-all ${copied ? 'bg-green-100 text-green-700' : 'bg-[#FFF8F0] text-[#5C3A1E]/50'}`}>
-                            {copied ? '✓ Copied' : 'Click to copy'}
-                          </div>
-                        </div>
-                        
-                        <button
-                          onClick={copyUpiId}
-                          className="w-full text-left group"
-                          data-testid="copy-upi-btn"
-                        >
-                          <div className="flex items-center justify-between gap-5 p-4 bg-gradient-to-r from-[#FFF8F0] to-[#FFFBF5] rounded-xl border border-[#E8DDD0] group-hover:border-[#8B0000]/30 group-active:scale-[0.99] transition-all">
-                            <p className="text-sm font-mono font-semibold text-[#8B0000] tracking-wide">{upiConfig.upi_id}</p>
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${copied ? 'bg-green-500' : 'bg-[#8B0000]'}`}>
-                              {copied ? <Check className="w-5 h-5 text-white" /> : <Copy className="w-5 h-5 text-white" />}
-                            </div>
-                          </div>
-                        </button>
-                      </div>
-                      
-                      {/* Instructions */}
-                      <div className="px-5 pb-5">
-                        <div className="flex items-start gap-3 text-[#5C3A1E]/60">
-                          <div className="w-5 h-5 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <span className="text-[10px] font-bold text-[#D4AF37]">?</span>
-                          </div>
-                          <p className="text-[12px] leading-relaxed">
-                            Open your UPI app → Pay → Paste ID → <span className="font-semibold text-[#8B0000]">₹{totalRupees}</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <OrDivider />
-
-                    {/* QR Code - Collapsible on desktop */}
+                    {/* QR Code - Collapsible, on top for desktop */}
                     <div className="bg-white rounded-2xl border border-[#E8DDD0] shadow-sm overflow-hidden">
                       <button 
                         onClick={() => setShowQrCode(!showQrCode)}
@@ -400,6 +360,46 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                             </div>
                             <p className="text-[10px] text-[#5C3A1E]/40 mt-2">Open GPay, PhonePe or Paytm and scan</p>
                           </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <OrDivider />
+
+                    {/* Copy UPI ID - Below QR on desktop */}
+                    <div className="bg-white rounded-2xl border border-[#E8DDD0] shadow-sm overflow-hidden">
+                      {/* UPI ID Display */}
+                      <div className="px-5 pt-5 pb-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <p className="text-[11px] uppercase tracking-wider text-[#5C3A1E]/40 font-medium">UPI ID</p>
+                          <div className={`text-[10px] font-medium px-2 py-0.5 rounded-full transition-all ${copied ? 'bg-green-100 text-green-700' : 'bg-[#FFF8F0] text-[#5C3A1E]/50'}`}>
+                            {copied ? '✓ Copied' : 'Click to copy'}
+                          </div>
+                        </div>
+                        
+                        <button
+                          onClick={copyUpiId}
+                          className="w-full text-left group"
+                          data-testid="copy-upi-btn"
+                        >
+                          <div className="flex items-center justify-between gap-5 p-4 bg-gradient-to-r from-[#FFF8F0] to-[#FFFBF5] rounded-xl border border-[#E8DDD0] group-hover:border-[#8B0000]/30 group-active:scale-[0.99] transition-all">
+                            <p className="text-sm font-mono font-semibold text-[#8B0000] tracking-wide">{upiConfig.upi_id}</p>
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${copied ? 'bg-green-500' : 'bg-[#8B0000]'}`}>
+                              {copied ? <Check className="w-5 h-5 text-white" /> : <Copy className="w-5 h-5 text-white" />}
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                      
+                      {/* Instructions */}
+                      <div className="px-5 pb-5">
+                        <div className="flex items-start gap-3 text-[#5C3A1E]/60">
+                          <div className="w-5 h-5 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span className="text-[10px] font-bold text-[#D4AF37]">?</span>
+                          </div>
+                          <p className="text-[12px] leading-relaxed">
+                            Open your UPI app → Pay → Paste ID → <span className="font-semibold text-[#8B0000]">₹{totalRupees}</span>
+                          </p>
                         </div>
                       </div>
                     </div>
