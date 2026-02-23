@@ -165,7 +165,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
     if (!form.phone.trim()) {
       setPhoneError("Please enter your phone number");
       hasError = true;
-    } else if (!isValidPhone(form.phone)) {
+    } else if (!isValidPhoneNumber(form.phone)) {
       setPhoneError("Please enter a valid phone number");
       hasError = true;
     }
@@ -179,12 +179,15 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       return;
     }
 
+    // Combine country code and phone number
+    const fullPhoneNumber = `${countryCode}${form.phone.trim().replace(/^0+/, '')}`;
+
     setSubmitting(true);
     try {
       await confirmBlessing({
         session_id: sessionId,
         donor_name: form.name.trim(),
-        donor_phone: form.phone.trim(),
+        donor_phone: fullPhoneNumber,
         donor_message: form.message.trim(),
         utr: form.utr.trim() || undefined,
       });
