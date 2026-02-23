@@ -37,6 +37,8 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
   const [success, setSuccess] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [phoneError, setPhoneError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [messageError, setMessageError] = useState("");
   const [copied, setCopied] = useState(false);
   const [showQrCode, setShowQrCode] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", message: "", utr: "" });
