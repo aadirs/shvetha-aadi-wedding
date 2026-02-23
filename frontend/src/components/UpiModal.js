@@ -89,6 +89,8 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       setSuccess(false);
       setSubmitting(false);
       setPhoneError("");
+      setNameError("");
+      setMessageError("");
       setCopied(false);
       setShowQrCode(false);
       setForm({ name: "", phone: "", message: "", utr: "" });
