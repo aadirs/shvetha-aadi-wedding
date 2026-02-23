@@ -486,6 +486,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                     className={`mt-1.5 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm min-h-[80px] resize-none placeholder:text-[#5C3A1E]/30 ${messageError ? 'border-red-400 focus:border-red-400' : ''}`}
                     data-testid="blessing-message-input"
                   />
+                  {messageError && <p className="text-red-500 text-[11px] mt-1">{messageError}</p>}
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
@@ -512,7 +513,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                     value={form.utr}
                     onChange={e => setForm({ ...form, utr: e.target.value })}
                     placeholder="12-digit transaction reference"
-                    className="mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm"
+                    className="mt-1.5 h-11 bg-white border-[#E8DDD0] focus:border-[#8B0000] focus:ring-[#8B0000]/10 rounded-xl text-sm placeholder:text-[#5C3A1E]/30"
                     data-testid="blessing-utr-input"
                   />
                 </div>
