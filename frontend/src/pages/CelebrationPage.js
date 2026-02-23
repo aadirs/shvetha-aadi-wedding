@@ -57,7 +57,9 @@ const events = [
 export default function CelebrationPage() {
   return (
     <div className="min-h-screen mandala-bg">
-      <HeritageNav />
+      <div className="sticky top-0 z-30">
+        <HeritageNav />
+      </div>
       
       {/* Hero Section - matching blessings page */}
       <header className="relative overflow-hidden bg-crimson text-white">
@@ -73,7 +75,7 @@ export default function CelebrationPage() {
         <div className="relative z-10 max-w-2xl mx-auto text-center py-16 px-6 sm:py-20">
           <Separator className="mx-auto w-20 bg-gold/40 mb-6" />
           <p className="text-gold uppercase tracking-[0.3em] text-xs font-sans font-semibold mb-4">
-            Join us in celebrating
+            Join us in
           </p>
           <h1 
             className="font-signature text-5xl sm:text-6xl lg:text-7xl text-white mb-4"

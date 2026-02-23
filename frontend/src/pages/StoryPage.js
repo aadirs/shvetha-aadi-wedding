@@ -207,7 +207,9 @@ export default function StoryPage() {
         </button>
       )}
 
-      <HeritageNav />
+      <div className="sticky top-0 z-30">
+        <HeritageNav />
+      </div>
       
       {/* Hero Section */}
       <header className="relative overflow-hidden bg-crimson text-white">

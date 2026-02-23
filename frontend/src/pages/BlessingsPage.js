@@ -18,7 +18,9 @@ export default function BlessingsPage() {
 
   return (
     <div className="min-h-screen mandala-bg">
-      <HeritageNav />
+      <div className="sticky top-0 z-30">
+        <HeritageNav />
+      </div>
       {/* Hero Header */}
       <header className="relative overflow-hidden bg-crimson text-white" data-testid="wedding-header">
         <div className="absolute inset-0 opacity-10">
@@ -31,19 +33,14 @@ export default function BlessingsPage() {
             <Separator className="mx-auto w-20 bg-gold/40 mb-6" />
           </div>
           <p className="text-gold uppercase tracking-[0.3em] text-xs font-sans font-semibold mb-4" data-testid="header-subtitle">
-            You are invited to celebrate
+            With Love & Gratitude
           </p>
           <h1 className="font-signature text-5xl sm:text-7xl lg:text-8xl text-white mb-4 leading-tight" data-testid="couple-names">
-            Shvetha & Aadi
+            Gifts & Blessings
           </h1>
           <p className="text-champagne/80 font-serif italic text-base sm:text-lg mb-6">
             As we begin our journey together, your blessings mean the world to us
           </p>
-          <div className="flex items-center justify-center gap-3 text-gold/70 text-sm font-sans">
-            <span className="w-8 h-px bg-gold/40" />
-            <span>Wedding Gift Collection</span>
-            <span className="w-8 h-px bg-gold/40" />
-          </div>
         </div>
       </header>
 

@@ -91,11 +91,10 @@ export default function PotPage() {
 
   return (
     <div className="min-h-screen mandala-bg">
-      {/* Heritage Navigation */}
-      <HeritageNav />
-      
-      {/* Secondary Nav */}
-      <nav className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border/40">
+      {/* Sticky header: Heritage Nav + Secondary Nav */}
+      <div className="sticky top-0 z-30">
+        <HeritageNav />
+        <nav className="bg-background/80 backdrop-blur-md border-b border-border/40">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/blessings" className="flex items-center gap-2 text-foreground hover:text-crimson transition-colors" data-testid="back-to-home">
             <ArrowLeft className="w-4 h-4" />
@@ -111,6 +110,7 @@ export default function PotPage() {
           )}
         </div>
       </nav>
+      </div>
 
       <div className="max-w-2xl mx-auto px-4 py-8">
         {/* Cover Image */}

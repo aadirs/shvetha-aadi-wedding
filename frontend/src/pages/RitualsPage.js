@@ -81,7 +81,9 @@ export default function RitualsPage() {
 
   return (
     <div className="min-h-screen mandala-bg">
-      <HeritageNav />
+      <div className="sticky top-0 z-30">
+        <HeritageNav />
+      </div>
       
       {/* Hero Section - matching blessings page */}
       <header className="relative overflow-hidden bg-crimson text-white">
