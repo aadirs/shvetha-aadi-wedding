@@ -191,6 +191,7 @@ export default function RitualsPage() {
           {rituals.map((ritual, index) => (
             <div 
               key={index}
+              ref={(el) => (accordionRefs.current[index] = el)}
               className="rounded-xl overflow-hidden bg-white shadow-sm gold-border"
             >
               <button
@@ -213,7 +214,11 @@ export default function RitualsPage() {
                 />
               </button>
               
-              {expandedIndex === index && (
+              <div 
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  expandedIndex === index ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0"
+                }`}
+              >
                 <div className="px-4 pb-4 border-t border-gold/10">
                   {/* Image */}
                   <div className="rounded-lg overflow-hidden my-4 bg-cream">
@@ -230,7 +235,7 @@ export default function RitualsPage() {
                     <strong>Significance:</strong> {ritual.significance}
                   </p>
                 </div>
-              )}
+              </div>
             </div>
           ))}
         </div>
