@@ -1,13 +1,83 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { fetchPots } from "../lib/api";
+import { fetchPots, fetchAllBlessings } from "../lib/api";
 import PotCard from "../components/PotCard";
 import { Separator } from "../components/ui/separator";
 import HeritageNav from "../components/HeritageNav";
+import { Heart, Quote } from "lucide-react";
+
+// Blessings Wall Component
+function BlessingsWall({ blessings, loading }) {
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!blessings || blessings.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <Heart className="w-10 h-10 text-gold/30 mx-auto mb-3" />
+        <p className="text-muted-foreground font-serif italic">Be the first to bless the couple</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {blessings.map((blessing, i) => (
+        <div 
+          key={i} 
+          className="group relative bg-white/80 backdrop-blur-sm rounded-lg p-5 shadow-sm border border-gold/10 hover:border-gold/30 hover:shadow-md transition-all duration-300"
+          style={{ animationDelay: `${i * 0.05}s` }}
+        >
+          {/* Decorative quote icon */}
+          <Quote className="absolute top-3 right-3 w-5 h-5 text-gold/20 group-hover:text-gold/40 transition-colors" />
+          
+          {/* Avatar and Name */}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-crimson to-crimson/70 flex items-center justify-center flex-shrink-0 shadow-sm">
+              <span className="text-sm font-bold text-white">
+                {blessing.donor_name?.charAt(0)?.toUpperCase() || "?"}
+              </span>
+            </div>
+            <div>
+              <p className="font-serif font-medium text-foreground">{blessing.donor_name}</p>
+              {blessing.paid_at && (
+                <p className="text-xs text-muted-foreground/70">
+                  {new Date(blessing.paid_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+              )}
+            </div>
+          </div>
+          
+          {/* Message */}
+          {blessing.donor_message && (
+            <p className="text-sm text-muted-foreground leading-relaxed italic pl-1 border-l-2 border-gold/30">
+              "{blessing.donor_message}"
+            </p>
+          )}
+          
+          {/* No message state */}
+          {!blessing.donor_message && (
+            <div className="flex items-center gap-2 text-gold/60">
+              <Heart className="w-4 h-4" />
+              <span className="text-sm italic">Sent their blessings</span>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function BlessingsPage() {
   const [pots, setPots] = useState([]);
+  const [blessings, setBlessings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [blessingsLoading, setBlessingsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
