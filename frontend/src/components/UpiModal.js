@@ -14,6 +14,25 @@ import { toast } from "sonner";
 const DEFAULT_UPI_ID = "8618052253@ybl";
 const DEFAULT_UPI_NAME = "Shvetha & Aadi";
 
+// Country codes with flags
+const COUNTRY_CODES = [
+  { code: "+91", country: "India", flag: "🇮🇳" },
+  { code: "+1", country: "USA/Canada", flag: "🇺🇸" },
+  { code: "+44", country: "UK", flag: "🇬🇧" },
+  { code: "+971", country: "UAE", flag: "🇦🇪" },
+  { code: "+65", country: "Singapore", flag: "🇸🇬" },
+  { code: "+61", country: "Australia", flag: "🇦🇺" },
+  { code: "+49", country: "Germany", flag: "🇩🇪" },
+  { code: "+33", country: "France", flag: "🇫🇷" },
+  { code: "+81", country: "Japan", flag: "🇯🇵" },
+  { code: "+86", country: "China", flag: "🇨🇳" },
+  { code: "+966", country: "Saudi Arabia", flag: "🇸🇦" },
+  { code: "+974", country: "Qatar", flag: "🇶🇦" },
+  { code: "+60", country: "Malaysia", flag: "🇲🇾" },
+  { code: "+64", country: "New Zealand", flag: "🇳🇿" },
+  { code: "+41", country: "Switzerland", flag: "🇨🇭" },
+];
+
 function fireGoldenConfetti() {
   const colors = ["#D4AF37", "#F5D78E", "#C9A55C", "#FFE4C4", "#FFDAB9", "#E8C991"];
   confetti({ particleCount: 60, spread: 80, startVelocity: 20, gravity: 0.6, ticks: 200, origin: { y: 0.6 }, colors, shapes: ["circle", "square"], scalar: 0.9 });
@@ -21,21 +40,11 @@ function fireGoldenConfetti() {
   setTimeout(() => confetti({ particleCount: 30, spread: 60, startVelocity: 15, gravity: 0.5, ticks: 180, origin: { y: 0.5, x: 0.7 }, colors, scalar: 0.8 }), 700);
 }
 
-// Phone validation: Indian and International numbers
-function isValidPhone(phone) {
+// Phone validation: validates the local number part (without country code)
+function isValidPhoneNumber(phone) {
   const cleaned = phone.replace(/[\s\-\(\)\.]/g, "");
-  
-  // Indian mobile: 10 digits starting with 6-9, optionally with +91 or 91
-  const indianPattern = /^(\+91|91)?[6-9]\d{9}$/;
-  
-  // International: + followed by country code (1-3 digits) and number (7-14 digits total)
-  // Covers most international formats like +1, +44, +971, etc.
-  const internationalPattern = /^\+[1-9]\d{7,14}$/;
-  
-  // Also allow numbers without + that are 7-15 digits (for flexibility)
-  const genericPattern = /^[1-9]\d{6,14}$/;
-  
-  return indianPattern.test(cleaned) || internationalPattern.test(cleaned) || genericPattern.test(cleaned);
+  // Local number should be 7-12 digits
+  return /^\d{7,12}$/.test(cleaned);
 }
 
 export default function UpiModal({ isOpen, onClose, allocations, totalPaise, potSlug }) {
