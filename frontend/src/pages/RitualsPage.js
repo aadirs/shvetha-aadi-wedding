@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import HeritageNav from "../components/HeritageNav";
 import { Separator } from "../components/ui/separator";
 import { ChevronDown } from "lucide-react";
