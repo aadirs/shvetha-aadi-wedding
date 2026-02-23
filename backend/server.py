@@ -228,6 +228,24 @@ async def get_contributors(slug: str):
     return [{"donor_name": s["donor_name"], "donor_message": s.get("donor_message", ""), "paid_at": s.get("paid_at")} for s in sessions if s.get("donor_name")]
 
 
+@api_router.get("/blessings/all")
+async def get_all_blessings():
+    """Get all blessings across all pots"""
+    sessions = await sb_get("contribution_sessions", {
+        "select": "id,donor_name,donor_message,paid_at",
+        "status": "eq.paid",
+        "order": "paid_at.desc.nullslast"
+    })
+    return [
+        {
+            "donor_name": s["donor_name"], 
+            "donor_message": s.get("donor_message", ""), 
+            "paid_at": s.get("paid_at")
+        } 
+        for s in sessions if s.get("donor_name")
+    ]
+
+
 # ---- SESSION ----
 @api_router.post("/session/create-or-update")
 async def create_or_update_session(request: Request):
