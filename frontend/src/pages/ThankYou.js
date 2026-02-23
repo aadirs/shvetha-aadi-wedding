@@ -270,23 +270,27 @@ export default function ThankYou() {
           )}
         </div>
 
-        {/* Countdown */}
+        {/* Back to Collections Button */}
         <div className="thankyou-redirect">
-          <p className="text-white/25 text-xs font-sans tracking-wide">
-            Returning to collection in {countdown}s
-          </p>
-          <div className="mt-2 mx-auto w-32 h-0.5 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gold/40 rounded-full transition-all duration-1000 ease-linear"
-              style={{ width: `${((12 - countdown) / 12) * 100}%` }}
-            />
-          </div>
           <Link
-            to={potSlug ? `/p/${potSlug}` : "/"}
-            className="inline-block mt-4 text-gold/40 text-xs font-sans hover:text-gold/70 transition-colors underline underline-offset-4"
+            to="/blessings"
+            className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-sans text-sm transition-all duration-500 ${
+              highlightButton 
+                ? 'bg-gold text-[#5C3A1E] shadow-lg shadow-gold/30 scale-105 animate-pulse-subtle' 
+                : 'bg-white/10 text-gold/70 hover:bg-white/20 hover:text-gold'
+            }`}
+            data-testid="back-to-collections-btn"
           >
-            Go now
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to All Collections
           </Link>
+          {highlightButton && (
+            <p className="text-gold/50 text-xs mt-3 animate-fade-in">
+              Click above to explore more gift collections
+            </p>
+          )}
         </div>
 
         {/* Decorative bottom border */}
