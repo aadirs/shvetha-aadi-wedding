@@ -237,12 +237,22 @@ export default function LandingPage() {
                   
                   <button
                     onClick={() => navigate(item.path)}
-                    className="group relative text-center py-1 px-6"
+                    className="group relative text-center py-2 px-8"
                     data-testid={`menu-${item.path.slice(1)}`}
                   >
-                    {/* Cream backdrop on hover like Begin button */}
+                    {/* Subtle visible button shape on mobile, full glow on hover */}
                     <span 
-                      className="absolute inset-0 rounded opacity-0 group-hover:opacity-100 transition-all duration-300"
+                      className="absolute inset-0 rounded-lg transition-all duration-300 
+                        opacity-30 sm:opacity-0 group-hover:opacity-100"
+                      style={{
+                        backgroundColor: 'rgba(255, 250, 240, 0.15)',
+                        border: '1px solid rgba(212, 175, 55, 0.3)',
+                        boxShadow: '0 0 15px rgba(212, 175, 55, 0.2)',
+                      }}
+                    />
+                    {/* Full cream backdrop on hover */}
+                    <span 
+                      className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300"
                       style={{
                         backgroundColor: '#FFFAF0',
                         boxShadow: '0 0 30px rgba(212, 175, 55, 0.8), 0 0 60px rgba(212, 175, 55, 0.5)',
