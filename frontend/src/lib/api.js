@@ -13,6 +13,7 @@ api.interceptors.request.use(config => {
 export const fetchPots = () => api.get('/pots');
 export const fetchPot = (slug) => api.get(`/pots/${slug}`);
 export const fetchContributors = (slug) => api.get(`/pots/${slug}/contributors`);
+export const fetchAllBlessings = () => api.get('/blessings/all');
 export const createSession = (data) => api.post('/session/create-or-update', data);
 export const createOrder = (data) => api.post('/razorpay/order/create', data);
 export const createPaymentLink = (data) => api.post('/razorpay/payment-link', data);
