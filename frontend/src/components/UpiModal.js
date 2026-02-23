@@ -168,6 +168,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
     // Reset errors
     setNameError("");
     setPhoneError("");
+    setEmailError("");
     setMessageError("");
     
     // Validate all fields and collect errors
@@ -182,6 +183,13 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       hasError = true;
     } else if (!isValidPhoneNumber(form.phone)) {
       setPhoneError("Please enter a valid phone number");
+      hasError = true;
+    }
+    if (!form.email.trim()) {
+      setEmailError("Please enter your email");
+      hasError = true;
+    } else if (!isValidEmail(form.email)) {
+      setEmailError("Please enter a valid email address");
       hasError = true;
     }
     if (!form.message.trim()) {
@@ -203,6 +211,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
         session_id: sessionId,
         donor_name: form.name.trim(),
         donor_phone: fullPhoneNumber,
+        donor_email: form.email.trim(),
         donor_message: form.message.trim(),
         utr: form.utr.trim() || undefined,
       });
