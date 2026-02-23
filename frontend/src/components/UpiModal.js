@@ -150,7 +150,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       setPhoneError("Please enter your phone number");
       hasError = true;
     } else if (!isValidPhone(form.phone)) {
-      setPhoneError("Please enter a valid Indian mobile number");
+      setPhoneError("Please enter a valid phone number");
       hasError = true;
     }
     if (!form.message.trim()) {
