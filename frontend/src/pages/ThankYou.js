@@ -110,20 +110,13 @@ export default function ThankYou() {
     return () => clearInterval(pollRef.current);
   }, [sessionId]);
 
-  // Countdown & redirect
+  // Highlight the back button after 10 seconds
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          navigate(potSlug ? `/p/${potSlug}` : "/blessings");
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [navigate, potSlug]);
+    const timer = setTimeout(() => {
+      setHighlightButton(true);
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Determine if goal was already met before this contribution
   const goalAlreadyMet = progressData && progressData.goal_amount_paise > 0 && 
