@@ -270,7 +270,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
               <div className="relative">
                 <div className="w-12 h-12 rounded-full border-2 border-[#D4AF37]/30 border-t-[#D4AF37] animate-spin" />
               </div>
-              <p className="text-[#5C3A1E]/70 font-serif text-sm">Preparing your blessing...</p>
+              <p className="text-[#5C3A1E]/70 font-serif text-sm">Preparing your wish...</p>
             </div>
           ) : success ? (
             <div className="flex flex-col items-center py-20 gap-4 px-6">
