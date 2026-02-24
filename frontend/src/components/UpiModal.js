@@ -221,6 +221,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       setSuccess(true);
       fireGoldenConfetti();
       clearCart();
+      clearPrefetchedData(); // Ensure fresh data is fetched on next visit to Blessings page
 
       setTimeout(() => {
         onClose();
