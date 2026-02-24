@@ -97,7 +97,7 @@ export default function PotCard({ pot }) {
               ))}
             </div>
             <span className="text-[11px] text-muted-foreground font-sans">
-              {pot.contributor_count} {pot.contributor_count === 1 ? "blessing" : "blessings"}
+              {pot.contributor_count} {pot.contributor_count === 1 ? "wish" : "wishes"}
             </span>
           </div>
         )}
