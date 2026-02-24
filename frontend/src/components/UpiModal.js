@@ -500,7 +500,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-[#5C3A1E]">After Payment</h3>
-                      <p className="text-[10px] text-[#5C3A1E]/50">Complete your blessing details</p>
+                      <p className="text-[10px] text-[#5C3A1E]/50">Complete your wish details</p>
                     </div>
                   </div>
                 </div>
