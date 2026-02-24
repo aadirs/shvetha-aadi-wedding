@@ -51,6 +51,7 @@ function isValidPhoneNumber(phone) {
 export default function UpiModal({ isOpen, onClose, allocations, totalPaise, potSlug }) {
   const navigate = useNavigate();
   const { clearCart } = useCart();
+  const { clearPrefetchedData } = useDataPrefetch();
   const scrollRef = useRef(null);
   const [sessionId, setSessionId] = useState(null);
   const [creating, setCreating] = useState(false);
