@@ -155,20 +155,32 @@ export default function LandingPage() {
           {landingBgLoaded && (
             <button
               onClick={handleBegin}
-              className="group absolute left-1/2 -translate-x-1/2 px-12 py-3 transition-all duration-500 animate-fade-in"
+              className="group absolute left-1/2 -translate-x-1/2 px-12 py-3 transition-all duration-500 animate-fade-in begin-btn-glow cursor-pointer"
               style={{
                 top: isMobile ? '78%' : '82%',
-                background: '#FFFAF0',
+                background: 'linear-gradient(135deg, #FFFAF0 0%, #FFF8E7 50%, #FFFAF0 100%)',
                 border: '2px solid #D4AF37',
                 borderRadius: '4px',
                 color: "#8B4513",
                 fontFamily: "'Great Vibes', cursive",
                 fontSize: isMobile ? "1.5rem" : "1.8rem",
-                boxShadow: '0 4px 20px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3), 0 0 15px rgba(212, 175, 55, 0.3)',
               }}
               data-testid="begin-btn"
             >
-              <span className="relative z-10">Begin the Journey</span>
+              <span className="relative z-10 flex items-center gap-2">
+                Begin
+                {/* Animated chevron arrow */}
+                <svg 
+                  className="w-5 h-5 animate-bounce-subtle" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor" 
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </span>
               {/* Golden glow on hover */}
               <div 
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
