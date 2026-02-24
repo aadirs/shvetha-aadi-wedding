@@ -154,7 +154,7 @@ export default function CartDrawer() {
                 <GiftBoxIcon className="w-5 h-5 text-[#8B0000]" />
               </div>
               <div>
-                <span>Your Blessing</span>
+                <span>Your Wish</span>
                 {items.length > 0 && (
                   <span className="block text-xs font-sans font-normal text-[#5C3A1E]/50">
                     {items.length} {items.length === 1 ? 'blessing' : 'blessings'} selected
