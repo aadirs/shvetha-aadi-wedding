@@ -6,59 +6,31 @@ const DataPrefetchContext = createContext();
 export function DataPrefetchProvider({ children }) {
   const [potsData, setPotsData] = useState(null);
   const [wishesData, setWishesData] = useState(null);
-  const [potsLoading, setPotsLoading] = useState(true);
-  const [wishesLoading, setWishesLoading] = useState(true);
-  const [potsError, setPotsError] = useState(null);
-  const [lastFetched, setLastFetched] = useState(null);
 
-  // Prefetch data on app load
-  const prefetchBlessingsData = useCallback(async (force = false) => {
-    // Don't refetch if data is fresh (less than 2 minutes old) unless forced
-    if (!force && lastFetched && Date.now() - lastFetched < 120000 && potsData) {
-      return;
-    }
-
-    try {
-      setPotsLoading(true);
-      setWishesLoading(true);
-
-      // Fetch both in parallel
-      const [potsResponse, wishesResponse] = await Promise.all([
-        fetchPots(),
-        fetchAllBlessings()
-      ]);
-
-      setPotsData(potsResponse.data);
-      setWishesData(wishesResponse.data);
-      setPotsError(null);
-      setLastFetched(Date.now());
-    } catch (error) {
-      setPotsError(error.response?.data?.detail || "Could not load data");
-    } finally {
-      setPotsLoading(false);
-      setWishesLoading(false);
-    }
-  }, [lastFetched, potsData]);
-
-  // Prefetch on mount
+  // Prefetch data on app load - fire and forget, no complex caching
   useEffect(() => {
-    prefetchBlessingsData();
+    // Prefetch pots
+    fetchPots()
+      .then(r => setPotsData(r.data))
+      .catch(() => {}); // Silently fail - page will fetch its own data
+    
+    // Prefetch wishes
+    fetchAllBlessings()
+      .then(r => setWishesData(r.data))
+      .catch(() => {}); // Silently fail
   }, []);
 
-  // Refresh data function (for after a contribution)
-  const refreshData = useCallback(() => {
-    prefetchBlessingsData(true);
-  }, [prefetchBlessingsData]);
+  // Clear prefetched data (call after contribution to ensure fresh data)
+  const clearPrefetchedData = useCallback(() => {
+    setPotsData(null);
+    setWishesData(null);
+  }, []);
 
   return (
     <DataPrefetchContext.Provider value={{
-      potsData,
-      wishesData,
-      potsLoading,
-      wishesLoading,
-      potsError,
-      prefetchBlessingsData,
-      refreshData,
+      prefetchedPots: potsData,
+      prefetchedWishes: wishesData,
+      clearPrefetchedData,
     }}>
       {children}
     </DataPrefetchContext.Provider>
