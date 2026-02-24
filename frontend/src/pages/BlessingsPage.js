@@ -182,7 +182,7 @@ export default function BlessingsPage() {
             )}
           </div>
           
-          <WishesWall wishes={wishes} loading={wishesLoadingLocal || wishesLoading} />
+          <WishesWall wishes={wishes} loading={wishesLoadingState} />
         </section>
       </main>
 
