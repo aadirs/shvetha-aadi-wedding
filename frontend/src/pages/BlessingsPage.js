@@ -85,41 +85,18 @@ export default function BlessingsPage() {
     refreshData 
   } = useDataPrefetch();
 
-  // Local state for fallback (in case context data is stale)
-  const [pots, setPots] = useState(potsData || []);
-  const [wishes, setWishes] = useState(wishesData || []);
-  const [loading, setLoading] = useState(!potsData);
-  const [wishesLoadingLocal, setWishesLoadingLocal] = useState(!wishesData);
-  const [error, setError] = useState(potsError);
-
-  // Sync with prefetch context when data arrives
+  // Always refresh data in background when visiting this page
+  // This ensures fresh data while showing cached data instantly
   useEffect(() => {
-    if (potsData) {
-      setPots(potsData);
-      setLoading(false);
-    }
-    if (wishesData) {
-      setWishes(wishesData);
-      setWishesLoadingLocal(false);
-    }
-    if (potsError) {
-      setError(potsError);
-    }
-  }, [potsData, wishesData, potsError]);
+    refreshData();
+  }, []);
 
-  // Fallback fetch if context doesn't have data (shouldn't happen normally)
-  useEffect(() => {
-    if (!potsData && !potsLoading) {
-      fetchPots()
-        .then(r => { setPots(r.data); setLoading(false); })
-        .catch(e => { setError(e.response?.data?.detail || "Could not load pots"); setLoading(false); });
-    }
-    if (!wishesData && !wishesLoading) {
-      fetchAllBlessings()
-        .then(r => { setWishes(r.data); setWishesLoadingLocal(false); })
-        .catch(() => setWishesLoadingLocal(false));
-    }
-  }, [potsData, wishesData, potsLoading, wishesLoading]);
+  // Derive state directly from context - no local state duplication needed
+  const pots = potsData || [];
+  const wishes = wishesData || [];
+  const loading = potsLoading && !potsData; // Show loading only if no cached data
+  const wishesLoadingState = wishesLoading && !wishesData;
+  const error = potsError;
 
   return (
     <div className="min-h-screen mandala-bg">
