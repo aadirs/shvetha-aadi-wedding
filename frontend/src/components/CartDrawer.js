@@ -128,6 +128,7 @@ export default function CartDrawer() {
         prefill: od.prefill, theme: { color: "#8B0000" },
         handler: function () {
           clearCart();
+          clearPrefetchedData(); // Ensure fresh data on next visit
           navigate(`/thank-you?session=${savedSessionId}&pot=${potSlug || ""}&name=${encodeURIComponent(savedDonorName)}`);
         },
         modal: { ondismiss: function () { setPaying(false); toast.info("Payment was cancelled"); } }
