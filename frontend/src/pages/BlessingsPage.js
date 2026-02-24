@@ -155,7 +155,7 @@ export default function BlessingsPage() {
           </div>
         )}
 
-        {/* Blessings Wall Section */}
+        {/* Wishes Wall Section */}
         <section className="mt-16 pt-12 border-t border-gold/20">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-3 mb-4">
@@ -163,18 +163,18 @@ export default function BlessingsPage() {
               <Heart className="w-5 h-5 text-crimson" />
               <div className="w-12 h-px bg-gradient-to-l from-transparent to-gold/50" />
             </div>
-            <h2 className="font-serif text-2xl sm:text-3xl text-foreground mb-2">Wall of Blessings</h2>
+            <h2 className="font-serif text-2xl sm:text-3xl text-foreground mb-2">Wall of Wishes</h2>
             <p className="text-muted-foreground text-sm sm:text-base font-sans">
               Heartfelt wishes from our loved ones
             </p>
-            {blessings.length > 0 && (
+            {wishes.length > 0 && (
               <p className="text-gold text-sm mt-2 font-serif">
-                {blessings.length} blessing{blessings.length !== 1 ? 's' : ''} received
+                {wishes.length} {wishes.length === 1 ? 'wish' : 'wishes'} received
               </p>
             )}
           </div>
           
-          <BlessingsWall blessings={blessings} loading={blessingsLoading} />
+          <WishesWall wishes={wishes} loading={wishesLoading} />
         </section>
       </main>
 
