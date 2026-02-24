@@ -75,9 +75,9 @@ function WishesWall({ wishes, loading }) {
 
 export default function BlessingsPage() {
   const [pots, setPots] = useState([]);
-  const [blessings, setBlessings] = useState([]);
+  const [wishes, setWishes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [blessingsLoading, setBlessingsLoading] = useState(true);
+  const [wishesLoading, setWishesLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -86,8 +86,8 @@ export default function BlessingsPage() {
       .catch(e => { setError(e.response?.data?.detail || "Could not load pots"); setLoading(false); });
     
     fetchAllBlessings()
-      .then(r => { setBlessings(r.data); setBlessingsLoading(false); })
-      .catch(() => setBlessingsLoading(false));
+      .then(r => { setWishes(r.data); setWishesLoading(false); })
+      .catch(() => setWishesLoading(false));
   }, []);
 
   return (
