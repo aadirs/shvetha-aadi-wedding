@@ -291,7 +291,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   <span className="text-[9px] uppercase tracking-[0.3em] text-[#8B0000]/50 font-medium">Wedding Gift</span>
                   <span className="w-8 h-px bg-[#D4AF37]/40" />
                 </div>
-                <h2 className="font-serif text-2xl text-[#5C3A1E] leading-tight mb-3">Send Your Blessing</h2>
+                <h2 className="font-serif text-2xl text-[#5C3A1E] leading-tight mb-3">Send Your Wish</h2>
                 <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#8B0000]/5 via-[#8B0000]/10 to-[#8B0000]/5 border border-[#8B0000]/10">
                   <span className="font-serif text-[#8B0000] text-xl font-semibold">₹{totalRupees}</span>
                 </div>
