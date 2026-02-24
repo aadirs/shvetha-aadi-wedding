@@ -178,7 +178,7 @@ export default function ThankYou() {
 
         {/* Thank you text */}
         <p className="text-gold/70 uppercase tracking-[0.25em] text-xs font-sans font-semibold mb-3 thankyou-label">
-          Your blessings are received
+          Your wishes are received
         </p>
 
         <h1 className="font-signature text-5xl sm:text-6xl text-white mb-3 thankyou-heading">
@@ -218,13 +218,13 @@ export default function ThankYou() {
               {/* Goal already met message */}
               {goalAlreadyMet && animationComplete && (
                 <p className="text-gold/50 text-xs mt-2 animate-fade-in italic">
-                  Goal reached — your blessing still adds to our journey ✨
+                  Goal reached — your wish still adds to our journey ✨
                 </p>
               )}
               {/* Normal completion message */}
               {!goalAlreadyMet && animationComplete && (
                 <p className="text-gold/60 text-xs mt-2 animate-fade-in">
-                  Blessing received with gratitude
+                  Wish received with gratitude
                 </p>
               )}
             </>
@@ -232,7 +232,7 @@ export default function ThankYou() {
             // Fallback: no goal set, just show processing
             <>
               <div className="flex items-center justify-center text-xs text-gold/50 mb-2 font-sans">
-                <span>Processing your blessing</span>
+                <span>Processing your wish</span>
               </div>
               <div className="relative h-2 bg-white/10 rounded-full overflow-hidden">
                 <div 
@@ -240,7 +240,7 @@ export default function ThankYou() {
                   style={{ width: '100%' }}
                 />
               </div>
-              <p className="text-gold/60 text-xs mt-2 animate-fade-in">Blessing received with gratitude</p>
+              <p className="text-gold/60 text-xs mt-2 animate-fade-in">Wish received with gratitude</p>
             </>
           )}
         </div>
