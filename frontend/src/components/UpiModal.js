@@ -193,7 +193,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
       hasError = true;
     }
     if (!form.message.trim()) {
-      setMessageError("Please write a blessing for the couple");
+      setMessageError("Please write a wish for the couple");
       hasError = true;
     }
     
