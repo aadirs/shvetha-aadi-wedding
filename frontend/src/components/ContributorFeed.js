@@ -14,7 +14,7 @@ export default function ContributorFeed({ contributors }) {
     <div data-testid="contributor-feed">
       <h3 className="font-serif text-lg text-foreground mb-4 flex items-center gap-2">
         <Heart className="w-4 h-4 text-crimson" />
-        Blessings ({contributors.length})
+        Wishes ({contributors.length})
       </h3>
       <div className="space-y-3">
         {contributors.map((c, i) => (
