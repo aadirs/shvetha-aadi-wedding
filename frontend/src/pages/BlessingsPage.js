@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { fetchPots, fetchAllBlessings } from "../lib/api";
 import { useDataPrefetch } from "../context/DataPrefetchContext";
 import PotCard from "../components/PotCard";
 import { Separator } from "../components/ui/separator";
