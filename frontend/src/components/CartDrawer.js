@@ -157,7 +157,7 @@ export default function CartDrawer() {
                 <span>Your Gift</span>
                 {items.length > 0 && (
                   <span className="block text-xs font-sans font-normal text-[#5C3A1E]/50">
-                    {items.length} {items.length === 1 ? 'wish' : 'wishes'} selected
+                    {items.length} {items.length === 1 ? 'gift' : 'gifts'} selected
                   </span>
                 )}
               </div>
