@@ -75,40 +75,27 @@ const rituals = [
 export default function RitualsPage() {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const accordionRefs = useRef([]);
-  const contentRefs = useRef([]);
 
   const toggleExpand = (index) => {
     const isClosing = expandedIndex === index;
     
     if (isClosing) {
-      // Just close, no scrolling needed
       setExpandedIndex(null);
     } else {
-      // Close any open section first, then open new one
       setExpandedIndex(index);
       
-      // Wait for the content to expand, then scroll
+      // Use requestAnimationFrame to wait for state update, then scroll
       requestAnimationFrame(() => {
-        setTimeout(() => {
-          const element = accordionRefs.current[index];
-          if (element) {
-            // Use scrollIntoView with block: 'start' to position at top
+        const element = accordionRefs.current[index];
+        if (element) {
+          // Small delay to let the accordion start expanding
+          setTimeout(() => {
             element.scrollIntoView({
               behavior: 'smooth',
               block: 'start',
             });
-            
-            // Additional offset adjustment for sticky nav (80px)
-            setTimeout(() => {
-              const currentScroll = window.scrollY;
-              const navOffset = 80;
-              window.scrollTo({
-                top: currentScroll - navOffset,
-                behavior: 'smooth'
-              });
-            }, 300);
-          }
-        }, 50);
+          }, 100);
+        }
       });
     }
   };
