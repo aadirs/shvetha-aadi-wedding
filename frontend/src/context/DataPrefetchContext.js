@@ -48,6 +48,7 @@ export function DataPrefetchProvider({ children }) {
   // Prefetch data on app load
   useEffect(() => {
     fetchAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Force refresh - clears cache timestamp and fetches fresh
