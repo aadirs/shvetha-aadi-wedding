@@ -75,21 +75,51 @@ function WishesWall({ wishes, loading }) {
 }
 
 export default function BlessingsPage() {
-  const [pots, setPots] = useState([]);
-  const [wishes, setWishes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [wishesLoading, setWishesLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Use prefetched data from context
+  const { 
+    potsData, 
+    wishesData, 
+    potsLoading, 
+    wishesLoading, 
+    potsError,
+    refreshData 
+  } = useDataPrefetch();
 
+  // Local state for fallback (in case context data is stale)
+  const [pots, setPots] = useState(potsData || []);
+  const [wishes, setWishes] = useState(wishesData || []);
+  const [loading, setLoading] = useState(!potsData);
+  const [wishesLoadingLocal, setWishesLoadingLocal] = useState(!wishesData);
+  const [error, setError] = useState(potsError);
+
+  // Sync with prefetch context when data arrives
   useEffect(() => {
-    fetchPots()
-      .then(r => { setPots(r.data); setLoading(false); })
-      .catch(e => { setError(e.response?.data?.detail || "Could not load pots"); setLoading(false); });
-    
-    fetchAllBlessings()
-      .then(r => { setWishes(r.data); setWishesLoading(false); })
-      .catch(() => setWishesLoading(false));
-  }, []);
+    if (potsData) {
+      setPots(potsData);
+      setLoading(false);
+    }
+    if (wishesData) {
+      setWishes(wishesData);
+      setWishesLoadingLocal(false);
+    }
+    if (potsError) {
+      setError(potsError);
+    }
+  }, [potsData, wishesData, potsError]);
+
+  // Fallback fetch if context doesn't have data (shouldn't happen normally)
+  useEffect(() => {
+    if (!potsData && !potsLoading) {
+      fetchPots()
+        .then(r => { setPots(r.data); setLoading(false); })
+        .catch(e => { setError(e.response?.data?.detail || "Could not load pots"); setLoading(false); });
+    }
+    if (!wishesData && !wishesLoading) {
+      fetchAllBlessings()
+        .then(r => { setWishes(r.data); setWishesLoadingLocal(false); })
+        .catch(() => setWishesLoadingLocal(false));
+    }
+  }, [potsData, wishesData, potsLoading, wishesLoading]);
 
   return (
     <div className="min-h-screen mandala-bg">
