@@ -248,7 +248,7 @@ export default function CartDrawer() {
                             placeholder="+91 98765 43210" className="mt-1.5 bg-white border-[#D4AF37]/30 rounded-xl text-sm h-10" />
                         </div>
                         <div>
-                          <Label className="text-[#5C3A1E]/80 font-serif text-xs">Your Wish</Label>
+                          <Label className="text-[#5C3A1E]/80 font-serif text-xs">Your Gift</Label>
                           <Textarea data-testid="donor-message-input" value={donor.message} onChange={e => setDonor({ ...donor, message: e.target.value })}
                             placeholder="Wishing Shvetha & Aadi a lifetime of happiness..." className="mt-1.5 bg-white border-[#D4AF37]/30 rounded-xl text-sm min-h-[70px]" />
                         </div>
