@@ -110,7 +110,7 @@ export default function BlessingsPage() {
             With Love & Gratitude
           </p>
           <h1 className="font-signature text-5xl sm:text-7xl lg:text-8xl text-white mb-4 leading-tight" data-testid="couple-names">
-            Gifts & Blessings
+            Gifts & Wishes
           </h1>
           <p className="text-champagne/80 font-serif italic text-base sm:text-lg mb-6">
             As we begin our journey together, your wishes mean the world to us
