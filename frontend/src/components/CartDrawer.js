@@ -44,6 +44,7 @@ const PAYMENT_PROVIDER = process.env.REACT_APP_PAYMENT_PROVIDER || "razorpay";
 
 export default function CartDrawer() {
   const { items, removeItem, clearCart, totalPaise, isOpen, setIsOpen } = useCart();
+  const { clearPrefetchedData } = useDataPrefetch();
   const [donor, setDonor] = useState({ name: "", email: "", phone: "", message: "" });
   const [coverFees, setCoverFees] = useState(true);
   const [paying, setPaying] = useState(false);
