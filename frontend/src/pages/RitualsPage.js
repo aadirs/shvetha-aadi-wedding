@@ -75,26 +75,41 @@ const rituals = [
 export default function RitualsPage() {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const accordionRefs = useRef([]);
+  const contentRefs = useRef([]);
 
   const toggleExpand = (index) => {
     const isClosing = expandedIndex === index;
-    setExpandedIndex(isClosing ? null : index);
     
-    // Smooth scroll to the clicked section after a brief delay for the DOM to update
-    if (!isClosing) {
-      setTimeout(() => {
-        const element = accordionRefs.current[index];
-        if (element) {
-          const headerOffset = 80; // Account for sticky nav
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-          
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 50);
+    if (isClosing) {
+      // Just close, no scrolling needed
+      setExpandedIndex(null);
+    } else {
+      // Close any open section first, then open new one
+      setExpandedIndex(index);
+      
+      // Wait for the content to expand, then scroll
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          const element = accordionRefs.current[index];
+          if (element) {
+            // Use scrollIntoView with block: 'start' to position at top
+            element.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+            
+            // Additional offset adjustment for sticky nav (80px)
+            setTimeout(() => {
+              const currentScroll = window.scrollY;
+              const navOffset = 80;
+              window.scrollTo({
+                top: currentScroll - navOffset,
+                behavior: 'smooth'
+              });
+            }, 300);
+          }
+        }, 50);
+      });
     }
   };
 
