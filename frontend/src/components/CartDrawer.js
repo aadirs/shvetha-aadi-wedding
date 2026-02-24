@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useDataPrefetch } from "../context/DataPrefetchContext";
 import { createSession, createOrder } from "../lib/api";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../components/ui/sheet";
 import { Button } from "../components/ui/button";
