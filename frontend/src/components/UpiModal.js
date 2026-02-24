@@ -636,7 +636,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                 className="w-full mt-6 h-14 bg-gradient-to-r from-[#8B0000] to-[#6B0000] hover:from-[#7B0000] hover:to-[#5B0000] text-white font-serif text-base rounded-2xl shadow-lg transition-all active:scale-[0.98]"
                 data-testid="submit-blessing-btn"
               >
-                {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirm My Blessing"}
+                {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Confirm My Wish"}
               </Button>
 
               {/* Bottom padding */}
