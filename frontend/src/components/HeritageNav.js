@@ -6,7 +6,7 @@ const navItems = [
   { label: "The Couple", path: "/story" },
   { label: "The Celebration", path: "/celebration" },
   { label: "Sacred Ceremonies", path: "/rituals" },
-  { label: "Gifts & Blessings", path: "/blessings" },
+  { label: "Gifts & Wishes", path: "/blessings" },
 ];
 
 export default function HeritageNav() {
