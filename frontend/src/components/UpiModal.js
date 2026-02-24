@@ -280,7 +280,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                 </svg>
               </div>
               <h2 className="font-serif text-2xl text-[#5C3A1E]">Thank You</h2>
-              <p className="text-[#5C3A1E]/60 text-sm text-center">Your blessing means the world to us</p>
+              <p className="text-[#5C3A1E]/60 text-sm text-center">Your wish means the world to us</p>
             </div>
           ) : (
             <div className="px-6 pt-6 pb-8">
