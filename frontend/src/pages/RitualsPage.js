@@ -195,10 +195,11 @@ export default function RitualsPage() {
               key={index}
               ref={(el) => (accordionRefs.current[index] = el)}
               className="rounded-xl overflow-hidden bg-white shadow-sm gold-border"
+              style={{ scrollMarginTop: '90px' }}
             >
               <button
                 onClick={() => toggleExpand(index)}
-                className="w-full flex items-center justify-between p-4 text-left"
+                className="w-full flex items-center justify-between p-4 text-left active:bg-gold/5 transition-colors"
                 data-testid={`ritual-${index}-toggle`}
               >
                 <div className="flex items-center gap-3">
@@ -216,26 +217,30 @@ export default function RitualsPage() {
                 />
               </button>
               
+              {/* Expandable Content with proper height animation */}
               <div 
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  expandedIndex === index ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0"
-                }`}
+                className="grid transition-all duration-300 ease-in-out"
+                style={{
+                  gridTemplateRows: expandedIndex === index ? '1fr' : '0fr',
+                }}
               >
-                <div className="px-4 pb-4 border-t border-gold/10">
-                  {/* Image */}
-                  <div className="rounded-lg overflow-hidden my-4 bg-cream">
-                    <img 
-                      src={ritual.image} 
-                      alt={ritual.title}
-                      className="w-full h-56 object-contain"
-                    />
+                <div className="overflow-hidden">
+                  <div className="px-4 pb-4 border-t border-gold/10">
+                    {/* Image */}
+                    <div className="rounded-lg overflow-hidden my-4 bg-cream">
+                      <img 
+                        src={ritual.image} 
+                        alt={ritual.title}
+                        className="w-full h-56 object-contain"
+                      />
+                    </div>
+                    <p className="text-sm mb-3 text-foreground/70">
+                      {ritual.description}
+                    </p>
+                    <p className="text-sm italic text-gold/80">
+                      <strong>Significance:</strong> {ritual.significance}
+                    </p>
                   </div>
-                  <p className="text-sm mb-3 text-foreground/70">
-                    {ritual.description}
-                  </p>
-                  <p className="text-sm italic text-gold/80">
-                    <strong>Significance:</strong> {ritual.significance}
-                  </p>
                 </div>
               </div>
             </div>
