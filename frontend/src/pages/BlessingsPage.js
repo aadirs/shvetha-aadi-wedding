@@ -113,7 +113,7 @@ export default function BlessingsPage() {
             Gifts & Blessings
           </h1>
           <p className="text-champagne/80 font-serif italic text-base sm:text-lg mb-6">
-            As we begin our journey together, your blessings mean the world to us
+            As we begin our journey together, your wishes mean the world to us
           </p>
         </div>
       </header>
