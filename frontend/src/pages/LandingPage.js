@@ -323,6 +323,33 @@ export default function LandingPage() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
         }
+        /* Begin button - subtle glow pulse to indicate clickability */
+        @keyframes btn-glow-pulse {
+          0%, 100% { 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3), 0 0 15px rgba(212, 175, 55, 0.3);
+            transform: translateX(-50%) scale(1);
+          }
+          50% { 
+            box-shadow: 0 4px 25px rgba(0,0,0,0.4), 0 2px 10px rgba(0,0,0,0.3), 0 0 25px rgba(212, 175, 55, 0.5);
+            transform: translateX(-50%) scale(1.02);
+          }
+        }
+        .begin-btn-glow {
+          animation: btn-glow-pulse 2.5s ease-in-out infinite;
+        }
+        .begin-btn-glow:hover {
+          animation: none;
+          transform: translateX(-50%) scale(1.05);
+          box-shadow: 0 6px 30px rgba(0,0,0,0.5), 0 0 40px rgba(212, 175, 55, 0.6) !important;
+        }
+        /* Subtle bounce for the arrow */
+        @keyframes bounce-subtle {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(4px); }
+        }
+        .animate-bounce-subtle {
+          animation: bounce-subtle 1.5s ease-in-out infinite;
+        }
         /* Mobile menu button glow - golden ghost button effect for touch affordance */
         @media (max-width: 639px) {
           .menu-btn-glow {
