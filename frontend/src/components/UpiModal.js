@@ -588,7 +588,7 @@ export default function UpiModal({ isOpen, onClose, allocations, totalPaise, pot
                   {emailError && <p className="text-red-500 text-[11px] mt-1">{emailError}</p>}
                 </div>
                 <div>
-                  <Label className="text-[#5C3A1E]/80 text-xs font-medium">Your Blessing <span className="text-[#8B0000]">*</span></Label>
+                  <Label className="text-[#5C3A1E]/80 text-xs font-medium">Your Wish <span className="text-[#8B0000]">*</span></Label>
                   <Textarea
                     value={form.message}
                     onChange={e => { setForm({ ...form, message: e.target.value }); setMessageError(""); }}
