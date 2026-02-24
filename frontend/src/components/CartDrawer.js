@@ -293,7 +293,7 @@ export default function CartDrawer() {
                       data-testid="proceed-blessing-btn"
                     >
                       <Heart className="w-5 h-5 mr-2" />
-                      Proceed to Wish
+                      Send With Love
                     </Button>
                   ) : (
                     <Button
