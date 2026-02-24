@@ -66,29 +66,31 @@ function FloatingCartButton() {
 
 function App() {
   return (
-    <CartProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-background">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/story" element={<StoryPage />} />
-            <Route path="/rituals" element={<RitualsPage />} />
-            <Route path="/celebration" element={<CelebrationPage />} />
-            <Route path="/blessings" element={<BlessingsPage />} />
-            <Route path="/p/:slug" element={<PotPage />} />
-            <Route path="/thank-you" element={<ThankYou />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/pots" element={<AdminPots />} />
-            <Route path="/admin/contributions" element={<AdminContributions />} />
-            <Route path="/admin/settings" element={<AdminSettings />} />
-          </Routes>
-          <FloatingCartButton />
-          <CartDrawer />
-          <Toaster position="top-center" richColors />
-        </div>
-      </BrowserRouter>
-    </CartProvider>
+    <DataPrefetchProvider>
+      <CartProvider>
+        <BrowserRouter>
+          <div className="min-h-screen bg-background">
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/story" element={<StoryPage />} />
+              <Route path="/rituals" element={<RitualsPage />} />
+              <Route path="/celebration" element={<CelebrationPage />} />
+              <Route path="/blessings" element={<BlessingsPage />} />
+              <Route path="/p/:slug" element={<PotPage />} />
+              <Route path="/thank-you" element={<ThankYou />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/pots" element={<AdminPots />} />
+              <Route path="/admin/contributions" element={<AdminContributions />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
+            </Routes>
+            <FloatingCartButton />
+            <CartDrawer />
+            <Toaster position="top-center" richColors />
+          </div>
+        </BrowserRouter>
+      </CartProvider>
+    </DataPrefetchProvider>
   );
 }
 
