@@ -84,19 +84,22 @@ export default function RitualsPage() {
     } else {
       setExpandedIndex(index);
       
-      // Use requestAnimationFrame to wait for state update, then scroll
-      requestAnimationFrame(() => {
+      // Wait for accordion to expand, then scroll to center the section
+      setTimeout(() => {
         const element = accordionRefs.current[index];
         if (element) {
-          // Small delay to let the accordion start expanding
-          setTimeout(() => {
-            element.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
-            });
-          }, 100);
+          // Get the element's position and dimensions
+          const rect = element.getBoundingClientRect();
+          const elementCenter = rect.top + (rect.height / 2);
+          const viewportCenter = window.innerHeight / 2;
+          const scrollOffset = elementCenter - viewportCenter;
+          
+          window.scrollBy({
+            top: scrollOffset,
+            behavior: 'smooth'
+          });
         }
-      });
+      }, 350); // Wait for accordion animation to mostly complete
     }
   };
 
