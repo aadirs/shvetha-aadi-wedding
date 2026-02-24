@@ -84,22 +84,39 @@ export default function RitualsPage() {
     } else {
       setExpandedIndex(index);
       
-      // Wait for accordion to expand, then scroll to center the section
+      // Wait for accordion to fully expand, then scroll to bring it into optimal view
       setTimeout(() => {
         const element = accordionRefs.current[index];
         if (element) {
-          // Get the element's position and dimensions
           const rect = element.getBoundingClientRect();
-          const elementCenter = rect.top + (rect.height / 2);
-          const viewportCenter = window.innerHeight / 2;
-          const scrollOffset = elementCenter - viewportCenter;
+          const headerHeight = 60; // Account for sticky nav
+          const viewportHeight = window.innerHeight;
+          const availableHeight = viewportHeight - headerHeight;
+          
+          // Calculate the ideal scroll position to center the element
+          // or at least bring the header near the top with content visible
+          const elementTop = rect.top;
+          const elementHeight = rect.height;
+          
+          // If element is taller than viewport, scroll to show header at top
+          // Otherwise, try to center it
+          let scrollAmount;
+          if (elementHeight > availableHeight) {
+            // Element is tall - put header near top (with small padding)
+            scrollAmount = elementTop - headerHeight - 16;
+          } else {
+            // Element fits - center it vertically
+            const elementCenter = elementTop + (elementHeight / 2);
+            const viewportCenter = headerHeight + (availableHeight / 2);
+            scrollAmount = elementCenter - viewportCenter;
+          }
           
           window.scrollBy({
-            top: scrollOffset,
+            top: scrollAmount,
             behavior: 'smooth'
           });
         }
-      }, 350); // Wait for accordion animation to mostly complete
+      }, 400); // Wait for accordion animation to complete
     }
   };
 
