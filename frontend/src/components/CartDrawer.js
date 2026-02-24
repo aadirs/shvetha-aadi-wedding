@@ -280,7 +280,7 @@ export default function CartDrawer() {
                     </div>
                     <Separator className="my-3 bg-[#D4AF37]/20" />
                     <div className="flex justify-between items-baseline" data-testid="cart-total">
-                      <span className="font-serif text-[#5C3A1E] text-sm">Total Blessing</span>
+                      <span className="font-serif text-[#5C3A1E] text-sm">Total Wish</span>
                       <span className="font-serif text-2xl font-semibold text-[#8B0000]">₹{(grandTotalPaise / 100).toLocaleString("en-IN")}</span>
                     </div>
                   </div>
