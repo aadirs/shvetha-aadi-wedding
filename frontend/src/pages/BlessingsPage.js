@@ -88,6 +88,7 @@ export default function BlessingsPage() {
   // This ensures fresh data while showing cached data instantly
   useEffect(() => {
     refreshData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Derive state directly from context - no local state duplication needed
