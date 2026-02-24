@@ -184,6 +184,23 @@ export default function HeritageNav() {
         .animate-fade-in {
           animation: fade-in 0.3s ease-out forwards;
         }
+        /* Mobile menu button glow - matching landing page */
+        .menu-btn-glow {
+          opacity: 1;
+          background: linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(255, 250, 240, 0.2) 50%, rgba(212, 175, 55, 0.12) 100%);
+          border: 1px solid rgba(212, 175, 55, 0.6);
+          animation: subtle-glow 2.5s ease-in-out infinite;
+        }
+        @keyframes subtle-glow {
+          0%, 100% { 
+            box-shadow: 0 0 18px rgba(212, 175, 55, 0.4), 0 0 6px rgba(212, 175, 55, 0.25), inset 0 0 12px rgba(212, 175, 55, 0.15);
+            border-color: rgba(212, 175, 55, 0.55);
+          }
+          50% { 
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.5), 0 0 10px rgba(212, 175, 55, 0.3), inset 0 0 18px rgba(212, 175, 55, 0.22);
+            border-color: rgba(212, 175, 55, 0.7);
+          }
+        }
       `}</style>
     </>
   );
