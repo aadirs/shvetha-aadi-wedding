@@ -1,6 +1,7 @@
 import "@/App.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { CartProvider, useCart } from "./context/CartContext";
+import { DataPrefetchProvider } from "./context/DataPrefetchContext";
 import { Toaster } from "./components/ui/sonner";
 import LandingPage from "./pages/LandingPage";
 import StoryPage from "./pages/StoryPage";
