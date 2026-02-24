@@ -165,4 +165,4 @@ Build a wedding gift "Collection Pots" full-stack web app (India-first) with dua
 - `PAYMENT_PROVIDER=upi` (both frontend and backend)
 - UPI ID: `8618052253@ybl`
 - Admin: Aadishve / 061097
-- Preview URL: https://shvetha-aadi-wedding.preview.emergentagent.com
+- Preview URL: https://gifts-wishes.preview.emergentagent.com
