@@ -17,7 +17,7 @@ export default function HeritageNav() {
     <>
       {/* Desktop Navigation - crimson background matching blessings */}
       <nav 
-        className="hidden md:flex items-center justify-between py-4 px-6 bg-crimson"
+        className="hidden md:flex items-center justify-between py-5 px-8 lg:px-12 bg-crimson"
         style={{ 
           borderBottom: "1px solid rgba(212, 175, 55, 0.3)",
         }}
@@ -26,32 +26,32 @@ export default function HeritageNav() {
         {/* Left: S & A Logo/Home link */}
         <Link 
           to="/" 
-          className="font-signature text-gold text-2xl hover:text-champagne transition-colors"
+          className="font-signature text-gold text-3xl lg:text-4xl hover:text-champagne transition-colors"
           data-testid="desktop-home-link"
         >
           S & A
         </Link>
 
         {/* Center: Navigation items */}
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-10 lg:gap-12">
           {navItems.map((item, index) => (
             <div key={item.path} className="flex items-center">
               {index > 0 && (
                 <span 
-                  className="w-1 h-1 rounded-full mr-8 bg-gold"
+                  className="w-1.5 h-1.5 rounded-full mr-10 lg:mr-12 bg-gold"
                   style={{ opacity: 0.5 }}
                 />
               )}
               <Link
                 to={item.path}
-                className="group relative py-1"
+                className="group relative py-2"
                 data-testid={`nav-${item.path.slice(1)}`}
               >
                 <span 
-                  className={`font-serif text-sm tracking-wider transition-colors duration-300 ${
+                  className={`font-serif text-base lg:text-lg tracking-wide transition-colors duration-300 ${
                     location.pathname === item.path ? "text-gold" : "text-champagne/90 hover:text-gold"
                   }`}
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.05em' }}
                 >
                   {item.label}
                 </span>
@@ -66,7 +66,7 @@ export default function HeritageNav() {
         </div>
 
         {/* Right: Empty spacer to balance the layout */}
-        <div className="w-12"></div>
+        <div className="w-16 lg:w-20"></div>
       </nav>
 
       {/* Mobile Navigation - crimson background */}
