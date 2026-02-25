@@ -17,41 +17,56 @@ export default function HeritageNav() {
     <>
       {/* Desktop Navigation - crimson background matching blessings */}
       <nav 
-        className="hidden md:flex items-center justify-center gap-8 py-4 px-6 bg-crimson"
+        className="hidden md:flex items-center justify-between py-4 px-6 bg-crimson"
         style={{ 
           borderBottom: "1px solid rgba(212, 175, 55, 0.3)",
         }}
         data-testid="heritage-nav"
       >
-        {navItems.map((item, index) => (
-          <div key={item.path} className="flex items-center">
-            {index > 0 && (
-              <span 
-                className="w-1 h-1 rounded-full mr-8 bg-gold"
-                style={{ opacity: 0.5 }}
-              />
-            )}
-            <Link
-              to={item.path}
-              className="group relative py-1"
-              data-testid={`nav-${item.path.slice(1)}`}
-            >
-              <span 
-                className={`font-serif text-sm tracking-wider transition-colors duration-300 ${
-                  location.pathname === item.path ? "text-gold" : "text-champagne/90 hover:text-gold"
-                }`}
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+        {/* Left: S & A Logo/Home link */}
+        <Link 
+          to="/" 
+          className="font-signature text-gold text-2xl hover:text-champagne transition-colors"
+          data-testid="desktop-home-link"
+        >
+          S & A
+        </Link>
+
+        {/* Center: Navigation items */}
+        <div className="flex items-center gap-8">
+          {navItems.map((item, index) => (
+            <div key={item.path} className="flex items-center">
+              {index > 0 && (
+                <span 
+                  className="w-1 h-1 rounded-full mr-8 bg-gold"
+                  style={{ opacity: 0.5 }}
+                />
+              )}
+              <Link
+                to={item.path}
+                className="group relative py-1"
+                data-testid={`nav-${item.path.slice(1)}`}
               >
-                {item.label}
-              </span>
-              <span 
-                className={`absolute -bottom-1 left-0 h-px bg-gold transition-all duration-300 ${
-                  location.pathname === item.path ? "w-full" : "w-0 group-hover:w-full"
-                }`}
-              />
-            </Link>
-          </div>
-        ))}
+                <span 
+                  className={`font-serif text-sm tracking-wider transition-colors duration-300 ${
+                    location.pathname === item.path ? "text-gold" : "text-champagne/90 hover:text-gold"
+                  }`}
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  {item.label}
+                </span>
+                <span 
+                  className={`absolute -bottom-1 left-0 h-px bg-gold transition-all duration-300 ${
+                    location.pathname === item.path ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                />
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        {/* Right: Empty spacer to balance the layout */}
+        <div className="w-12"></div>
       </nav>
 
       {/* Mobile Navigation - crimson background */}
