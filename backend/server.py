@@ -971,6 +971,11 @@ async def update_admin_settings(request: Request, admin=Depends(get_admin_token)
     return {"status": "updated", "settings": results}
 
 
+# Root-level health check for Kubernetes probes (must be at root, not under /api)
+@app.get("/health")
+async def root_health_check():
+    """Health check endpoint for Kubernetes liveness/readiness probes."""
+    return {"status": "ok"}
 
 app.include_router(api_router)
 
