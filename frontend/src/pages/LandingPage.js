@@ -81,23 +81,42 @@ export default function LandingPage() {
       bellSound.loop = false; // Ensure no looping
       bellSound.play().catch(err => console.log('Audio play error:', err));
       
-      // After 4 seconds, start slow fade out over 1.5 seconds
+      // Store initial volume for fade calculation
+      const initialVolume = 0.6;
+      
+      // After 4 seconds, start fade out over 1 second
       setTimeout(() => {
-        const fadeOutDuration = 1500; // 1.5 seconds fade
-        const fadeSteps = 30; // Number of fade steps
+        const fadeOutDuration = 1000; // 1 second fade
+        const fadeSteps = 20;
         const fadeInterval = fadeOutDuration / fadeSteps;
-        const volumeStep = bellSound.volume / fadeSteps;
+        let currentStep = 0;
         
         const fadeOut = setInterval(() => {
-          if (bellSound.volume > volumeStep) {
-            bellSound.volume = Math.max(0, bellSound.volume - volumeStep);
-          } else {
-            bellSound.volume = 0;
+          currentStep++;
+          const newVolume = initialVolume * (1 - currentStep / fadeSteps);
+          
+          try {
+            bellSound.volume = Math.max(0, newVolume);
+          } catch (e) {
+            // Some mobile browsers don't allow volume changes
+          }
+          
+          if (currentStep >= fadeSteps) {
             bellSound.pause();
+            bellSound.currentTime = 0;
             clearInterval(fadeOut);
           }
         }, fadeInterval);
       }, 4000); // Start fade after 4 seconds
+      
+      // Hard stop at 6 seconds as failsafe (in case fade doesn't work on mobile)
+      setTimeout(() => {
+        try {
+          bellSound.pause();
+          bellSound.currentTime = 0;
+        } catch (e) {}
+      }, 6000);
+      
     } catch (err) {
       console.log('Audio error:', err);
     }
