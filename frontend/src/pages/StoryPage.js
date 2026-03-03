@@ -118,17 +118,17 @@ function BioCard({ person, isReversed }) {
         >
           <p className="text-xs uppercase tracking-wider text-gold font-semibold mb-3">Quick Stats</p>
           <div className="space-y-2 text-sm">
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-0.5">
+            <div className="flex justify-between items-start gap-2">
               <span className="text-foreground/60 shrink-0">Comfort Movie:</span>
-              <span className="text-foreground/80 sm:text-right">{person.favorites.movie}</span>
+              <span className="text-foreground/80 text-right">{person.favorites.movie}</span>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-0.5">
+            <div className="flex justify-between items-start gap-2">
               <span className="text-foreground/60 shrink-0">Soul Food:</span>
-              <span className="text-foreground/80 sm:text-right">{person.favorites.food}</span>
+              <span className="text-foreground/80 text-right">{person.favorites.food}</span>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-0.5">
+            <div className="flex justify-between items-start gap-2">
               <span className="text-foreground/60 shrink-0">Secret Hobby:</span>
-              <span className="text-foreground/80 sm:text-right">{person.favorites.hobby}</span>
+              <span className="text-foreground/80 text-right">{person.favorites.hobby}</span>
             </div>
           </div>
         </div>
