@@ -5,6 +5,14 @@ import { Button } from "../components/ui/button";
 import { Download, CheckCircle, XCircle, Loader2, ArrowLeft, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 
+// Helper to decode HTML entities like &amp; -> &
+function decodeHtmlEntities(text) {
+  if (!text) return text;
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 export default function AdminContributions() {
   const [contributions, setContributions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -165,7 +173,7 @@ export default function AdminContributions() {
                 {sortedContributions.map(c => (
                   <tr key={c.id} className="hover:bg-gray-50" data-testid={`contribution-row-${c.id}`}>
                     <td className="p-3">
-                      <p className="font-medium">{c.donor_name || "—"}</p>
+                      <p className="font-medium">{decodeHtmlEntities(c.donor_name) || "—"}</p>
                       <p className="text-xs text-gray-400">{c.donor_email || c.donor_phone || ""}</p>
                     </td>
                     <td className="p-3 font-medium">₹{(c.total_amount_paise / 100).toLocaleString("en-IN")}</td>
@@ -176,7 +184,7 @@ export default function AdminContributions() {
                         <span className="text-gray-300">—</span>
                       )}
                     </td>
-                    <td className="p-3 text-xs text-gray-600 max-w-[200px] truncate" title={c.donor_message}>{c.donor_message || "—"}</td>
+                    <td className="p-3 text-xs text-gray-600 max-w-[200px] truncate" title={decodeHtmlEntities(c.donor_message)}>{decodeHtmlEntities(c.donor_message) || "—"}</td>
                     <td className="p-3">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
                         ${c.status === "paid" ? "bg-green-100 text-green-700" :

@@ -7,6 +7,14 @@ import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
 import { LayoutDashboard, Package, Users, IndianRupee, LogOut, Settings } from "lucide-react";
 
+// Helper to decode HTML entities like &amp; -> &
+function decodeHtmlEntities(text) {
+  if (!text) return text;
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 export default function AdminDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -145,7 +153,7 @@ export default function AdminDashboard() {
               <TableBody>
                 {data.recent_contributions.map(c => (
                   <TableRow key={c.id} className="border-border/20">
-                    <TableCell className="font-sans text-sm">{c.donor_name}</TableCell>
+                    <TableCell className="font-sans text-sm">{decodeHtmlEntities(c.donor_name)}</TableCell>
                     <TableCell className="font-sans text-sm font-medium">
                       {"\u20B9"}{(c.total_amount_paise / 100).toLocaleString('en-IN')}
                     </TableCell>
