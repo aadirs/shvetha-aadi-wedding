@@ -1,5 +1,13 @@
 import { Heart } from "lucide-react";
 
+// Helper to decode HTML entities like &amp; -> &
+function decodeHtmlEntities(text) {
+  if (!text) return text;
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 export default function ContributorFeed({ contributors }) {
   if (!contributors || contributors.length === 0) {
     return (
@@ -25,9 +33,9 @@ export default function ContributorFeed({ contributors }) {
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-sans font-medium text-foreground">{c.donor_name}</p>
+              <p className="text-sm font-sans font-medium text-foreground">{decodeHtmlEntities(c.donor_name)}</p>
               {c.donor_message && (
-                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{c.donor_message}</p>
+                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{decodeHtmlEntities(c.donor_message)}</p>
               )}
               {c.paid_at && (
                 <p className="text-xs text-muted-foreground/60 mt-1">

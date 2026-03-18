@@ -6,6 +6,14 @@ import { Separator } from "../components/ui/separator";
 import HeritageNav from "../components/HeritageNav";
 import { Heart, Quote } from "lucide-react";
 
+// Helper to decode HTML entities like &amp; -> &
+function decodeHtmlEntities(text) {
+  if (!text) return text;
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 // Wishes Wall Component
 function WishesWall({ wishes, loading }) {
   if (loading) {
@@ -44,7 +52,7 @@ function WishesWall({ wishes, loading }) {
               </span>
             </div>
             <div>
-              <p className="font-serif font-medium text-foreground">{wish.donor_name}</p>
+              <p className="font-serif font-medium text-foreground">{decodeHtmlEntities(wish.donor_name)}</p>
               {wish.paid_at && (
                 <p className="text-xs text-muted-foreground/70">
                   {new Date(wish.paid_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
@@ -56,7 +64,7 @@ function WishesWall({ wishes, loading }) {
           {/* Message */}
           {wish.donor_message && (
             <p className="text-sm text-muted-foreground leading-relaxed italic pl-1 border-l-2 border-gold/30">
-              "{wish.donor_message}"
+              "{decodeHtmlEntities(wish.donor_message)}"
             </p>
           )}
           

@@ -1,6 +1,14 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 
+// Helper to decode HTML entities like &amp; -> &
+function decodeHtmlEntities(text) {
+  if (!text) return text;
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 export default function PotCard({ pot }) {
   const totalRupees = (pot.total_raised_paise || 0) / 100;
   const goalRupees = pot.goal_amount_paise ? pot.goal_amount_paise / 100 : null;
@@ -88,7 +96,7 @@ export default function PotCard({ pot }) {
                 <div
                   key={i}
                   className="w-5 h-5 rounded-full bg-crimson/8 border border-gold/30 flex items-center justify-center"
-                  title={name}
+                  title={decodeHtmlEntities(name)}
                 >
                   <span className="text-[9px] font-sans font-bold text-crimson/70">
                     {name.charAt(0).toUpperCase()}
